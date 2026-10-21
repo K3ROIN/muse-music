@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://30lor71sqgsv"
+path="res://.godot/imported/1-18. Talk.ogg-26fcd8d0fcde20234a422dfcf51fffeb.oggvorbisstr"
+
+[deps]
+
+source_file="res://Audios/1-18. Talk.ogg"
+dest_files=["res://.godot/imported/1-18. Talk.ogg-26fcd8d0fcde20234a422dfcf51fffeb.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

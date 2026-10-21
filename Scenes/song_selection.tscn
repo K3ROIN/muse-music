@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://yrda8pk1mom6"]
+
+[ext_resource type="Script" uid="uid://qp54nb1og50k" path="res://Scripts/song_selection.gd" id="1_hjcgt"]
+
+[node name="SongSelection" type="Control" unique_id=1395709539]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hjcgt")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=442034306]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.46394128, 0.5708061, 0.82213825, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=721921476]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=825314263]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1121860960]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "SELECT A SONG"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer" unique_id=1737436956]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Song1Button" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer" unique_id=705584272]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Song 1 - Demo Track"
+
+[node name="BackButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1683787851]
+custom_minimum_size = Vector2(250, 65)
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Back"
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/Song1Button" to="." method="_on_song_1_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

@@ -1,0 +1,112 @@
+[gd_scene format=3 uid="uid://cih8fek40xrlf"]
+
+[ext_resource type="Shader" uid="uid://bkgfuy8n04tyr" path="res://Scripts/sky.gdshader" id="1_8j60k"]
+[ext_resource type="PackedScene" uid="uid://mbxso3cde1ki" path="res://Prefabs/player.tscn" id="1_a02cp"]
+[ext_resource type="Texture2D" uid="uid://clo5p6qv54b2b" path="res://icon.svg" id="1_go701"]
+[ext_resource type="Script" uid="uid://5vn4le2hdf5w" path="res://Scripts/road.gd" id="2_5a7ea"]
+[ext_resource type="AudioStream" uid="uid://30lor71sqgsv" path="res://Audios/1-18. Talk.ogg" id="5_fo5ed"]
+[ext_resource type="Script" uid="uid://sn5c1px4m87k" path="res://Scripts/enemy_spawner.gd" id="6_5ukr8"]
+[ext_resource type="PackedScene" uid="uid://do0k06ic81xpv" path="res://Prefabs/note.tscn" id="7_o06y3"]
+[ext_resource type="PackedScene" uid="uid://bw7gefp2auc6q" path="res://Scenes/pause_menu.tscn" id="8_k7acu"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8j60k"]
+shader = ExtResource("1_8j60k")
+shader_parameter/top_color = Color(0.45, 0.9, 0.75, 1)
+shader_parameter/bottom_color = Color(0.75, 0.98, 0.85, 1)
+shader_parameter/pattern_scale = 15.0
+
+[sub_resource type="Sky" id="Sky_5a7ea"]
+sky_material = SubResource("ShaderMaterial_8j60k")
+
+[sub_resource type="Environment" id="Environment_fj7yv"]
+background_mode = 2
+sky = SubResource("Sky_5a7ea")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.5
+glow_bloom = 0.2
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.54509807, 0.9137255, 0.99215686, 1)
+fog_density = 1.0
+fog_sky_affect = 0.0
+fog_depth_begin = 15.0
+fog_depth_end = 50.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a02cp"]
+albedo_texture = ExtResource("1_go701")
+uv1_scale = Vector3(3, 20, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_on1s7"]
+material = SubResource("StandardMaterial3D_a02cp")
+size = Vector2(6, 50)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_tlwt5"]
+data = PackedVector3Array(3, 0, 15, -3, 0, 15, 3, 0, -15, -3, 0, 15, -3, 0, -15, 3, 0, -15)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bla11"]
+emission_shape = 3
+emission_box_extents = Vector3(5, 3, 2)
+gravity = Vector3(0, 0.5, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xumad"]
+shading_mode = 0
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_0aroo"]
+material = SubResource("StandardMaterial3D_xumad")
+size = Vector2(0.1, 0.1)
+
+[node name="World" type="Node" unique_id=1044091218]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=468124570]
+layer = 10
+
+[node name="PauseMenu" parent="CanvasLayer" unique_id=354742640 instance=ExtResource("8_k7acu")]
+process_mode = 2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=289200435]
+environment = SubResource("Environment_fj7yv")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1981679460]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 1.4200363, -0.6030406)
+light_energy = 0.8
+shadow_enabled = true
+
+[node name="Road" type="MeshInstance3D" parent="." unique_id=15351569]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 23)
+mesh = SubResource("PlaneMesh_on1s7")
+script = ExtResource("2_5a7ea")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Road" unique_id=535870100]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Road/StaticBody3D" unique_id=1109104972]
+shape = SubResource("ConcavePolygonShape3D_tlwt5")
+
+[node name="Player" parent="." unique_id=1781030902 instance=ExtResource("1_a02cp")]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1555136286]
+transform = Transform3D(-1, 2.4829411e-08, -8.3822684e-08, 0, 0.95881975, 0.28401536, 8.742278e-08, 0.28401536, -0.95881975, 0, 3.4, -4)
+current = true
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Camera3D" unique_id=523145903]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+process_material = SubResource("ParticleProcessMaterial_bla11")
+draw_pass_1 = SubResource("QuadMesh_0aroo")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=462656833]
+stream = ExtResource("5_fo5ed")
+autoplay = true
+
+[node name="EnemySpawner" type="Node3D" parent="." unique_id=1045829611]
+script = ExtResource("6_5ukr8")
+note_scene = ExtResource("7_o06y3")
+
+[node name="Timer" type="Timer" parent="EnemySpawner" unique_id=785041158]
+autostart = true

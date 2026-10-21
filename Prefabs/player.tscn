@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://mbxso3cde1ki"]
+
+[ext_resource type="PackedScene" uid="uid://b2es5yv6ee0he" path="res://character-female-c.glb" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://beslk5ixim8b1" path="res://Scripts/player.gd" id="1_onrkg"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_on1s7"]
+radius = 0.2783203
+height = 0.9646301
+
+[node name="Player" type="CharacterBody3D" unique_id=1781030902 groups=["player"]]
+script = ExtResource("1_onrkg")
+
+[node name="character-female-c2" parent="." unique_id=1329194194 instance=ExtResource("1_4flbx")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -0.0075660944, 0, 0.095558405)
+
+[node name="Skeleton3D" parent="character-female-c2/character-female-c" parent_id_path=PackedInt32Array(1329194194, 1689379716) index="0" unique_id=1571232824]
+bones/4/rotation = Quaternion(0, 0, -0.3826835, 0.92387956)
+bones/5/rotation = Quaternion(0, 0, 0.3826835, 0.92387956)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=182862474]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018, 0.4, 0.072)
+shape = SubResource("CapsuleShape3D_on1s7")
+
+[editable path="character-female-c2"]
