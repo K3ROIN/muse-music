@@ -1,12 +1,14 @@
 [gd_scene format=3 uid="uid://cih8fek40xrlf"]
 
+[ext_resource type="PackedScene" uid="uid://dt186ajhnq5ou" path="res://Scenes/hud.tscn" id="1_0fj1v"]
 [ext_resource type="Shader" uid="uid://bkgfuy8n04tyr" path="res://Scripts/sky.gdshader" id="1_8j60k"]
 [ext_resource type="PackedScene" uid="uid://mbxso3cde1ki" path="res://Prefabs/player.tscn" id="1_a02cp"]
 [ext_resource type="Texture2D" uid="uid://clo5p6qv54b2b" path="res://icon.svg" id="1_go701"]
 [ext_resource type="Script" uid="uid://5vn4le2hdf5w" path="res://Scripts/road.gd" id="2_5a7ea"]
+[ext_resource type="PackedScene" uid="uid://beouv3r8quua4" path="res://Scenes/result_screen.tscn" id="2_5v1tr"]
 [ext_resource type="AudioStream" uid="uid://30lor71sqgsv" path="res://Audios/1-18. Talk.ogg" id="5_fo5ed"]
 [ext_resource type="Script" uid="uid://sn5c1px4m87k" path="res://Scripts/enemy_spawner.gd" id="6_5ukr8"]
-[ext_resource type="PackedScene" uid="uid://do0k06ic81xpv" path="res://Prefabs/note.tscn" id="7_o06y3"]
+[ext_resource type="MidiResource" uid="uid://ccfqm0n32h6ae" path="res://Audios/Rick_Astley_-_Never_Gonna_Give_You_Up.mid" id="8_5v1tr"]
 [ext_resource type="PackedScene" uid="uid://bw7gefp2auc6q" path="res://Scenes/pause_menu.tscn" id="8_k7acu"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8j60k"]
@@ -68,6 +70,11 @@ size = Vector2(0.1, 0.1)
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=468124570]
 layer = 10
 
+[node name="HUD" parent="CanvasLayer" unique_id=1811688486 instance=ExtResource("1_0fj1v")]
+
+[node name="ResultScreen" parent="CanvasLayer" unique_id=618987242 instance=ExtResource("2_5v1tr")]
+process_mode = 2
+
 [node name="PauseMenu" parent="CanvasLayer" unique_id=354742640 instance=ExtResource("8_k7acu")]
 process_mode = 2
 
@@ -100,13 +107,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 process_material = SubResource("ParticleProcessMaterial_bla11")
 draw_pass_1 = SubResource("QuadMesh_0aroo")
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=462656833]
-stream = ExtResource("5_fo5ed")
-autoplay = true
-
-[node name="EnemySpawner" type="Node3D" parent="." unique_id=1045829611]
+[node name="EnemySpawner" type="Node3D" parent="." unique_id=1045829611 node_paths=PackedStringArray("audio_player", "midi_player")]
 script = ExtResource("6_5ukr8")
-note_scene = ExtResource("7_o06y3")
+audio_player = NodePath("AudioStreamPlayer")
+midi_player = NodePath("../MidiPlayer")
+midi_file_path = "uid://ccfqm0n32h6ae"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="EnemySpawner" unique_id=1911983967]
+stream = ExtResource("5_fo5ed")
 
 [node name="Timer" type="Timer" parent="EnemySpawner" unique_id=785041158]
 autostart = true
+
+[node name="MidiPlayer" type="MidiPlayer" parent="." unique_id=999243496]
+midi = ExtResource("8_5v1tr")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=10189429]

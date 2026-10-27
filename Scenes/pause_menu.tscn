@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bw7gefp2auc6q"]
 
 [ext_resource type="Script" uid="uid://be1xujdyxif5s" path="res://Scripts/pause_menu.gd" id="1_emv3i"]
+[ext_resource type="Theme" uid="uid://dd6p6geacq4k0" path="res://main_theme.tres" id="2_k0w1u"]
 
 [node name="PauseMenu" type="Control" unique_id=354742640]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_k0w1u")
 script = ExtResource("1_emv3i")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1439532469]
@@ -69,15 +71,7 @@ offset_right = 250.0
 offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="ColorRect" type="ColorRect" parent="OptionsPanel" unique_id=432307045]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6745376, 0.5830405, 0.75234973, 1)
+theme = ExtResource("2_k0w1u")
 
 [node name="CenterContainer" type="CenterContainer" parent="OptionsPanel" unique_id=2140549947]
 layout_mode = 1

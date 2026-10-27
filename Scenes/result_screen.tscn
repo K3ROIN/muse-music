@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://beouv3r8quua4"]
+
+[ext_resource type="Theme" uid="uid://dd6p6geacq4k0" path="res://main_theme.tres" id="1_qtxv5"]
+[ext_resource type="Script" uid="uid://c6q1y8d8oymj5" path="res://Scripts/result_screen.gd" id="2_t0wn3"]
+
+[node name="ResultScreen" type="Control" unique_id=618987242]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_qtxv5")
+script = ExtResource("2_t0wn3")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1748680166]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.003921569)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1603459081]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="CenterContainer" unique_id=1309153727]
+custom_minimum_size = Vector2(480, 420)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Panel" unique_id=54016990]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -217.5
+offset_top = -209.0
+offset_right = 217.5
+offset_bottom = 209.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer" unique_id=1666316231]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=948323354]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "STAGE CLEAR!"
+horizontal_alignment = 1
+
+[node name="RankLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=2095155504]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "RANK: S"
+horizontal_alignment = 1
+
+[node name="StatsVBox" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=966681758]
+layout_mode = 2
+
+[node name="ScoreLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=1506766030]
+layout_mode = 2
+text = "SCORE: 0"
+
+[node name="AccuracyLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=1903289353]
+layout_mode = 2
+text = "Accuracy: 0"
+
+[node name="MaxComboLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=1496578410]
+layout_mode = 2
+text = "Max Combo: 0"
+
+[node name="PerfectLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=562013798]
+layout_mode = 2
+text = "PERFECT: 0"
+
+[node name="MissLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=276247918]
+layout_mode = 2
+text = "MISS: 0"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=261324888]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+
+[node name="RetryButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1544801080]
+custom_minimum_size = Vector2(130, 65)
+layout_mode = 2
+text = "RETRY"
+
+[node name="SongSelectButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=51438898]
+custom_minimum_size = Vector2(130, 65)
+layout_mode = 2
+text = "SONGS"
+
+[node name="MainMenuButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1061083875]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "MENU"
+
+[connection signal="pressed" from="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/SongSelectButton" to="." method="_on_song_select_button_pressed"]
+[connection signal="pressed" from="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

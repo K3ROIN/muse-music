@@ -1,0 +1,14 @@
+[remap]
+
+importer="com.nlaha.godotmidi"
+type="MidiResource"
+uid="uid://ccfqm0n32h6ae"
+path="res://.godot/imported/Rick_Astley_-_Never_Gonna_Give_You_Up.mid-48f784a4844ff25e38e985e16498cbd7.res"
+
+[deps]
+
+source_file="res://Audios/Rick_Astley_-_Never_Gonna_Give_You_Up.mid"
+dest_files=["res://.godot/imported/Rick_Astley_-_Never_Gonna_Give_You_Up.mid-48f784a4844ff25e38e985e16498cbd7.res"]
+
+[params]
+

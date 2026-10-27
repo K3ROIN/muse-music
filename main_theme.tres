@@ -1,0 +1,48 @@
+[gd_resource type="Theme" format=3 uid="uid://dd6p6geacq4k0"]
+
+[ext_resource type="Texture2D" uid="uid://boftx28265alb" path="res://Assets/UI/PNG/Blue/Default/button_square_depth_gloss.png" id="1_58jnp"]
+[ext_resource type="FontFile" uid="uid://fc2tq21bwlrh" path="res://Assets/UI/Font/Kenney Future.ttf" id="1_470mv"]
+[ext_resource type="Texture2D" uid="uid://dopjfou3eaat7" path="res://Assets/UI/PNG/Blue/Default/button_rectangle_depth_flat.png" id="2_466ly"]
+[ext_resource type="Texture2D" uid="uid://dbr8ow3k607wl" path="res://Assets/UI/PNG/Green/Default/button_rectangle_flat.png" id="3_58jnp"]
+[ext_resource type="Texture2D" uid="uid://b1sn54ixxmx1f" path="res://Assets/UI/PNG/Yellow/Default/button_square_depth_border.png" id="4_466ly"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_0omi4"]
+texture = ExtResource("1_58jnp")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_a2l2q"]
+texture = ExtResource("2_466ly")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_58jnp"]
+texture = ExtResource("3_58jnp")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_466ly"]
+texture = ExtResource("4_466ly")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+
+[resource]
+default_font = ExtResource("1_470mv")
+default_font_size = 24
+Button/colors/font_color = Color(0.875, 0.875, 0.875, 1)
+Button/colors/font_outline_color = Color(0, 0, 0, 1)
+Button/constants/outline_size = 2
+Button/styles/hover = SubResource("StyleBoxTexture_0omi4")
+Button/styles/normal = SubResource("StyleBoxTexture_a2l2q")
+Button/styles/pressed = SubResource("StyleBoxTexture_58jnp")
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/constants/outline_size = 8
+Panel/styles/panel = SubResource("StyleBoxTexture_466ly")

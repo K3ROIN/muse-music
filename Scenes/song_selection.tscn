@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://yrda8pk1mom6"]
 
+[ext_resource type="Theme" uid="uid://dd6p6geacq4k0" path="res://main_theme.tres" id="1_1lfv0"]
 [ext_resource type="Script" uid="uid://qp54nb1og50k" path="res://Scripts/song_selection.gd" id="1_hjcgt"]
 
 [node name="SongSelection" type="Control" unique_id=1395709539]
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_1lfv0")
 script = ExtResource("1_hjcgt")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=442034306]
