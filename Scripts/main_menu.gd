@@ -1,6 +1,5 @@
 extends Control
 
-# ค้นหาโหนดที่ชื่อ OptionsPanel อัตโนมัติ ไม่ว่าจะวางซ้อนไว้ชั้นไหนก็ตาม
 @onready var options_panel = find_child("OptionsPanel", true, false)
 
 func _ready():
