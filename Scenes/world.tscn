@@ -104,6 +104,7 @@ current = true
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="Camera3D" unique_id=523145903]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+cast_shadow = 0
 process_material = SubResource("ParticleProcessMaterial_bla11")
 draw_pass_1 = SubResource("QuadMesh_0aroo")
 

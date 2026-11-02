@@ -1,24 +1,44 @@
 extends Control
 
-@onready var options_panel = find_child("OptionsPanel", true, false)
+const SETTINGS_SCENE_PATH: String = "res://Scenes/settings_menu.tscn"
 
-func _ready():
-	if options_panel:
-		options_panel.hide()
-	else:
-		print("⚠️ หาโหนดชื่อ OptionsPanel ไม่เจอ! เช็กตัวสะกดชื่อโหนดฝั่งซ้ายด้วยนะครับ")
+var _settings_instance: Control = null
+
+
+func _ready() -> void:
+	# ซ่อน OptionsPanel แบบเก่าใน main_menu.tscn (หากยังมีอยู่)
+	if has_node("OptionsPanel"):
+		$OptionsPanel.hide()
+
+	# โหลดฉาก SettingsMenu (res://Scenes/settings_menu.tscn) มาเตรียมไว้เป็น Popup
+	if ResourceLoader.exists(SETTINGS_SCENE_PATH):
+		var packed: PackedScene = load(SETTINGS_SCENE_PATH)
+		if packed:
+			_settings_instance = packed.instantiate() as Control
+			add_child(_settings_instance)
+			_settings_instance.hide()
+
 
 func _on_play_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://Scenes/song_selection.tscn")
 
-func _on_options_button_pressed() -> void:
-	print("🖱️ กดปุ่ม Options แล้ว!") # เช็กในหน้าต่าง Output ด้านล่างว่าปุ่มทำงานไหม
-	if options_panel:
-		options_panel.show()
 
-func _on_close_button_pressed() -> void:
-	if options_panel:
-		options_panel.hide()
+func _on_options_button_pressed() -> void:
+	if _settings_instance != null:
+		if _settings_instance.has_method("open_settings"):
+			_settings_instance.call("open_settings")
+		else:
+			_settings_instance.show()
+	elif has_node("OptionsPanel"):
+		$OptionsPanel.show()
+
+
+func _on_close_options_button_pressed() -> void:
+	if _settings_instance != null:
+		_settings_instance.hide()
+	if has_node("OptionsPanel"):
+		$OptionsPanel.hide()
+
 
 func _on_quit_button_pressed() -> void:
 	get_tree().quit()

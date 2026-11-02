@@ -1,10 +1,5 @@
 extends Control
 
-# ==============================================================================
-# Result Screen (Scenes/result_screen.tscn)
-# รองรับทั้งกรณีเล่นจบเพลง ("STAGE CLEAR!") และกรณี Stamina หมด ("STAGE FAILED!")
-# ==============================================================================
-
 @onready var panel: Panel = $CenterContainer/Panel
 @onready var title_label: Label = $CenterContainer/Panel/MarginContainer/VBoxContainer/TitleLabel
 @onready var rank_label: Label = $CenterContainer/Panel/MarginContainer/VBoxContainer/RankLabel
@@ -20,7 +15,6 @@ extends Control
 
 @export var is_overlay_in_world: bool = true
 
-
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
@@ -30,7 +24,6 @@ func _ready() -> void:
 			GameManager.song_finished_for_result.connect(show_result)
 	else:
 		show_result()
-
 
 func show_result() -> void:
 	show()
@@ -43,7 +36,6 @@ func show_result() -> void:
 	var final_miss: int = GameManager.miss_count
 	var rank_text: String = GameManager.get_rank()
 
-	# แสดงหัวข้อตามสถานะว่าผ่านด่านหรือ Stamina หมด
 	if title_label:
 		if GameManager.is_game_over:
 			title_label.text = "STAGE FAILED!"
