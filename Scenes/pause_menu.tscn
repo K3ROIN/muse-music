@@ -1,9 +1,20 @@
 [gd_scene format=3 uid="uid://bw7gefp2auc6q"]
 
-[ext_resource type="Script" uid="uid://be1xujdyxif5s" path="res://Scripts/pause_menu.gd" id="1_emv3i"]
-[ext_resource type="Theme" uid="uid://dd6p6geacq4k0" path="res://main_theme.tres" id="2_k0w1u"]
+[ext_resource type="Script" uid="uid://be1xujdyxif5s" path="res://Scripts/pause_menu.gd" id="1_pause_script"]
 
-[node name="PauseMenu" type="Control" unique_id=354742640]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_juice_preview"]
+bg_color = Color(0.960784, 0.937255, 0.886275, 1)
+skew = Vector2(0.28, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.0431373, 0.0313726, 0.0705882, 1)
+shadow_color = Color(0.0431373, 0.0313726, 0.0705882, 1)
+shadow_size = 1
+shadow_offset = Vector2(5, 5)
+
+[node name="PauseMenu" type="Control" unique_id=183115173]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -11,53 +22,71 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("2_k0w1u")
-script = ExtResource("1_emv3i")
+script = ExtResource("1_pause_script")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1439532469]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=740174387]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.39215687)
+color = Color(0.07, 0.05, 0.12, 0.86)
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1622919689]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1308289801]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 80.0
+offset_top = -210.0
+offset_right = 400.0
+offset_bottom = 210.0
 grow_vertical = 2
+theme_override_constants/separation = 14
+alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1166787893]
+[node name="TitleLabel" type="Label" parent="VBoxContainer" unique_id=1532292096]
 layout_mode = 2
-theme_override_constants/separation = 25
-
-[node name="Label" type="Label" parent="CenterContainer/VBoxContainer" unique_id=901816899]
-layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_colors/font_color = Color(0.960784, 0.937255, 0.886275, 1)
+theme_override_colors/font_shadow_color = Color(0.0431373, 0.0313726, 0.0705882, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 46
 text = "GAME PAUSED"
 
-[node name="ResumeButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=932419719]
-custom_minimum_size = Vector2(250, 65)
+[node name="Spacer" type="Control" parent="VBoxContainer" unique_id=21954197]
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
+
+[node name="ResumeButton" type="Button" parent="VBoxContainer" unique_id=424204266]
+custom_minimum_size = Vector2(310, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0862745, 0.0705882, 0.141176, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_juice_preview")
 text = "RESUME"
 
-[node name="OptionsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=691540709]
-custom_minimum_size = Vector2(250, 65)
+[node name="RestartButton" type="Button" parent="VBoxContainer" unique_id=2045495364]
+custom_minimum_size = Vector2(310, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.0862745, 0.0705882, 0.141176, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_juice_preview")
+text = "RESTART"
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer" unique_id=121228772]
+custom_minimum_size = Vector2(310, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0862745, 0.0705882, 0.141176, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_juice_preview")
 text = "OPTIONS"
 
-[node name="MainMenuButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1753545798]
-custom_minimum_size = Vector2(250, 65)
+[node name="MainMenuButton" type="Button" parent="VBoxContainer" unique_id=200605516]
+custom_minimum_size = Vector2(310, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.0862745, 0.0705882, 0.141176, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_juice_preview")
 text = "MAIN MENU"
-
-[connection signal="pressed" from="CenterContainer/VBoxContainer/ResumeButton" to="." method="_on_resume_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/OptionsButton" to="." method="_on_options_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
