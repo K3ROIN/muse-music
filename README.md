@@ -40,10 +40,3 @@ The game includes:
 
 The player must hit notes as they reach the target area. Successful hits increase score and combo, while missed notes reduce stamina. If stamina reaches zero, the run ends and the result screen is displayed.
 
-## Technologies Used
-
-- Godot Engine 4
-- GDScript
-- 3D game scene system
-- Audio and visual asset integration
-- Custom game systems and UI logic
