@@ -2,17 +2,15 @@ extends Control
 
 const SETTINGS_SCENE_PATH: String = "res://Scenes/settings_menu.tscn"
 
-const COL_BG_OVERLAY := Color(0.07, 0.05, 0.12, 0.86)
-const COL_CREAM_NORMAL := Color("#f5efe2")
-const COL_TEXT_DARK := Color("#161224")
-const COL_HARD_SHADOW := Color("#0b0812")
-const COL_GOLD := Color("#ffb72b")
-
-const HOVER_COLORS: Array[Color] = [
-	Color("#ff5b69"), # 1. RESUME    -> แดงอมชมพู
-	Color("#ffcf48"), # 2. RESTART   -> เหลืองทอง
-	Color("#72ff9e"), # 3. OPTIONS   -> เขียวมินต์
-	Color("#5ce6ff")  # 4. MAIN MENU -> ฟ้าไซเบอร์
+@export_group("Button Colors (ปรับแต่งได้ใน Inspector)")
+@export var button_normal_color: Color = Color("#f5efe2")
+@export var button_text_color: Color = Color("#161224")
+@export var button_shadow_color: Color = Color("#0b0812")
+@export var hover_colors: Array[Color] = [
+	Color("#ff5b69"), # RESUME
+	Color("#ffcf48"), # RESTART
+	Color("#72ff9e"), # OPTIONS
+	Color("#5ce6ff")  # MAIN MENU
 ]
 
 const SLIDE_OFFSCREEN_X: float = -520.0
@@ -50,28 +48,14 @@ func _ready() -> void:
 
 
 func _setup_left_layout_and_buttons() -> void:
-	if has_node("ColorRect"):
-		$ColorRect.color = COL_BG_OVERLAY
-
 	var vbox: VBoxContainer = find_child("VBoxContainer", true, false) as VBoxContainer
-	if vbox != null:
-		vbox.set_anchors_preset(Control.PRESET_CENTER_LEFT)
-		vbox.offset_left = 80.0
-		vbox.offset_right = 400.0
-		vbox.offset_top = -210.0
-		vbox.offset_bottom = 210.0
-		vbox.add_theme_constant_override("separation", 14)
 
 	var title_lbl: Label = find_child("TitleLabel", true, false) as Label
-	if title_lbl:
-		title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	if title_lbl and title_lbl.custom_minimum_size == Vector2.ZERO:
 		title_lbl.custom_minimum_size = Vector2(340, 54)
-		title_lbl.add_theme_color_override("font_color", COL_CREAM_NORMAL)
 
 	var sub_lbl: Label = find_child("SubtitleLabel", true, false) as Label
-	if sub_lbl:
-		sub_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		sub_lbl.add_theme_color_override("font_color", COL_GOLD)
+	if sub_lbl and sub_lbl.custom_minimum_size == Vector2.ZERO:
 		sub_lbl.custom_minimum_size = Vector2(340, 24)
 
 	var resume_btn: Button = find_child("ResumeButton", true, false) as Button
@@ -107,7 +91,7 @@ func _setup_left_layout_and_buttons() -> void:
 
 	for i in range(_menu_buttons.size()):
 		var btn: Button = _menu_buttons[i]
-		var hover_col: Color = HOVER_COLORS[i % HOVER_COLORS.size()]
+		var hover_col: Color = hover_colors[i % hover_colors.size()]
 		_apply_juice_kit_button_style(btn, hover_col)
 
 	_slide_items.clear()
@@ -128,9 +112,13 @@ func _wrap_in_slide_slot(item: Control) -> void:
 		return
 
 	var idx: int = item.get_index()
+	var slot_size: Vector2 = item.custom_minimum_size
+	if slot_size == Vector2.ZERO:
+		slot_size = item.size if item.size != Vector2.ZERO else Vector2(310, 52)
+
 	var slot := Control.new()
 	slot.name = item.name + "Slot"
-	slot.custom_minimum_size = item.custom_minimum_size
+	slot.custom_minimum_size = slot_size
 	slot.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	parent_node.remove_child(item)
@@ -139,7 +127,7 @@ func _wrap_in_slide_slot(item: Control) -> void:
 
 	slot.add_child(item)
 	item.position = Vector2.ZERO
-	item.size = item.custom_minimum_size
+	item.size = slot_size
 
 
 func _apply_juice_kit_button_style(btn: Button, target_hover_color: Color) -> void:
@@ -148,22 +136,22 @@ func _apply_juice_kit_button_style(btn: Button, target_hover_color: Color) -> vo
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.disabled = false
 
-	btn.add_theme_color_override("font_color", COL_TEXT_DARK)
-	btn.add_theme_color_override("font_hover_color", COL_TEXT_DARK)
-	btn.add_theme_color_override("font_pressed_color", COL_TEXT_DARK)
-	btn.add_theme_color_override("font_focus_color", COL_TEXT_DARK)
-	btn.add_theme_color_override("font_disabled_color", COL_TEXT_DARK)
+	btn.add_theme_color_override("font_color", button_text_color)
+	btn.add_theme_color_override("font_hover_color", button_text_color)
+	btn.add_theme_color_override("font_pressed_color", button_text_color)
+	btn.add_theme_color_override("font_focus_color", button_text_color)
+	btn.add_theme_color_override("font_disabled_color", button_text_color)
 	btn.add_theme_font_size_override("font_size", 22)
 
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = COL_CREAM_NORMAL
+	sb.bg_color = button_normal_color
 	sb.skew = Vector2(0.28, 0.0)
 	sb.border_width_left = 3
 	sb.border_width_top = 3
 	sb.border_width_right = 6
 	sb.border_width_bottom = 6
-	sb.border_color = COL_HARD_SHADOW
-	sb.shadow_color = COL_HARD_SHADOW
+	sb.border_color = button_shadow_color
+	sb.shadow_color = button_shadow_color
 	sb.shadow_size = 1
 	sb.shadow_offset = Vector2(5, 5)
 	sb.content_margin_top = 8
@@ -179,7 +167,7 @@ func _apply_juice_kit_button_style(btn: Button, target_hover_color: Color) -> vo
 	btn.pivot_offset = btn.custom_minimum_size / 2.0
 
 	btn.mouse_entered.connect(func(): _animate_button_hover(btn, target_hover_color, true))
-	btn.mouse_exited.connect(func(): _animate_button_hover(btn, COL_CREAM_NORMAL, false))
+	btn.mouse_exited.connect(func(): _animate_button_hover(btn, button_normal_color, false))
 	btn.button_down.connect(func(): _animate_button_press_punch(btn))
 
 
@@ -205,7 +193,7 @@ func play_sequential_slide_in() -> void:
 		btn.mouse_filter = Control.MOUSE_FILTER_STOP
 		var sb: StyleBoxFlat = _btn_styleboxes.get(btn)
 		if sb:
-			sb.bg_color = COL_CREAM_NORMAL
+			sb.bg_color = button_normal_color
 			sb.shadow_offset = Vector2(5, 5)
 
 	_active_slide_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
@@ -237,7 +225,7 @@ func play_sequential_slide_out(on_complete: Callable) -> void:
 		btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var sb: StyleBoxFlat = _btn_styleboxes.get(btn)
 		if sb:
-			sb.bg_color = COL_CREAM_NORMAL
+			sb.bg_color = button_normal_color
 			sb.shadow_offset = Vector2(5, 5)
 
 	_active_slide_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
