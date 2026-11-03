@@ -1,11 +1,39 @@
 extends Control
 
-# ฟังก์ชันทำงานเมื่อคลิกเลือก เพลงที่ 1
+# ==============================================================================
+# Song Selection (res://Scripts/song_selection.gd)
+# เชื่อมต่อเสียงปุ่มจากโฟลเดอร์ res://Audios/SFX/ui/
+# - เลื่อนเมาส์ชี้ปุ่ม: เล่นเสียง Hover.wav
+# - กดปุ่มเลือกเพลง (Song1Button): เล่นเสียง Song_Selected.wav
+# - กดปุ่มย้อนกลับ (BackButton): เล่นเสียง Click.wav
+# ==============================================================================
+
+func _ready() -> void:
+	for child in find_children("*", "Button", true, false):
+		var btn := child as Button
+		btn.set_meta("ui_sfx_bound", true)
+		btn.resized.connect(func(): btn.pivot_offset = btn.size / 2.0)
+		btn.pivot_offset = btn.size / 2.0
+
+		btn.mouse_entered.connect(func():
+			if typeof(GameManager) != TYPE_NIL:
+				GameManager.play_ui_hover()
+			var tw: Tween = create_tween()
+			tw.tween_property(btn, "scale", Vector2(1.05, 1.05), 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		)
+		btn.mouse_exited.connect(func():
+			var tw: Tween = create_tween()
+			tw.tween_property(btn, "scale", Vector2.ONE, 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		)
+
+
 func _on_song_1_button_pressed() -> void:
-	# สั่งโหลดฉากเล่นเกมหลัก 3D ขึ้นมาทันทีเพื่อเริ่มต้นเกม
+	if typeof(GameManager) != TYPE_NIL:
+		GameManager.play_song_selected()
 	get_tree().change_scene_to_file("res://Scenes/world.tscn")
 
-# ฟังก์ชันทำงานเมื่อคลิกปุ่มย้อนกลับ
+
 func _on_back_button_pressed() -> void:
-	# สั่งย้อนกลับไปหน้าจอเมนูหลักหน้าแรก
+	if typeof(GameManager) != TYPE_NIL:
+		GameManager.play_ui_click()
 	get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")

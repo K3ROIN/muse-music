@@ -1,5 +1,12 @@
 extends Control
 
+# ==============================================================================
+# Pause Menu สไตล์ "JUICE KIT" + เสียงปุ่มจาก res://Audios/SFX/ui/ (res://Scripts/pause_menu.gd)
+# - เลื่อนเมาส์ชี้ปุ่ม: เล่นเสียง Hover.wav
+# - กดปุ่ม RESUME / RESTART / MAIN MENU: เล่นเสียง Click.wav
+# - กดปุ่ม OPTIONS: เล่นเสียง Open_Settings.wav
+# ==============================================================================
+
 const SETTINGS_SCENE_PATH: String = "res://Scenes/settings_menu.tscn"
 
 @export_group("Button Colors (ปรับแต่งได้ใน Inspector)")
@@ -7,10 +14,10 @@ const SETTINGS_SCENE_PATH: String = "res://Scenes/settings_menu.tscn"
 @export var button_text_color: Color = Color("#161224")
 @export var button_shadow_color: Color = Color("#0b0812")
 @export var hover_colors: Array[Color] = [
-	Color("#ff5b69"), # RESUME
-	Color("#ffcf48"), # RESTART
-	Color("#72ff9e"), # OPTIONS
-	Color("#5ce6ff")  # MAIN MENU
+	Color("#ff5b69"), # 1. RESUME    -> แดงอมชมพู
+	Color("#ffcf48"), # 2. RESTART   -> เหลืองทอง
+	Color("#72ff9e"), # 3. OPTIONS   -> เขียวมินต์
+	Color("#5ce6ff")  # 4. MAIN MENU -> ฟ้าไซเบอร์
 ]
 
 const SLIDE_OFFSCREEN_X: float = -520.0
@@ -135,6 +142,7 @@ func _apply_juice_kit_button_style(btn: Button, target_hover_color: Color) -> vo
 	btn.size = Vector2(310, 52)
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.disabled = false
+	btn.set_meta("ui_sfx_bound", true)
 
 	btn.add_theme_color_override("font_color", button_text_color)
 	btn.add_theme_color_override("font_hover_color", button_text_color)
@@ -166,7 +174,11 @@ func _apply_juice_kit_button_style(btn: Button, target_hover_color: Color) -> vo
 
 	btn.pivot_offset = btn.custom_minimum_size / 2.0
 
-	btn.mouse_entered.connect(func(): _animate_button_hover(btn, target_hover_color, true))
+	btn.mouse_entered.connect(func():
+		if not _is_animating_out and typeof(GameManager) != TYPE_NIL:
+			GameManager.play_ui_hover()
+		_animate_button_hover(btn, target_hover_color, true)
+	)
 	btn.mouse_exited.connect(func(): _animate_button_hover(btn, button_normal_color, false))
 	btn.button_down.connect(func(): _animate_button_press_punch(btn))
 
@@ -322,6 +334,8 @@ func toggle_pause() -> void:
 	var hud_node: Control = get_parent().find_child("HUD", false, false) as Control if get_parent() else null
 
 	if not get_tree().paused:
+		if typeof(GameManager) != TYPE_NIL:
+			GameManager.play_open_settings()
 		get_tree().paused = true
 		if hud_node != null:
 			hud_node.hide()
@@ -333,6 +347,8 @@ func toggle_pause() -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		play_sequential_slide_in()
 	else:
+		if typeof(GameManager) != TYPE_NIL:
+			GameManager.play_close_settings()
 		play_sequential_slide_out(func():
 			hide()
 			if _settings_instance != null:
@@ -347,12 +363,16 @@ func toggle_pause() -> void:
 
 func _on_resume_button_pressed() -> void:
 	if get_tree().paused and not _is_animating_out:
+		if typeof(GameManager) != TYPE_NIL:
+			GameManager.play_ui_click()
 		toggle_pause()
 
 
 func _on_restart_button_pressed() -> void:
 	if _is_animating_out:
 		return
+	if typeof(GameManager) != TYPE_NIL:
+		GameManager.play_ui_click()
 	play_sequential_slide_out(func():
 		if typeof(GameManager) != TYPE_NIL:
 			GameManager.reset_stats()
@@ -364,6 +384,8 @@ func _on_restart_button_pressed() -> void:
 func _on_options_button_pressed() -> void:
 	if _is_animating_out:
 		return
+	if typeof(GameManager) != TYPE_NIL:
+		GameManager.play_open_settings()
 	await get_tree().create_timer(0.08, true).timeout
 	if _settings_instance != null:
 		if _settings_instance.has_method("open_settings"):
@@ -375,6 +397,8 @@ func _on_options_button_pressed() -> void:
 
 
 func _on_close_options_button_pressed() -> void:
+	if typeof(GameManager) != TYPE_NIL:
+		GameManager.play_close_settings()
 	if _settings_instance != null:
 		_settings_instance.hide()
 	if has_node("OptionsPanel"):
@@ -384,6 +408,8 @@ func _on_close_options_button_pressed() -> void:
 func _on_main_menu_button_pressed() -> void:
 	if _is_animating_out:
 		return
+	if typeof(GameManager) != TYPE_NIL:
+		GameManager.play_ui_click()
 	play_sequential_slide_out(func():
 		get_tree().paused = false
 		get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")

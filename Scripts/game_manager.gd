@@ -1,8 +1,15 @@
 extends Node
 
 # ==============================================================================
-# GameManager (Autoload Singleton)
-# จัดการคะแนน, คอมโบ, หลอดเลือด/Stamina (HP), ความแม่นยำ (Accuracy) และเกรดหน้า Result
+# GameManager (Autoload Singleton) - res://Scripts/game_manager.gd
+# จัดการคะแนน, คอมโบ, Stamina (HP), เกรดหน้า Result และระบบเสียง UI SFX กลาง
+# ------------------------------------------------------------------------------
+# เสียง UI ที่โหลดจากโฟลเดอร์ res://Audios/SFX/ui/ ของโปรเจกต์:
+# - Hover.wav          : เล่นเมื่อเลื่อนเมาส์ชี้ปุ่ม
+# - Click.wav          : เล่นเมื่อคลิกปุ่มทั่วไป หรือสลับแท็บ
+# - Open_Settings.wav  : เล่นเมื่อกดเปิดหน้าต่าง Settings
+# - Close_Settings.wav : เล่นเมื่อกดบันทึก/ปิดหน้าต่าง Settings
+# - Song_Selected.wav  : เล่นเมื่อกดเลือกเพลงในหน้า Song Selection
 # ==============================================================================
 
 signal score_changed(new_score: int, new_combo: int, judgment: String)
@@ -12,11 +19,17 @@ signal song_finished_for_result()
 
 const PERFECT_SCORE: int = 300
 
+const SFX_PATHS: Dictionary = {
+	"hover": "res://Audios/SFX/ui/Hover.wav",
+	"click": "res://Audios/SFX/ui/Click.wav",
+	"open_settings": "res://Audios/SFX/ui/Open_Settings.wav",
+	"close_settings": "res://Audios/SFX/ui/Close_Settings.wav",
+	"song_selected": "res://Audios/SFX/ui/Song_Selected.wav"
+}
+
 @export_group("Stamina / HP Settings")
 @export var max_stamina: float = 100.0
-## เลือดที่ลดลงต่อการพลาดโน้ต (MISS) 1 ตัว (เช่น 15 หน่วย = พลาดติดกัน 7 ตัวเลือดหมด)
 @export var miss_stamina_damage: float = 15.0
-## เลือดที่ฟื้นฟูเมื่อเก็บโน้ตได้ PERFECT 1 ตัว
 @export var perfect_stamina_heal: float = 2.5
 
 var score: int = 0
@@ -29,7 +42,130 @@ var total_notes_in_chart: int = 0
 var current_stamina: float = 100.0
 var is_game_over: bool = false
 
+var _sfx_streams: Dictionary = {}
+var _sfx_players: Array[AudioStreamPlayer] = []
+var _next_player_idx: int = 0
 
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_ensure_audio_buses()
+	_init_ui_sfx_players()
+
+	# ดักจับปุ่มที่ถูกสร้างหรือเพิ่มเข้ามาใน Scene Tree อัตโนมัติ (เช่น ResultScreen / SongSelection)
+	get_tree().node_added.connect(_on_tree_node_added)
+	if get_tree().current_scene:
+		bind_ui_sounds_recursive(get_tree().current_scene)
+
+
+# ==============================================================================
+# ระบบจัดการเสียงปุ่ม UI (ทำงานข้ามฉากได้โดยเสียงไม่ถูกตัดเมื่อเปลี่ยน Scene)
+# ==============================================================================
+func _ensure_audio_buses() -> void:
+	# สร้าง Bus "SFX" และ "Music" อัตโนมัติหากยังไม่ได้สร้างในแท็บ Audio ของ Godot
+	if AudioServer.get_bus_index("SFX") == -1:
+		var idx: int = AudioServer.bus_count
+		AudioServer.add_bus(idx)
+		AudioServer.set_bus_name(idx, "SFX")
+		AudioServer.set_bus_send(idx, "Master")
+
+	if AudioServer.get_bus_index("Music") == -1:
+		var m_idx: int = AudioServer.bus_count
+		AudioServer.add_bus(m_idx)
+		AudioServer.set_bus_name(m_idx, "Music")
+		AudioServer.set_bus_send(m_idx, "Master")
+
+
+func _init_ui_sfx_players() -> void:
+	for key in SFX_PATHS.keys():
+		var path: String = SFX_PATHS[key]
+		if ResourceLoader.exists(path):
+			_sfx_streams[key] = load(path)
+
+	# สร้าง Pool ของ AudioStreamPlayer 6 ตัวเพื่อให้เสียง Hover และ Click เล่นซ้อนกันได้ไม่สะดุด
+	for i in range(6):
+		var player := AudioStreamPlayer.new()
+		player.name = "UISFXPlayer_%d" % i
+		player.bus = &"SFX" if AudioServer.get_bus_index("SFX") != -1 else &"Master"
+		player.process_mode = Node.PROCESS_MODE_ALWAYS
+		add_child(player)
+		_sfx_players.append(player)
+
+
+func play_sfx(sfx_key: String, pitch_variation: float = 0.0) -> void:
+	if not _sfx_streams.has(sfx_key) or _sfx_players.is_empty():
+		return
+
+	var player: AudioStreamPlayer = _sfx_players[_next_player_idx]
+	_next_player_idx = (_next_player_idx + 1) % _sfx_players.size()
+
+	player.stream = _sfx_streams[sfx_key]
+	if pitch_variation > 0.0:
+		player.pitch_scale = randf_range(1.0 - pitch_variation, 1.0 + pitch_variation)
+	else:
+		player.pitch_scale = 1.0
+	player.play()
+
+
+func play_ui_hover() -> void:
+	play_sfx("hover", 0.03)
+
+
+func play_ui_click() -> void:
+	play_sfx("click", 0.02)
+
+
+func play_open_settings() -> void:
+	play_sfx("open_settings")
+
+
+func play_close_settings() -> void:
+	play_sfx("close_settings")
+
+
+func play_song_selected() -> void:
+	play_sfx("song_selected")
+
+
+func _on_tree_node_added(node: Node) -> void:
+	if node is BaseButton:
+		bind_button_sound(node as BaseButton)
+
+
+func bind_ui_sounds_recursive(root: Node) -> void:
+	if root == null:
+		return
+	if root is BaseButton:
+		bind_button_sound(root as BaseButton)
+	for child in root.get_children():
+		bind_ui_sounds_recursive(child)
+
+
+func bind_button_sound(btn: BaseButton) -> void:
+	if btn == null or btn.has_meta("ui_sfx_bound"):
+		return
+	btn.set_meta("ui_sfx_bound", true)
+
+	btn.mouse_entered.connect(func():
+		if not btn.disabled and btn.visible:
+			play_ui_hover()
+	)
+	btn.pressed.connect(func():
+		var b_name: String = btn.name.to_lower()
+		if "options" in b_name:
+			play_open_settings()
+		elif "saveclose" in b_name or "close" in b_name:
+			play_close_settings()
+		elif "song" in b_name and not ("select" in b_name):
+			play_song_selected()
+		else:
+			play_ui_click()
+	)
+
+
+# ==============================================================================
+# ระบบจัดการคะแนน, คอมโบ และ Stamina (HP)
+# ==============================================================================
 func reset_stats() -> void:
 	score = 0
 	combo = 0
@@ -52,11 +188,9 @@ func register_perfect() -> void:
 	if combo > max_combo:
 		max_combo = combo
 
-	# โบนัสตัวคูณคอมโบ (เพิ่มขึ้นทุกๆ 10 คอมโบ สูงสุด 4x)
 	var multiplier: int = clampi(1 + int(floor(float(combo) / 10.0)), 1, 4)
 	score += PERFECT_SCORE * multiplier
 
-	# ฟื้นฟู Stamina เล็กน้อยเมื่อกดแม่นยำต่อเนื่อง
 	if current_stamina < max_stamina:
 		current_stamina = minf(max_stamina, current_stamina + perfect_stamina_heal)
 		stamina_changed.emit(current_stamina, max_stamina)
@@ -71,12 +205,10 @@ func register_miss() -> void:
 	miss_count += 1
 	combo = 0
 
-	# ลด Stamina เมื่อพลาดโน้ต
 	current_stamina = maxf(0.0, current_stamina - miss_stamina_damage)
 	stamina_changed.emit(current_stamina, max_stamina)
 	score_changed.emit(score, combo, "MISS")
 
-	# ถ้าพลาดโน้ตสะสมจน Stamina หมด (0) ให้จบเกมทันที (Stage Failed)
 	if current_stamina <= 0.0:
 		is_game_over = true
 		print("💀 STAMINA หมด! STAGE FAILED!")

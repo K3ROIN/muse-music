@@ -1,5 +1,12 @@
 extends Control
 
+# ==============================================================================
+# Tabbed Juicy Settings Menu + เสียงปุ่มจาก res://Audios/SFX/ui/ (res://Scripts/settings_menu.gd)
+# - เปิดหน้า Settings: เล่นเสียง Open_Settings.wav
+# - ปิดหน้า Settings (Save & Close): เล่นเสียง Close_Settings.wav
+# - ชี้ปุ่ม / สลับแท็บ / คลิกปุ่ม: เล่นเสียง Hover.wav และ Click.wav
+# ==============================================================================
+
 const CONFIG_PATH: String = "user://settings.cfg"
 
 static var key_lane_left: Key = KEY_F
@@ -37,22 +44,19 @@ var _config := ConfigFile.new()
 @onready var save_close_btn: Button = find_child("SaveCloseButton", true, false) as Button
 
 var _waiting_for_action: String = ""
-var _key_buttons_map: Dictionary = {}
 var _is_fullscreen: bool = false
+var _is_loading_config: bool = false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_init_input_map()
-	_setup_key_buttons_map()
+	_refresh_keybind_labels()
 	_connect_all_signals()
-	_attach_juicy_feel_to_controls()
+	_attach_juicy_feel_and_sounds()
 	load_settings()
 
 
-# ==============================================================================
-# เปิด / ปิด หน้าต่าง Settings พร้อมแอนิเมชั่น Juicy Pop
-# ==============================================================================
 func open_settings() -> void:
 	_waiting_for_action = ""
 	show()
@@ -69,6 +73,8 @@ func open_settings() -> void:
 func close_settings() -> void:
 	_waiting_for_action = ""
 	save_settings()
+	if typeof(GameManager) != TYPE_NIL:
+		GameManager.play_close_settings()
 
 	if main_vbox:
 		main_vbox.pivot_offset = main_vbox.size / 2.0
@@ -86,16 +92,24 @@ func close_settings() -> void:
 		hide()
 
 
-# ==============================================================================
-# ระบบแอนิเมชั่น Juicy สำหรับแท็บและปุ่มทั้งหมด
-# ==============================================================================
-func _attach_juicy_feel_to_controls() -> void:
+func _attach_juicy_feel_and_sounds() -> void:
+	if settings_tabs:
+		var tab_bar: TabBar = settings_tabs.get_tab_bar()
+		if tab_bar:
+			tab_bar.tab_hovered.connect(func(_idx: int):
+				if typeof(GameManager) != TYPE_NIL:
+					GameManager.play_ui_hover()
+			)
+
 	for node in find_children("*", "BaseButton", true, false):
 		var btn := node as BaseButton
+		btn.set_meta("ui_sfx_bound", true)
 		btn.resized.connect(func(): btn.pivot_offset = btn.size / 2.0)
 		btn.pivot_offset = btn.size / 2.0
 
 		btn.mouse_entered.connect(func():
+			if typeof(GameManager) != TYPE_NIL:
+				GameManager.play_ui_hover()
 			var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 			tw.tween_property(btn, "scale", Vector2(1.04, 1.04), 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		)
@@ -104,6 +118,8 @@ func _attach_juicy_feel_to_controls() -> void:
 			tw.tween_property(btn, "scale", Vector2.ONE, 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		)
 		btn.button_down.connect(func():
+			if btn != save_close_btn and typeof(GameManager) != TYPE_NIL:
+				GameManager.play_ui_click()
 			btn.pivot_offset = btn.size / 2.0
 			var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 			tw.tween_property(btn, "scale", Vector2(1.10, 0.88), 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -115,6 +131,8 @@ func _attach_juicy_feel_to_controls() -> void:
 func _on_tab_changed(tab_idx: int) -> void:
 	_waiting_for_action = ""
 	_refresh_keybind_labels()
+	if visible and typeof(GameManager) != TYPE_NIL:
+		GameManager.play_ui_click()
 
 	if settings_tabs == null:
 		return
@@ -122,7 +140,6 @@ func _on_tab_changed(tab_idx: int) -> void:
 	if active_page == null:
 		return
 
-	# แอนิเมชั่น Juicy ตอนสลับแท็บ: เนื้อหาในแท็บจะเด้งและซูมขึ้นมาอย่างนุ่มนวล
 	active_page.pivot_offset = active_page.size / 2.0
 	active_page.scale = Vector2(0.96, 0.96)
 	active_page.modulate.a = 0.0
@@ -132,14 +149,10 @@ func _on_tab_changed(tab_idx: int) -> void:
 	tw.tween_property(active_page, "modulate:a", 1.0, 0.14)
 
 
-# ==============================================================================
-# เชื่อมสัญญาณของ UI ทั้ง 3 แท็บ และปุ่ม Reset to Default / Save & Close
-# ==============================================================================
 func _connect_all_signals() -> void:
 	if settings_tabs:
 		settings_tabs.tab_changed.connect(_on_tab_changed)
 
-	# --- แท็บ Display ---
 	if windowed_btn:
 		windowed_btn.pressed.connect(func(): _set_fullscreen_mode(false))
 	if fullscreen_btn:
@@ -151,7 +164,6 @@ func _connect_all_signals() -> void:
 	if fps_option:
 		fps_option.item_selected.connect(_on_fps_selected)
 
-	# --- แท็บ Audio ---
 	if offset_spinbox:
 		offset_spinbox.value_changed.connect(_on_audio_offset_changed)
 	if music_slider:
@@ -159,7 +171,6 @@ func _connect_all_signals() -> void:
 	if sfx_slider:
 		sfx_slider.value_changed.connect(_on_sfx_volume_changed)
 
-	# --- แท็บ Controls ---
 	if left_key_btn:
 		left_key_btn.pressed.connect(func(): _start_rebinding("lane_left", left_key_btn))
 	if right_key_btn:
@@ -167,16 +178,12 @@ func _connect_all_signals() -> void:
 	if pause_key_btn:
 		pause_key_btn.pressed.connect(func(): _start_rebinding("pause_game", pause_key_btn))
 
-	# --- ปุ่มด้านล่าง ---
 	if reset_default_btn:
 		reset_default_btn.pressed.connect(reset_to_defaults)
 	if save_close_btn:
 		save_close_btn.pressed.connect(close_settings)
 
 
-# ==============================================================================
-# การทำงานจริงของการตั้งค่าแต่ละรายการ
-# ==============================================================================
 func _set_fullscreen_mode(enable_fs: bool) -> void:
 	_is_fullscreen = enable_fs
 	if enable_fs:
@@ -184,7 +191,8 @@ func _set_fullscreen_mode(enable_fs: bool) -> void:
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 	_update_window_mode_button_highlights()
-	save_settings()
+	if not _is_loading_config:
+		save_settings()
 
 
 func _update_window_mode_button_highlights() -> void:
@@ -200,14 +208,16 @@ func _on_high_quality_toggled(enabled: bool) -> void:
 		var world_env: WorldEnvironment = root_scene.find_child("WorldEnvironment", true, false) as WorldEnvironment
 		if world_env and world_env.environment:
 			world_env.environment.fog_enabled = enabled
-	save_settings()
+	if not _is_loading_config:
+		save_settings()
 
 
 func _on_vsync_toggled(enabled: bool) -> void:
 	DisplayServer.window_set_vsync_mode(
 		DisplayServer.VSYNC_ENABLED if enabled else DisplayServer.VSYNC_DISABLED
 	)
-	save_settings()
+	if not _is_loading_config:
+		save_settings()
 
 
 func _on_fps_selected(index: int) -> void:
@@ -215,7 +225,10 @@ func _on_fps_selected(index: int) -> void:
 		return
 	var target_fps: int = fps_option.get_item_id(index)
 	Engine.max_fps = target_fps
-	save_settings()
+	if not _is_loading_config:
+		if typeof(GameManager) != TYPE_NIL:
+			GameManager.play_ui_click()
+		save_settings()
 
 
 func _on_audio_offset_changed(val_ms: float) -> void:
@@ -225,7 +238,8 @@ func _on_audio_offset_changed(val_ms: float) -> void:
 		var spawner: Node = root_scene.find_child("EnemySpawner", true, false)
 		if spawner != null and "audio_offset" in spawner:
 			spawner.audio_offset = custom_audio_offset_sec
-	save_settings()
+	if not _is_loading_config:
+		save_settings()
 
 
 func _on_music_volume_changed(val: float) -> void:
@@ -235,14 +249,16 @@ func _on_music_volume_changed(val: float) -> void:
 		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 		tw.tween_property(master_prog_bar, "value", val, 0.10)
 	_set_bus_volume_percent("Master", val)
-	save_settings()
+	if not _is_loading_config:
+		save_settings()
 
 
 func _on_sfx_volume_changed(val: float) -> void:
 	if sfx_val_lbl:
 		sfx_val_lbl.text = "%d%%" % int(round(val))
 	_set_bus_volume_percent("SFX", val)
-	save_settings()
+	if not _is_loading_config:
+		save_settings()
 
 
 func _set_bus_volume_percent(bus_name: String, pct: float) -> void:
@@ -254,18 +270,6 @@ func _set_bus_volume_percent(bus_name: String, pct: float) -> void:
 	else:
 		AudioServer.set_bus_mute(idx, false)
 		AudioServer.set_bus_volume_db(idx, linear_to_db(pct / 100.0))
-
-
-# ==============================================================================
-# ระบบเปลี่ยนปุ่มคีย์บอร์ด (Keybinding Remapper)
-# ==============================================================================
-func _setup_key_buttons_map() -> void:
-	_key_buttons_map = {
-		"lane_left": left_key_btn,
-		"lane_right": right_key_btn,
-		"pause_game": pause_key_btn
-	}
-	_refresh_keybind_labels()
 
 
 func _init_input_map() -> void:
@@ -328,16 +332,15 @@ func _input(event: InputEvent) -> void:
 		var pressed_k: Key = event.keycode if event.keycode != KEY_NONE else event.physical_keycode
 		_apply_key_binding(_waiting_for_action, pressed_k)
 		_waiting_for_action = ""
+		if typeof(GameManager) != TYPE_NIL:
+			GameManager.play_ui_click()
 		save_settings()
 
 
-# ==============================================================================
-# ปุ่ม Reset to Default และการบันทึก/โหลดไฟล์ user://settings.cfg
-# ==============================================================================
 func reset_to_defaults() -> void:
 	_waiting_for_action = ""
+	_is_loading_config = true
 
-	# คืนค่าเริ่มต้นทั้งหมด
 	_set_fullscreen_mode(false)
 	if hq_checkbox:
 		hq_checkbox.button_pressed = true
@@ -351,16 +354,18 @@ func reset_to_defaults() -> void:
 		offset_spinbox.value = 0.0
 	if music_slider:
 		music_slider.value = 80.0
+		_on_music_volume_changed(80.0)
 	if sfx_slider:
 		sfx_slider.value = 75.0
+		_on_sfx_volume_changed(75.0)
 
 	_apply_key_binding("lane_left", KEY_F)
 	_apply_key_binding("lane_right", KEY_J)
 	_apply_key_binding("pause_game", KEY_ESCAPE)
 
+	_is_loading_config = false
 	save_settings()
 
-	# แอนิเมชั่น Juicy สั่น/เด้งกรอบหน้าต่างเพื่อยืนยันการรีเซ็ตค่าเริ่มต้น
 	if main_vbox:
 		main_vbox.pivot_offset = main_vbox.size / 2.0
 		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
@@ -392,10 +397,12 @@ func save_settings() -> void:
 
 
 func load_settings() -> void:
+	_is_loading_config = true
 	if _config.load(CONFIG_PATH) != OK:
 		_update_window_mode_button_highlights()
 		_on_music_volume_changed(80.0)
 		_on_sfx_volume_changed(75.0)
+		_is_loading_config = false
 		return
 
 	_is_fullscreen = bool(_config.get_value("display", "fullscreen", false))
@@ -422,3 +429,4 @@ func load_settings() -> void:
 	_apply_key_binding("lane_left", int(_config.get_value("controls", "lane_left", KEY_F)) as Key)
 	_apply_key_binding("lane_right", int(_config.get_value("controls", "lane_right", KEY_J)) as Key)
 	_apply_key_binding("pause_game", int(_config.get_value("controls", "pause_game", KEY_ESCAPE)) as Key)
+	_is_loading_config = false
