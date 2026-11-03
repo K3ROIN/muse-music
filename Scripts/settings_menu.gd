@@ -5,208 +5,267 @@ const CONFIG_PATH: String = "user://settings.cfg"
 static var key_lane_left: Key = KEY_F
 static var key_lane_right: Key = KEY_J
 static var key_pause: Key = KEY_ESCAPE
-
-const COL_BG_SLATE := Color("#262140")
-const COL_CYAN := Color("#00f0ff")
-const COL_PINK := Color("#ff5577")
-const COL_TEXT := Color("#e8f4ff")
+static var custom_audio_offset_sec: float = 0.0
 
 var _config := ConfigFile.new()
 
-@onready var main_card: PanelContainer = find_child("MainCard", true, false) as PanelContainer
-@onready var back_btn: Button = find_child("BackButton", true, false) as Button
-@onready var controls_or_reset_btn: Button = find_child("ControlsOrResetButton", true, false) as Button
-@onready var settings_grid_view: Control = find_child("SettingsGridView", true, false) as Control
-@onready var controls_sub_view: VBoxContainer = find_child("ControlsSubView", true, false) as VBoxContainer
+@onready var main_vbox: VBoxContainer = find_child("MainVBox", true, false) as VBoxContainer
+@onready var settings_tabs: TabContainer = find_child("SettingsTabs", true, false) as TabContainer
 
+# แท็บที่ 1: Display
+@onready var windowed_btn: Button = find_child("WindowedPresetBtn", true, false) as Button
+@onready var fullscreen_btn: Button = find_child("FullscreenPresetBtn", true, false) as Button
+@onready var hq_checkbox: CheckBox = find_child("HQCheckBox", true, false) as CheckBox
+@onready var vsync_checkbtn: CheckButton = find_child("VsyncCheckButton", true, false) as CheckButton
 @onready var fps_option: OptionButton = find_child("FPSOption", true, false) as OptionButton
-@onready var vsync_toggle: CheckButton = find_child("VsyncToggle", true, false) as CheckButton
-@onready var lang_option: OptionButton = find_child("LangOption", true, false) as OptionButton
-@onready var fullscreen_toggle: CheckButton = find_child("FullscreenToggle", true, false) as CheckButton
-@onready var hq_toggle: CheckButton = find_child("HQToggle", true, false) as CheckButton
 
+# แท็บที่ 2: Audio
+@onready var offset_spinbox: SpinBox = find_child("OffsetSpinBox", true, false) as SpinBox
+@onready var master_prog_bar: ProgressBar = find_child("MasterProgressBar", true, false) as ProgressBar
 @onready var music_slider: HSlider = find_child("MusicSlider", true, false) as HSlider
-@onready var music_num_label: Label = find_child("MusicNumLabel", true, false) as Label
+@onready var music_val_lbl: Label = find_child("MusicValueLabel", true, false) as Label
 @onready var sfx_slider: HSlider = find_child("SFXSlider", true, false) as HSlider
-@onready var sfx_num_label: Label = find_child("SFXNumLabel", true, false) as Label
+@onready var sfx_val_lbl: Label = find_child("SFXValueLabel", true, false) as Label
 
-var _is_in_controls_view: bool = false
-var _kb_buttons: Dictionary = {}
-var _joy_buttons: Dictionary = {}
-var _waiting_action: String = ""
-var _waiting_device: String = ""
+# แท็บที่ 3: Controls
+@onready var left_key_btn: Button = find_child("LeftKeyButton", true, false) as Button
+@onready var right_key_btn: Button = find_child("RightKeyButton", true, false) as Button
+@onready var pause_key_btn: Button = find_child("PauseKeyButton", true, false) as Button
+
+# แถบปุ่มด้านล่าง
+@onready var reset_default_btn: Button = find_child("ResetDefaultButton", true, false) as Button
+@onready var save_close_btn: Button = find_child("SaveCloseButton", true, false) as Button
+
+var _waiting_for_action: String = ""
+var _key_buttons_map: Dictionary = {}
+var _is_fullscreen: bool = false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_init_input_map()
-	_populate_controls_sub_view()
-	_connect_ui_signals()
+	_setup_key_buttons_map()
+	_connect_all_signals()
+	_attach_juicy_feel_to_controls()
 	load_settings()
-	_show_main_settings_view()
 
 
+# ==============================================================================
+# เปิด / ปิด หน้าต่าง Settings พร้อมแอนิเมชั่น Juicy Pop
+# ==============================================================================
 func open_settings() -> void:
-	_show_main_settings_view()
+	_waiting_for_action = ""
 	show()
-	if main_card:
-		main_card.pivot_offset = main_card.size / 2.0
-		main_card.scale = Vector2(0.92, 0.92)
+	if main_vbox:
+		main_vbox.pivot_offset = main_vbox.size / 2.0
+		main_vbox.scale = Vector2(0.88, 0.88)
+		main_vbox.modulate.a = 0.0
 		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-		tw.tween_property(main_card, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.set_parallel(true)
+		tw.tween_property(main_vbox, "scale", Vector2.ONE, 0.24).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_property(main_vbox, "modulate:a", 1.0, 0.16)
 
 
 func close_settings() -> void:
-	_waiting_action = ""
+	_waiting_for_action = ""
 	save_settings()
-	# หากเปิดเป็น Scene เดี่ยว (รันตรงจาก settings_menu.tscn) ให้กลับหน้า MainMenu
-	if get_tree().current_scene == self:
-		get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")
+
+	if main_vbox:
+		main_vbox.pivot_offset = main_vbox.size / 2.0
+		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		tw.set_parallel(true)
+		tw.tween_property(main_vbox, "scale", Vector2(0.90, 0.90), 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		tw.tween_property(main_vbox, "modulate:a", 0.0, 0.14)
+		tw.chain().tween_callback(func():
+			if get_tree().current_scene == self:
+				get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")
+			else:
+				hide()
+		)
 	else:
 		hide()
 
 
-func _connect_ui_signals() -> void:
-	if back_btn:
-		back_btn.pressed.connect(_on_back_button_pressed)
-	if controls_or_reset_btn:
-		controls_or_reset_btn.pressed.connect(_on_bottom_left_button_pressed)
+# ==============================================================================
+# ระบบแอนิเมชั่น Juicy สำหรับแท็บและปุ่มทั้งหมด
+# ==============================================================================
+func _attach_juicy_feel_to_controls() -> void:
+	for node in find_children("*", "BaseButton", true, false):
+		var btn := node as BaseButton
+		btn.resized.connect(func(): btn.pivot_offset = btn.size / 2.0)
+		btn.pivot_offset = btn.size / 2.0
 
+		btn.mouse_entered.connect(func():
+			var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			tw.tween_property(btn, "scale", Vector2(1.04, 1.04), 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		)
+		btn.mouse_exited.connect(func():
+			var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			tw.tween_property(btn, "scale", Vector2.ONE, 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		)
+		btn.button_down.connect(func():
+			btn.pivot_offset = btn.size / 2.0
+			var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			tw.tween_property(btn, "scale", Vector2(1.10, 0.88), 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			tw.tween_property(btn, "scale", Vector2(0.97, 1.04), 0.06)
+			tw.tween_property(btn, "scale", Vector2(1.04, 1.04), 0.08).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		)
+
+
+func _on_tab_changed(tab_idx: int) -> void:
+	_waiting_for_action = ""
+	_refresh_keybind_labels()
+
+	if settings_tabs == null:
+		return
+	var active_page: Control = settings_tabs.get_tab_control(tab_idx)
+	if active_page == null:
+		return
+
+	# แอนิเมชั่น Juicy ตอนสลับแท็บ: เนื้อหาในแท็บจะเด้งและซูมขึ้นมาอย่างนุ่มนวล
+	active_page.pivot_offset = active_page.size / 2.0
+	active_page.scale = Vector2(0.96, 0.96)
+	active_page.modulate.a = 0.0
+	var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.set_parallel(true)
+	tw.tween_property(active_page, "scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(active_page, "modulate:a", 1.0, 0.14)
+
+
+# ==============================================================================
+# เชื่อมสัญญาณของ UI ทั้ง 3 แท็บ และปุ่ม Reset to Default / Save & Close
+# ==============================================================================
+func _connect_all_signals() -> void:
+	if settings_tabs:
+		settings_tabs.tab_changed.connect(_on_tab_changed)
+
+	# --- แท็บ Display ---
+	if windowed_btn:
+		windowed_btn.pressed.connect(func(): _set_fullscreen_mode(false))
+	if fullscreen_btn:
+		fullscreen_btn.pressed.connect(func(): _set_fullscreen_mode(true))
+	if hq_checkbox:
+		hq_checkbox.toggled.connect(_on_high_quality_toggled)
+	if vsync_checkbtn:
+		vsync_checkbtn.toggled.connect(_on_vsync_toggled)
 	if fps_option:
 		fps_option.item_selected.connect(_on_fps_selected)
-	if vsync_toggle:
-		vsync_toggle.toggled.connect(func(on: bool):
-			DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if on else DisplayServer.VSYNC_DISABLED)
-		)
-	if fullscreen_toggle:
-		fullscreen_toggle.toggled.connect(func(on: bool):
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if on else DisplayServer.WINDOW_MODE_WINDOWED)
-		)
-	if hq_toggle:
-		hq_toggle.toggled.connect(_on_high_quality_toggled)
 
+	# --- แท็บ Audio ---
+	if offset_spinbox:
+		offset_spinbox.value_changed.connect(_on_audio_offset_changed)
 	if music_slider:
-		music_slider.value_changed.connect(func(val: float):
-			if music_num_label:
-				music_num_label.text = str(int(round(val)))
-			_set_bus_percent("Master", val)
-		)
+		music_slider.value_changed.connect(_on_music_volume_changed)
 	if sfx_slider:
-		sfx_slider.value_changed.connect(func(val: float):
-			if sfx_num_label:
-				sfx_num_label.text = str(int(round(val)))
-			_set_bus_percent("SFX", val)
-		)
+		sfx_slider.value_changed.connect(_on_sfx_volume_changed)
 
-func _populate_controls_sub_view() -> void:
-	if controls_sub_view == null or controls_sub_view.get_child_count() > 0:
-		return
+	# --- แท็บ Controls ---
+	if left_key_btn:
+		left_key_btn.pressed.connect(func(): _start_rebinding("lane_left", left_key_btn))
+	if right_key_btn:
+		right_key_btn.pressed.connect(func(): _start_rebinding("lane_right", right_key_btn))
+	if pause_key_btn:
+		pause_key_btn.pressed.connect(func(): _start_rebinding("pause_game", pause_key_btn))
 
-	var header := HBoxContainer.new()
-	controls_sub_view.add_child(header)
-
-	var h_act := _make_label("")
-	h_act.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	header.add_child(h_act)
-
-	var h_kb := _make_label("Keyboard/mouse", COL_CYAN)
-	h_kb.custom_minimum_size = Vector2(140, 0)
-	h_kb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	header.add_child(h_kb)
-
-	var h_joy := _make_label("Joystick", COL_PINK)
-	h_joy.custom_minimum_size = Vector2(120, 0)
-	h_joy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	header.add_child(h_joy)
-
-	_add_control_bind_row("Left (Lane X = 2.0)", "lane_left", key_lane_left, "LB / D-Left")
-	_add_control_bind_row("Right (Lane X = -2.0)", "lane_right", key_lane_right, "RB / D-Right")
-	_add_control_bind_row("Pause Menu", "pause_game", key_pause, "Start")
+	# --- ปุ่มด้านล่าง ---
+	if reset_default_btn:
+		reset_default_btn.pressed.connect(reset_to_defaults)
+	if save_close_btn:
+		save_close_btn.pressed.connect(close_settings)
 
 
-func _add_control_bind_row(title: String, action: String, def_key: Key, joy_text: String) -> void:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
-	controls_sub_view.add_child(row)
-
-	var lbl := _make_label(title)
-	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(lbl)
-
-	var kb_btn := _make_skewed_button(OS.get_keycode_string(def_key).to_upper(), Vector2(140, 36), COL_CYAN)
-	kb_btn.pressed.connect(func():
-		_waiting_action = action
-		_waiting_device = "kb"
-		kb_btn.text = "..."
-	)
-	row.add_child(kb_btn)
-	_kb_buttons[action] = kb_btn
-
-	var joy_btn := _make_skewed_button(joy_text, Vector2(120, 36), COL_PINK)
-	joy_btn.pressed.connect(func():
-		_waiting_action = action
-		_waiting_device = "joy"
-		joy_btn.text = "..."
-	)
-	row.add_child(joy_btn)
-	_joy_buttons[action] = joy_btn
-
-
-func _show_main_settings_view() -> void:
-	_is_in_controls_view = false
-	_waiting_action = ""
-	if settings_grid_view:
-		settings_grid_view.show()
-	if controls_sub_view:
-		controls_sub_view.hide()
-	if controls_or_reset_btn:
-		controls_or_reset_btn.text = "Controls"
-
-func _show_controls_sub_view() -> void:
-	_is_in_controls_view = true
-	_waiting_action = ""
-	if settings_grid_view:
-		settings_grid_view.hide()
-	if controls_sub_view:
-		controls_sub_view.show()
-	if controls_or_reset_btn:
-		controls_or_reset_btn.text = "Reset"
-
-
-func _on_back_button_pressed() -> void:
-	if _is_in_controls_view:
-		_show_main_settings_view()
+# ==============================================================================
+# การทำงานจริงของการตั้งค่าแต่ละรายการ
+# ==============================================================================
+func _set_fullscreen_mode(enable_fs: bool) -> void:
+	_is_fullscreen = enable_fs
+	if enable_fs:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
-		close_settings()
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	_update_window_mode_button_highlights()
+	save_settings()
 
 
-func _on_bottom_left_button_pressed() -> void:
-	if not _is_in_controls_view:
-		_show_controls_sub_view()
-	else:
-		_apply_key_binding("lane_left", KEY_F)
-		_apply_key_binding("lane_right", KEY_J)
-		_apply_key_binding("pause_game", KEY_ESCAPE)
-		save_settings()
+func _update_window_mode_button_highlights() -> void:
+	if windowed_btn:
+		windowed_btn.modulate = Color(0.24, 0.96, 1.0) if not _is_fullscreen else Color.WHITE
+	if fullscreen_btn:
+		fullscreen_btn.modulate = Color(0.24, 0.96, 1.0) if _is_fullscreen else Color.WHITE
 
 
-func _input(event: InputEvent) -> void:
-	if _waiting_action == "" or not visible:
+func _on_high_quality_toggled(enabled: bool) -> void:
+	var root_scene: Node = get_tree().current_scene
+	if root_scene != null:
+		var world_env: WorldEnvironment = root_scene.find_child("WorldEnvironment", true, false) as WorldEnvironment
+		if world_env and world_env.environment:
+			world_env.environment.fog_enabled = enabled
+	save_settings()
+
+
+func _on_vsync_toggled(enabled: bool) -> void:
+	DisplayServer.window_set_vsync_mode(
+		DisplayServer.VSYNC_ENABLED if enabled else DisplayServer.VSYNC_DISABLED
+	)
+	save_settings()
+
+
+func _on_fps_selected(index: int) -> void:
+	if fps_option == null:
 		return
+	var target_fps: int = fps_option.get_item_id(index)
+	Engine.max_fps = target_fps
+	save_settings()
 
-	if _waiting_device == "kb" and event is InputEventKey and event.pressed and not event.echo:
-		get_viewport().set_input_as_handled()
-		var k: Key = event.keycode if event.keycode != KEY_NONE else event.physical_keycode
-		_apply_key_binding(_waiting_action, k)
-		_waiting_action = ""
-		save_settings()
-	elif _waiting_device == "joy" and event is InputEventJoypadButton and event.pressed:
-		get_viewport().set_input_as_handled()
-		InputMap.action_add_event(_waiting_action, event)
-		if _joy_buttons.has(_waiting_action):
-			_joy_buttons[_waiting_action].text = "BTN " + str(event.button_index)
-		_waiting_action = ""
-		save_settings()
+
+func _on_audio_offset_changed(val_ms: float) -> void:
+	custom_audio_offset_sec = val_ms / 1000.0
+	var root_scene: Node = get_tree().current_scene
+	if root_scene != null:
+		var spawner: Node = root_scene.find_child("EnemySpawner", true, false)
+		if spawner != null and "audio_offset" in spawner:
+			spawner.audio_offset = custom_audio_offset_sec
+	save_settings()
+
+
+func _on_music_volume_changed(val: float) -> void:
+	if music_val_lbl:
+		music_val_lbl.text = "%d%%" % int(round(val))
+	if master_prog_bar:
+		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		tw.tween_property(master_prog_bar, "value", val, 0.10)
+	_set_bus_volume_percent("Master", val)
+	save_settings()
+
+
+func _on_sfx_volume_changed(val: float) -> void:
+	if sfx_val_lbl:
+		sfx_val_lbl.text = "%d%%" % int(round(val))
+	_set_bus_volume_percent("SFX", val)
+	save_settings()
+
+
+func _set_bus_volume_percent(bus_name: String, pct: float) -> void:
+	var idx: int = AudioServer.get_bus_index(bus_name)
+	if idx < 0:
+		return
+	if pct <= 0.0:
+		AudioServer.set_bus_mute(idx, true)
+	else:
+		AudioServer.set_bus_mute(idx, false)
+		AudioServer.set_bus_volume_db(idx, linear_to_db(pct / 100.0))
+
+
+# ==============================================================================
+# ระบบเปลี่ยนปุ่มคีย์บอร์ด (Keybinding Remapper)
+# ==============================================================================
+func _setup_key_buttons_map() -> void:
+	_key_buttons_map = {
+		"lane_left": left_key_btn,
+		"lane_right": right_key_btn,
+		"pause_game": pause_key_btn
+	}
+	_refresh_keybind_labels()
 
 
 func _init_input_map() -> void:
@@ -220,6 +279,14 @@ func _init_input_map() -> void:
 			ev.keycode = def_k
 			ev.physical_keycode = def_k
 			InputMap.action_add_event(act, ev)
+
+
+func _start_rebinding(action_name: String, btn: Button) -> void:
+	_refresh_keybind_labels()
+	_waiting_for_action = action_name
+	if btn:
+		btn.text = "[ Press Any Key... ]"
+		btn.modulate = Color(0.24, 0.96, 1.0)
 
 
 func _apply_key_binding(action_name: String, new_key: Key) -> void:
@@ -237,99 +304,121 @@ func _apply_key_binding(action_name: String, new_key: Key) -> void:
 		"pause_game":
 			key_pause = new_key
 
-	if _kb_buttons.has(action_name):
-		_kb_buttons[action_name].text = OS.get_keycode_string(new_key).to_upper()
+	_refresh_keybind_labels()
 
 
-func _on_fps_selected(idx: int) -> void:
-	match idx:
-		0: Engine.max_fps = 0
-		1: Engine.max_fps = 60
-		2: Engine.max_fps = 120
+func _refresh_keybind_labels() -> void:
+	if left_key_btn:
+		left_key_btn.text = "Key: " + OS.get_keycode_string(key_lane_left).to_upper()
+		left_key_btn.modulate = Color.WHITE
+	if right_key_btn:
+		right_key_btn.text = "Key: " + OS.get_keycode_string(key_lane_right).to_upper()
+		right_key_btn.modulate = Color.WHITE
+	if pause_key_btn:
+		pause_key_btn.text = "Key: " + OS.get_keycode_string(key_pause).to_upper()
+		pause_key_btn.modulate = Color.WHITE
 
 
-func _on_high_quality_toggled(on: bool) -> void:
-	var env_node: WorldEnvironment = get_tree().current_scene.find_child("WorldEnvironment", true, false) as WorldEnvironment if get_tree().current_scene else null
-	if env_node and env_node.environment:
-		env_node.environment.fog_enabled = on
-
-
-func _set_bus_percent(bus_name: String, pct: float) -> void:
-	var idx: int = AudioServer.get_bus_index(bus_name)
-	if idx < 0:
+func _input(event: InputEvent) -> void:
+	if _waiting_for_action == "" or not visible:
 		return
-	if pct <= 0.0:
-		AudioServer.set_bus_mute(idx, true)
-	else:
-		AudioServer.set_bus_mute(idx, false)
-		AudioServer.set_bus_volume_db(idx, linear_to_db(pct / 100.0))
+
+	if event is InputEventKey and event.pressed and not event.echo:
+		get_viewport().set_input_as_handled()
+		var pressed_k: Key = event.keycode if event.keycode != KEY_NONE else event.physical_keycode
+		_apply_key_binding(_waiting_for_action, pressed_k)
+		_waiting_for_action = ""
+		save_settings()
+
+
+# ==============================================================================
+# ปุ่ม Reset to Default และการบันทึก/โหลดไฟล์ user://settings.cfg
+# ==============================================================================
+func reset_to_defaults() -> void:
+	_waiting_for_action = ""
+
+	# คืนค่าเริ่มต้นทั้งหมด
+	_set_fullscreen_mode(false)
+	if hq_checkbox:
+		hq_checkbox.button_pressed = true
+	if vsync_checkbtn:
+		vsync_checkbtn.button_pressed = true
+	if fps_option:
+		fps_option.select(0)
+		Engine.max_fps = 0
+
+	if offset_spinbox:
+		offset_spinbox.value = 0.0
+	if music_slider:
+		music_slider.value = 80.0
+	if sfx_slider:
+		sfx_slider.value = 75.0
+
+	_apply_key_binding("lane_left", KEY_F)
+	_apply_key_binding("lane_right", KEY_J)
+	_apply_key_binding("pause_game", KEY_ESCAPE)
+
+	save_settings()
+
+	# แอนิเมชั่น Juicy สั่น/เด้งกรอบหน้าต่างเพื่อยืนยันการรีเซ็ตค่าเริ่มต้น
+	if main_vbox:
+		main_vbox.pivot_offset = main_vbox.size / 2.0
+		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		tw.tween_property(main_vbox, "scale", Vector2(1.03, 0.97), 0.06)
+		tw.tween_property(main_vbox, "scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func save_settings() -> void:
-	if vsync_toggle:
-		_config.set_value("settings", "vsync", vsync_toggle.button_pressed)
-	if fullscreen_toggle:
-		_config.set_value("settings", "fullscreen", fullscreen_toggle.button_pressed)
-	if hq_toggle:
-		_config.set_value("settings", "high_quality", hq_toggle.button_pressed)
+	_config.set_value("display", "fullscreen", _is_fullscreen)
+	if hq_checkbox:
+		_config.set_value("display", "high_quality", hq_checkbox.button_pressed)
+	if vsync_checkbtn:
+		_config.set_value("display", "vsync", vsync_checkbtn.button_pressed)
 	if fps_option:
-		_config.set_value("settings", "fps_idx", fps_option.selected)
+		_config.set_value("display", "fps_index", fps_option.selected)
+
+	if offset_spinbox:
+		_config.set_value("audio", "offset_ms", offset_spinbox.value)
 	if music_slider:
-		_config.set_value("settings", "music", music_slider.value)
+		_config.set_value("audio", "music_volume", music_slider.value)
 	if sfx_slider:
-		_config.set_value("settings", "sfx", sfx_slider.value)
+		_config.set_value("audio", "sfx_volume", sfx_slider.value)
+
 	_config.set_value("controls", "lane_left", int(key_lane_left))
 	_config.set_value("controls", "lane_right", int(key_lane_right))
 	_config.set_value("controls", "pause_game", int(key_pause))
+
 	_config.save(CONFIG_PATH)
 
 
 func load_settings() -> void:
 	if _config.load(CONFIG_PATH) != OK:
+		_update_window_mode_button_highlights()
+		_on_music_volume_changed(80.0)
+		_on_sfx_volume_changed(75.0)
 		return
-	if vsync_toggle:
-		vsync_toggle.button_pressed = bool(_config.get_value("settings", "vsync", true))
-	if fullscreen_toggle:
-		fullscreen_toggle.button_pressed = bool(_config.get_value("settings", "fullscreen", false))
-	if hq_toggle:
-		hq_toggle.button_pressed = bool(_config.get_value("settings", "high_quality", true))
+
+	_is_fullscreen = bool(_config.get_value("display", "fullscreen", false))
+	_set_fullscreen_mode(_is_fullscreen)
+
+	if hq_checkbox:
+		hq_checkbox.button_pressed = bool(_config.get_value("display", "high_quality", true))
+	if vsync_checkbtn:
+		vsync_checkbtn.button_pressed = bool(_config.get_value("display", "vsync", true))
 	if fps_option:
-		fps_option.select(int(_config.get_value("settings", "fps_idx", 0)))
+		var idx: int = clampi(int(_config.get_value("display", "fps_index", 0)), 0, fps_option.item_count - 1)
+		fps_option.select(idx)
+		_on_fps_selected(idx)
+
+	if offset_spinbox:
+		offset_spinbox.value = float(_config.get_value("audio", "offset_ms", 0.0))
 	if music_slider:
-		music_slider.value = float(_config.get_value("settings", "music", 80.0))
+		music_slider.value = float(_config.get_value("audio", "music_volume", 80.0))
+		_on_music_volume_changed(music_slider.value)
 	if sfx_slider:
-		sfx_slider.value = float(_config.get_value("settings", "sfx", 75.0))
+		sfx_slider.value = float(_config.get_value("audio", "sfx_volume", 75.0))
+		_on_sfx_volume_changed(sfx_slider.value)
+
 	_apply_key_binding("lane_left", int(_config.get_value("controls", "lane_left", KEY_F)) as Key)
 	_apply_key_binding("lane_right", int(_config.get_value("controls", "lane_right", KEY_J)) as Key)
 	_apply_key_binding("pause_game", int(_config.get_value("controls", "pause_game", KEY_ESCAPE)) as Key)
-
-
-func _make_skewed_button(txt: String, min_sz: Vector2, accent: Color) -> Button:
-	var btn := Button.new()
-	btn.text = txt
-	btn.custom_minimum_size = min_sz
-	btn.add_theme_color_override("font_color", COL_TEXT)
-	btn.add_theme_color_override("font_hover_color", COL_CYAN)
-
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = COL_BG_SLATE
-	normal.border_color = accent
-	normal.skew = Vector2(0.28, 0.0)
-	normal.set_border_width_all(2)
-
-	var hover := normal.duplicate() as StyleBoxFlat
-	hover.bg_color = Color(0.21, 0.18, 0.36)
-	hover.border_color = COL_CYAN
-
-	btn.add_theme_stylebox_override("normal", normal)
-	btn.add_theme_stylebox_override("hover", hover)
-	btn.add_theme_stylebox_override("pressed", hover)
-	return btn
-
-
-func _make_label(txt: String, col: Color = COL_TEXT) -> Label:
-	var lbl := Label.new()
-	lbl.text = txt
-	lbl.add_theme_color_override("font_color", col)
-	lbl.add_theme_font_size_override("font_size", 17)
-	return lbl

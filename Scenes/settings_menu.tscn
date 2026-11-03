@@ -2,61 +2,104 @@
 
 [ext_resource type="Script" uid="uid://civo31ke5gc54" path="res://Scripts/settings_menu.gd" id="1_script"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_card"]
-bg_color = Color(0.0745098, 0.0627451, 0.129412, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0.941176, 1, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-shadow_color = Color(0, 0.941176, 1, 0.18)
-shadow_size = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pink"]
-bg_color = Color(0.14902, 0.129412, 0.25098, 1)
-skew = Vector2(0.28, 0)
-border_width_left = 3
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.333333, 0.466667, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.21, 0.18, 0.36, 1)
-skew = Vector2(0.28, 0)
-border_width_left = 3
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0.941176, 1, 1)
-shadow_color = Color(0, 0.941176, 1, 0.35)
-shadow_size = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_cyan"]
-bg_color = Color(0.14902, 0.129412, 0.25098, 1)
-skew = Vector2(0.28, 0)
-border_width_left = 3
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0.941176, 1, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_right_panel"]
-bg_color = Color(0.105882, 0.0901961, 0.188235, 0.95)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_panel"]
+content_margin_left = 28.0
+content_margin_top = 26.0
+content_margin_right = 28.0
+content_margin_bottom = 24.0
+bg_color = Color(0.0941176, 0.101961, 0.168627, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.431373, 0.415686, 0.52549, 0.8)
+border_color = Color(0.239216, 0.960784, 1, 1)
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 16
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dropdown"]
-content_margin_left = 10.0
-content_margin_right = 10.0
-bg_color = Color(0.14902, 0.129412, 0.25098, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_unselected"]
+content_margin_left = 20.0
+content_margin_top = 8.0
+content_margin_right = 20.0
+content_margin_bottom = 8.0
+bg_color = Color(0.0588235, 0.0627451, 0.109804, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_color = Color(0.227451, 0.247059, 0.360784, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_hovered"]
+content_margin_left = 20.0
+content_margin_top = 8.0
+content_margin_right = 20.0
+content_margin_bottom = 8.0
+bg_color = Color(0.12549, 0.137255, 0.223529, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_color = Color(0.239216, 0.960784, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_selected"]
+content_margin_left = 20.0
+content_margin_top = 8.0
+content_margin_right = 20.0
+content_margin_bottom = 8.0
+bg_color = Color(0.0941176, 0.101961, 0.168627, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_color = Color(0.239216, 0.960784, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.054902, 0.0588235, 0.101961, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.219608, 0.239216, 0.34902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.239216, 0.960784, 1, 0.22)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.239216, 0.960784, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.0901961, 0.113725, 0.196078, 1)
+skew = Vector2(0.28, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.239216, 0.960784, 1, 1)
+shadow_color = Color(0, 0.941176, 1, 0.35)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prog_bg"]
+bg_color = Color(0.054902, 0.0588235, 0.101961, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.219608, 0.239216, 0.34902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_fill"]
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.239216, 0.960784, 1, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
@@ -66,24 +109,26 @@ border_color = Color(0, 0.941176, 1, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_track"]
 content_margin_top = 6.0
 content_margin_bottom = 6.0
-bg_color = Color(0.14902, 0.129412, 0.25098, 1)
+bg_color = Color(0.054902, 0.0588235, 0.101961, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.431373, 0.415686, 0.52549, 1)
+border_color = Color(0.219608, 0.239216, 0.34902, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_fill"]
-content_margin_top = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0.941176, 1, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0, 0.941176, 1, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_reset"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.054902, 0.0588235, 0.101961, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.35, 0.42, 0.85)
 
-[node name="SettingsMenu" type="Control" unique_id=1069534486]
+[node name="SettingsMenu" type="Control" unique_id=729358873]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -93,16 +138,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Backdrop" type="ColorRect" parent="." unique_id=1308321659]
+[node name="Backdrop" type="ColorRect" parent="." unique_id=223462039]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.05, 0.04, 0.09, 0.82)
+color = Color(0.035, 0.038, 0.07, 0.82)
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=558552575]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1246612585]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -110,152 +155,136 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MainCard" type="PanelContainer" parent="CenterContainer" unique_id=1398356989]
-custom_minimum_size = Vector2(740, 430)
+[node name="MainVBox" type="VBoxContainer" parent="CenterContainer" unique_id=63987856]
+custom_minimum_size = Vector2(740, 440)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_main_card")
+theme_override_constants/separation = 12
 
-[node name="OuterMargin" type="MarginContainer" parent="CenterContainer/MainCard" unique_id=601502347]
-layout_mode = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 22
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 22
-
-[node name="MainHBox" type="HBoxContainer" parent="CenterContainer/MainCard/OuterMargin" unique_id=1952971896]
-layout_mode = 2
-theme_override_constants/separation = 24
-
-[node name="LeftNavColumn" type="VBoxContainer" parent="CenterContainer/MainCard/OuterMargin/MainHBox" unique_id=377854697]
-custom_minimum_size = Vector2(165, 0)
-layout_mode = 2
-
-[node name="BackButton" type="Button" parent="CenterContainer/MainCard/OuterMargin/MainHBox/LeftNavColumn" unique_id=1525502651]
-custom_minimum_size = Vector2(150, 42)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0.941176, 1, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pink")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "Back"
-
-[node name="NavSpacer" type="Control" parent="CenterContainer/MainCard/OuterMargin/MainHBox/LeftNavColumn" unique_id=1499472413]
+[node name="SettingsTabs" type="TabContainer" parent="CenterContainer/MainVBox" unique_id=273059979]
+custom_minimum_size = Vector2(740, 370)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/font_selected_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hovered_color = Color(0.239216, 0.960784, 1, 1)
+theme_override_colors/font_unselected_color = Color(0.45098, 0.486275, 0.639216, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/panel = SubResource("StyleBoxFlat_tab_panel")
+theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_tab_unselected")
+theme_override_styles/tab_hovered = SubResource("StyleBoxFlat_tab_hovered")
+theme_override_styles/tab_selected = SubResource("StyleBoxFlat_tab_selected")
+tab_alignment = 1
+current_tab = 0
 
-[node name="ControlsOrResetButton" type="Button" parent="CenterContainer/MainCard/OuterMargin/MainHBox/LeftNavColumn" unique_id=496641860]
-custom_minimum_size = Vector2(160, 48)
+[node name="Display" type="VBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs" unique_id=1486307943]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0.941176, 1, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cyan")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "Controls"
+theme_override_constants/separation = 20
+metadata/_tab_index = 0
 
-[node name="RightContentFrame" type="PanelContainer" parent="CenterContainer/MainCard/OuterMargin/MainHBox" unique_id=370228382]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_right_panel")
-
-[node name="RightMargin" type="MarginContainer" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame" unique_id=167383371]
-layout_mode = 2
-theme_override_constants/margin_left = 26
-theme_override_constants/margin_top = 22
-theme_override_constants/margin_right = 26
-theme_override_constants/margin_bottom = 22
-
-[node name="SettingsGridView" type="VBoxContainer" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin" unique_id=1300909001]
+[node name="TopButtonsRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Display" unique_id=1655932864]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="TopGrid" type="GridContainer" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView" unique_id=1561594146]
+[node name="WindowedPresetBtn" type="Button" parent="CenterContainer/MainVBox/SettingsTabs/Display/TopButtonsRow" unique_id=492927536]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-theme_override_constants/h_separation = 18
-theme_override_constants/v_separation = 16
-columns = 4
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "Windowed Mode"
 
-[node name="FPSLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=1792661379]
+[node name="FullscreenPresetBtn" type="Button" parent="CenterContainer/MainVBox/SettingsTabs/Display/TopButtonsRow" unique_id=1159132690]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-text = "FPS Limit"
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "Fullscreen Mode"
 
-[node name="FPSOption" type="OptionButton" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=1522290444]
-custom_minimum_size = Vector2(125, 34)
+[node name="TogglesRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Display" unique_id=1430205925]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_dropdown")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dropdown")
+theme_override_constants/separation = 24
+
+[node name="HQCheckBox" type="CheckBox" parent="CenterContainer/MainVBox/SettingsTabs/Display/TogglesRow" unique_id=174381316]
+layout_mode = 2
+size_flags_horizontal = 3
+button_pressed = true
+text = "High Quality (Fog & Sky)"
+
+[node name="VsyncCheckButton" type="CheckButton" parent="CenterContainer/MainVBox/SettingsTabs/Display/TogglesRow" unique_id=117779448]
+layout_mode = 2
+size_flags_horizontal = 3
+button_pressed = true
+text = "Enable V-Sync"
+
+[node name="DropdownRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Display" unique_id=181235923]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="FPSLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Display/DropdownRow" unique_id=1545993532]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+text = "Frame Rate Limit"
+
+[node name="FPSOption" type="OptionButton" parent="CenterContainer/MainVBox/SettingsTabs/Display/DropdownRow" unique_id=2092217732]
+custom_minimum_size = Vector2(260, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 selected = 0
-item_count = 3
-popup/item_0/text = "Unlimited"
+item_count = 4
+popup/item_0/text = "Unlimited FPS"
 popup/item_0/id = 0
 popup/item_1/text = "60 FPS"
-popup/item_1/id = 1
+popup/item_1/id = 60
 popup/item_2/text = "120 FPS"
-popup/item_2/id = 2
+popup/item_2/id = 120
+popup/item_3/text = "144 FPS"
+popup/item_3/id = 144
 
-[node name="VsyncLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=262689085]
+[node name="Audio" type="VBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs" unique_id=1525264203]
+visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-text = "Enable Vsync"
+theme_override_constants/separation = 20
+metadata/_tab_index = 1
 
-[node name="VsyncToggle" type="CheckButton" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=530264634]
+[node name="MasterBarRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Audio" unique_id=408270981]
 layout_mode = 2
-button_pressed = true
+theme_override_constants/separation = 18
 
-[node name="LangLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=2094496677]
+[node name="OffsetSpinBox" type="SpinBox" parent="CenterContainer/MainVBox/SettingsTabs/Audio/MasterBarRow" unique_id=863701549]
+custom_minimum_size = Vector2(260, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-text = "Language"
+size_flags_horizontal = 3
+min_value = -150.0
+max_value = 150.0
+step = 5.0
+prefix = "Audio Offset:"
+suffix = "ms"
 
-[node name="LangOption" type="OptionButton" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=992276497]
-custom_minimum_size = Vector2(125, 34)
+[node name="MasterProgressBar" type="ProgressBar" parent="CenterContainer/MainVBox/SettingsTabs/Audio/MasterBarRow" unique_id=1562091426]
+custom_minimum_size = Vector2(260, 36)
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_dropdown")
-theme_override_styles/hover = SubResource("StyleBoxFlat_dropdown")
-selected = 0
-item_count = 2
-popup/item_0/text = "en"
-popup/item_0/id = 0
-popup/item_1/text = "th"
-popup/item_1/id = 1
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.05, 0.08, 0.14, 1)
+theme_override_styles/background = SubResource("StyleBoxFlat_prog_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_slider_fill")
+value = 80.0
 
-[node name="FullscreenLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=1450604780]
+[node name="MusicSliderRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Audio" unique_id=1493998847]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-text = "Fullscreen"
+theme_override_constants/separation = 18
 
-[node name="FullscreenToggle" type="CheckButton" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=674568009]
+[node name="MusicLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Audio/MusicSliderRow" unique_id=1220964094]
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
+text = "Music Volume"
 
-[node name="HQLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=785592387]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-text = "High quality"
-
-[node name="HQToggle" type="CheckButton" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/TopGrid" unique_id=797336312]
-layout_mode = 2
-button_pressed = true
-
-[node name="Divider" type="ColorRect" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView" unique_id=2078076139]
-custom_minimum_size = Vector2(0, 1)
-layout_mode = 2
-color = Color(0.431373, 0.415686, 0.52549, 0.35)
-
-[node name="MusicRow" type="HBoxContainer" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView" unique_id=1547310243]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="MusicLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/MusicRow" unique_id=1088794201]
-custom_minimum_size = Vector2(90, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-text = "Music"
-
-[node name="MusicSlider" type="HSlider" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/MusicRow" unique_id=137154089]
-custom_minimum_size = Vector2(200, 24)
+[node name="MusicSlider" type="HSlider" parent="CenterContainer/MainVBox/SettingsTabs/Audio/MusicSliderRow" unique_id=1969856294]
+custom_minimum_size = Vector2(240, 28)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -264,25 +293,24 @@ theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
 value = 80.0
 
-[node name="MusicNumLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/MusicRow" unique_id=1061917659]
-custom_minimum_size = Vector2(40, 0)
+[node name="MusicValueLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Audio/MusicSliderRow" unique_id=2085254200]
+custom_minimum_size = Vector2(55, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.941176, 1, 1)
-text = "80"
+theme_override_colors/font_color = Color(0.239216, 0.960784, 1, 1)
+text = "80%"
 horizontal_alignment = 2
 
-[node name="SFXRow" type="HBoxContainer" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView" unique_id=1788878439]
+[node name="SFXSliderRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Audio" unique_id=1540926913]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 18
 
-[node name="SFXLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/SFXRow" unique_id=1168916709]
-custom_minimum_size = Vector2(90, 0)
+[node name="SFXLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Audio/SFXSliderRow" unique_id=688868086]
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.96, 1, 1)
-text = "SFX"
+text = "SFX Volume"
 
-[node name="SFXSlider" type="HSlider" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/SFXRow" unique_id=1809219370]
-custom_minimum_size = Vector2(200, 24)
+[node name="SFXSlider" type="HSlider" parent="CenterContainer/MainVBox/SettingsTabs/Audio/SFXSliderRow" unique_id=181585452]
+custom_minimum_size = Vector2(240, 28)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -291,14 +319,96 @@ theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
 value = 75.0
 
-[node name="SFXNumLabel" type="Label" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin/SettingsGridView/SFXRow" unique_id=1360824810]
-custom_minimum_size = Vector2(40, 0)
+[node name="SFXValueLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Audio/SFXSliderRow" unique_id=1386214930]
+custom_minimum_size = Vector2(55, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.941176, 1, 1)
-text = "75"
+theme_override_colors/font_color = Color(0.239216, 0.960784, 1, 1)
+text = "75%"
 horizontal_alignment = 2
 
-[node name="ControlsSubView" type="VBoxContainer" parent="CenterContainer/MainCard/OuterMargin/MainHBox/RightContentFrame/RightMargin" unique_id=852556616]
+[node name="Controls" type="VBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs" unique_id=455184407]
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 16
+metadata/_tab_index = 2
+
+[node name="HintLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Controls" unique_id=109970792]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45098, 0.486275, 0.639216, 1)
+text = "Click any button below to rebind keys (Press Left + Right together for Center Lane)"
+
+[node name="LeftLaneRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Controls" unique_id=1623178690]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="LeftLaneLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Controls/LeftLaneRow" unique_id=1582564635]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Left Lane (X = 2.0)"
+
+[node name="LeftKeyButton" type="Button" parent="CenterContainer/MainVBox/SettingsTabs/Controls/LeftLaneRow" unique_id=1795190172]
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "Key: F"
+
+[node name="RightLaneRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Controls" unique_id=1630837590]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="RightLaneLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Controls/RightLaneRow" unique_id=2030384580]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Right Lane (X = -2.0)"
+
+[node name="RightKeyButton" type="Button" parent="CenterContainer/MainVBox/SettingsTabs/Controls/RightLaneRow" unique_id=194831250]
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "Key: J"
+
+[node name="PauseRow" type="HBoxContainer" parent="CenterContainer/MainVBox/SettingsTabs/Controls" unique_id=995889031]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="PauseLabel" type="Label" parent="CenterContainer/MainVBox/SettingsTabs/Controls/PauseRow" unique_id=87559984]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pause Game"
+
+[node name="PauseKeyButton" type="Button" parent="CenterContainer/MainVBox/SettingsTabs/Controls/PauseRow" unique_id=113805907]
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "Key: ESCAPE"
+
+[node name="FooterBar" type="HBoxContainer" parent="CenterContainer/MainVBox" unique_id=1898904186]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="ResetDefaultButton" type="Button" parent="CenterContainer/MainVBox/FooterBar" unique_id=629291140]
+custom_minimum_size = Vector2(220, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.55, 0.6, 1)
+theme_override_colors/font_hover_color = Color(1, 0.8, 0.82, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_reset")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "Reset to Default"
+
+[node name="SaveCloseButton" type="Button" parent="CenterContainer/MainVBox/FooterBar" unique_id=1021151098]
+custom_minimum_size = Vector2(220, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.239216, 0.960784, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "Save & Close"
