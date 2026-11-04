@@ -7,22 +7,35 @@ static var key_lane_right: Key = KEY_J
 static var key_pause: Key = KEY_ESCAPE
 static var custom_audio_offset_sec: float = 0.0
 
-const RESOLUTIONS: Array[Vector2i] = [
-	Vector2i(1152, 648),
-	Vector2i(1280, 720),
-	Vector2i(1360, 768),
-	Vector2i(1920, 1080)
-]
+@export_group("Tab Animation & Text (ปรับใน Inspector ได้)")
+## เปิด/ปิดแอนิเมชั่นยืด-หดความกว้างของปุ่มแท็บเวลาคลิกเลือก
+@export var animate_tab_width: bool = true
+@export var tab_expanded_width: float = 220.0
+@export var tab_collapsed_width: float = 84.0
+## หากเปิดไว้ จะสลับข้อความปุ่มแท็บระหว่างแบบเต็ม (ตอนเลือก) กับไอคอนย่อ (ตอนไม่ได้เลือก)
+## หากปิดไว้ จะใช้ข้อความตามที่พิมพ์ไว้บนปุ่มใน Editor ตลอดเวลา
+@export var use_collapsed_tab_icons: bool = true
+@export var tab_expanded_texts: Array[String] = ["⚙ DISPLAY", "🔊 AUDIO", "🎮 CONTROLS"]
+@export var tab_collapsed_texts: Array[String] = ["⚙", "🔊", "🎮"]
 
-const FPS_VALUES: Array[int] = [60, 120, 144, 0]
-const FPS_LABELS: Array[String] = ["60 FPS", "120 FPS", "144 FPS", "Unlimited"]
+@export_group("Display Options (ปรับใน Inspector ได้)")
+@export var fps_limits: Array[int] = [60, 120, 144, 0]
+@export var fps_labels: Array[String] = ["60 FPS", "120 FPS", "144 FPS", "Unlimited"]
+@export var offset_step_ms: int = 5
+@export var volume_step: float = 5.0
 
-const TAB_WIDTH_EXPANDED: float = 220.0
-const TAB_WIDTH_COLLAPSED: float = 84.0
+@export_group("Default Values (สำหรับปุ่ม Reset to Default)")
+@export var default_master_volume: float = 85.0
+@export var default_music_volume: float = 80.0
+@export var default_sfx_volume: float = 75.0
+@export var default_fullscreen: bool = false
+@export var default_vsync: bool = true
+@export var default_high_quality: bool = true
+@export var default_bgm_enabled: bool = true
 
 var _config := ConfigFile.new()
 
-# โหนดแถบ Ribbon และแท็บทั้ง 3 หมวด
+# โหนดอ้างอิง (ค้นหาตามชื่อโหนดด้วย find_child เพื่อให้ย้ายลำดับชั้นใน Editor ได้อิสระ)
 @onready var ribbon_bar: Control = find_child("RibbonBar", true, false) as Control
 @onready var back_btn: Button = find_child("BackButton", true, false) as Button
 @onready var prev_tab_btn: Button = find_child("PrevTabBtn", true, false) as Button
@@ -31,7 +44,6 @@ var _config := ConfigFile.new()
 @onready var tab_audio_btn: Button = find_child("TabAudioBtn", true, false) as Button
 @onready var tab_controls_btn: Button = find_child("TabControlsBtn", true, false) as Button
 
-# โหนดหน้าเนื้อหาทั้ง 3 หมวด
 @onready var display_page: Control = find_child("DisplayPage", true, false) as Control
 @onready var audio_page: Control = find_child("AudioPage", true, false) as Control
 @onready var controls_page: Control = find_child("ControlsPage", true, false) as Control
@@ -80,11 +92,11 @@ var _config := ConfigFile.new()
 var _current_tab_idx: int = 0
 var _tab_buttons: Array[Button] = []
 var _tab_pages: Array[Control] = []
-var _tab_full_titles: Array[String] = ["⚙  DISPLAY", "🔊  AUDIO", "🎮  CONTROLS"]
-var _tab_short_icons: Array[String] = ["⚙", "🔊", "🎮"]
 
-var _style_tab_active := StyleBoxFlat.new()
-var _style_tab_inactive := StyleBoxFlat.new()
+# เก็บคำนำหน้าของ Label ที่ตั้งไว้ใน Editor เพื่อไม่ให้โค้ดเขียนทับข้อความของคุณ
+var _master_prefix: String = "Master Volume:"
+var _music_prefix: String = "Music Volume:"
+var _sfx_prefix: String = "Sound Effect Volume:"
 
 var _is_fullscreen: bool = false
 var _fps_index: int = 0
@@ -99,7 +111,7 @@ var _is_loading_config: bool = false
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_ensure_audio_buses_exist()
-	_init_tab_styles()
+	_cache_editor_prefixes_and_tabs()
 	_init_input_map()
 	_connect_all_signals()
 	_attach_button_hover_effects()
@@ -107,15 +119,36 @@ func _ready() -> void:
 	_switch_section_tab(0, false)
 
 
+func _cache_editor_prefixes_and_tabs() -> void:
+	_tab_buttons = [tab_display_btn, tab_audio_btn, tab_controls_btn]
+	_tab_pages = [display_page, audio_page, controls_page]
+
+	for btn in _tab_buttons:
+		if btn != null:
+			# ใช้ toggle_mode เพื่อให้ Godot สลับระหว่าง StyleBox "normal" กับ "pressed" ที่คุณตั้งใน Editor เอง
+			btn.toggle_mode = true
+
+	if master_title_lbl and ":" in master_title_lbl.text:
+		_master_prefix = master_title_lbl.text.split(":")[0] + ":"
+	if music_title_lbl and ":" in music_title_lbl.text:
+		_music_prefix = music_title_lbl.text.split(":")[0] + ":"
+	if sfx_title_lbl and ":" in sfx_title_lbl.text:
+		_sfx_prefix = sfx_title_lbl.text.split(":")[0] + ":"
+
+
+# ==============================================================================
+# แอนิเมชั่นเปิด-ปิดหน้าต่าง Settings และแอนิเมชั่นสลับแท็บ (ใช้ Style จาก Editor)
+# ==============================================================================
 func open_settings() -> void:
 	_waiting_for_action = ""
 	_route_all_music_players_in_tree()
 	show()
 
 	if ribbon_bar:
+		var base_x: float = ribbon_bar.position.x
 		ribbon_bar.position.x = -get_viewport_rect().size.x
 		var r_tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-		r_tw.tween_property(ribbon_bar, "position:x", 0.0, 0.28).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+		r_tw.tween_property(ribbon_bar, "position:x", base_x, 0.28).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 	_switch_section_tab(_current_tab_idx, false)
 
@@ -127,10 +160,11 @@ func close_settings() -> void:
 		GameManager.play_close_settings()
 
 	if ribbon_bar:
+		var orig_x: float = ribbon_bar.position.x
 		var r_tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 		r_tw.tween_property(ribbon_bar, "position:x", -get_viewport_rect().size.x, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		r_tw.chain().tween_callback(func():
-			ribbon_bar.position.x = 0.0
+			ribbon_bar.position.x = orig_x
 			if get_tree().current_scene == self:
 				get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")
 			else:
@@ -140,24 +174,9 @@ func close_settings() -> void:
 		hide()
 
 
-func _init_tab_styles() -> void:
-	_style_tab_active.bg_color = Color("#ff2288")
-	_style_tab_active.skew = Vector2(0.32, 0.0)
-	_style_tab_active.border_width_left = 3
-	_style_tab_active.border_width_right = 3
-	_style_tab_active.border_color = Color("#9e004f")
-
-	_style_tab_inactive.bg_color = Color("#c70067")
-	_style_tab_inactive.skew = Vector2(0.32, 0.0)
-	_style_tab_inactive.border_width_left = 3
-	_style_tab_inactive.border_width_right = 3
-	_style_tab_inactive.border_color = Color("#8c0047")
-
-	_tab_buttons = [tab_display_btn, tab_audio_btn, tab_controls_btn]
-	_tab_pages = [display_page, audio_page, controls_page]
-
-
 func _switch_section_tab(new_idx: int, play_sound: bool = true) -> void:
+	if _tab_buttons.is_empty():
+		return
 	var prev_idx: int = _current_tab_idx
 	_current_tab_idx = posmod(new_idx, _tab_buttons.size())
 	_waiting_for_action = ""
@@ -174,17 +193,18 @@ func _switch_section_tab(new_idx: int, play_sound: bool = true) -> void:
 		if btn == null:
 			continue
 		var is_selected: bool = (i == _current_tab_idx)
-		var target_w: float = TAB_WIDTH_EXPANDED if is_selected else TAB_WIDTH_COLLAPSED
 
-		btn.text = _tab_full_titles[i] if is_selected else _tab_short_icons[i]
-		btn.add_theme_color_override("font_color", Color.WHITE if is_selected else Color("#5e0034"))
-		btn.add_theme_stylebox_override("normal", _style_tab_active if is_selected else _style_tab_inactive)
-		btn.add_theme_stylebox_override("hover", _style_tab_active)
-		btn.add_theme_stylebox_override("pressed", _style_tab_active)
+		# สลับสถานะ button_pressed เพื่อให้ใช้ StyleBox "pressed" (ตอนเลือก) และ "normal" (ตอนไม่ได้เลือก) จาก Editor
+		btn.set_pressed_no_signal(is_selected)
 
-		tw.tween_property(
-			btn, "custom_minimum_size:x", target_w, 0.24
-		).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		if use_collapsed_tab_icons and i < tab_expanded_texts.size() and i < tab_collapsed_texts.size():
+			btn.text = tab_expanded_texts[i] if is_selected else tab_collapsed_texts[i]
+
+		if animate_tab_width:
+			var target_w: float = tab_expanded_width if is_selected else tab_collapsed_width
+			tw.tween_property(
+				btn, "custom_minimum_size:x", target_w, 0.24
+			).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 	var slide_dir: float = 1.0 if _current_tab_idx >= prev_idx else -1.0
 	for i in range(_tab_pages.size()):
@@ -204,6 +224,9 @@ func _switch_section_tab(new_idx: int, play_sound: bool = true) -> void:
 			page.hide()
 
 
+# ==============================================================================
+# เชื่อมต่อสัญญาณปุ่มทั้งหมด
+# ==============================================================================
 func _connect_all_signals() -> void:
 	if back_btn:
 		back_btn.pressed.connect(close_settings)
@@ -219,7 +242,6 @@ func _connect_all_signals() -> void:
 	if tab_controls_btn:
 		tab_controls_btn.pressed.connect(func(): _switch_section_tab(2))
 
-	# --- หมวด DISPLAY ---
 	if res_option:
 		res_option.item_selected.connect(_on_resolution_selected)
 	if screen_prev_btn:
@@ -241,20 +263,19 @@ func _connect_all_signals() -> void:
 	if fx_high_check:
 		fx_high_check.pressed.connect(func(): _set_special_effect(true))
 
-	# --- หมวด AUDIO ---
 	if master_slider:
 		master_slider.value_changed.connect(_on_master_volume_changed)
 	if master_minus_btn:
-		master_minus_btn.pressed.connect(func(): master_slider.value = clampf(master_slider.value - 5.0, 0.0, 100.0))
+		master_minus_btn.pressed.connect(func(): master_slider.value = clampf(master_slider.value - volume_step, master_slider.min_value, master_slider.max_value))
 	if master_plus_btn:
-		master_plus_btn.pressed.connect(func(): master_slider.value = clampf(master_slider.value + 5.0, 0.0, 100.0))
+		master_plus_btn.pressed.connect(func(): master_slider.value = clampf(master_slider.value + volume_step, master_slider.min_value, master_slider.max_value))
 
 	if music_slider:
 		music_slider.value_changed.connect(_on_music_volume_changed)
 	if music_minus_btn:
-		music_minus_btn.pressed.connect(func(): music_slider.value = clampf(music_slider.value - 5.0, 0.0, 100.0))
+		music_minus_btn.pressed.connect(func(): music_slider.value = clampf(music_slider.value - volume_step, music_slider.min_value, music_slider.max_value))
 	if music_plus_btn:
-		music_plus_btn.pressed.connect(func(): music_slider.value = clampf(music_slider.value + 5.0, 0.0, 100.0))
+		music_plus_btn.pressed.connect(func(): music_slider.value = clampf(music_slider.value + volume_step, music_slider.min_value, music_slider.max_value))
 
 	if sfx_slider:
 		sfx_slider.value_changed.connect(_on_sfx_volume_changed)
@@ -263,21 +284,20 @@ func _connect_all_signals() -> void:
 				GameManager.play_ui_hover()
 		)
 	if sfx_minus_btn:
-		sfx_minus_btn.pressed.connect(func(): sfx_slider.value = clampf(sfx_slider.value - 5.0, 0.0, 100.0))
+		sfx_minus_btn.pressed.connect(func(): sfx_slider.value = clampf(sfx_slider.value - volume_step, sfx_slider.min_value, sfx_slider.max_value))
 	if sfx_plus_btn:
-		sfx_plus_btn.pressed.connect(func(): sfx_slider.value = clampf(sfx_slider.value + 5.0, 0.0, 100.0))
+		sfx_plus_btn.pressed.connect(func(): sfx_slider.value = clampf(sfx_slider.value + volume_step, sfx_slider.min_value, sfx_slider.max_value))
 
 	if offset_minus_btn:
-		offset_minus_btn.pressed.connect(func(): _set_audio_offset(_offset_ms - 5))
+		offset_minus_btn.pressed.connect(func(): _set_audio_offset(_offset_ms - offset_step_ms))
 	if offset_plus_btn:
-		offset_plus_btn.pressed.connect(func(): _set_audio_offset(_offset_ms + 5))
+		offset_plus_btn.pressed.connect(func(): _set_audio_offset(_offset_ms + offset_step_ms))
 
 	if bgm_on_check:
 		bgm_on_check.pressed.connect(func(): _set_bgm_enabled(true))
 	if bgm_off_check:
 		bgm_off_check.pressed.connect(func(): _set_bgm_enabled(false))
 
-	# --- หมวด CONTROLS & RESET ---
 	if left_key_btn:
 		left_key_btn.pressed.connect(func(): _start_rebinding("lane_left", left_key_btn))
 	if right_key_btn:
@@ -313,10 +333,18 @@ func _attach_button_hover_effects() -> void:
 		)
 
 
+# ==============================================================================
+# การทำงานจริงของหมวด DISPLAY (อ่านค่าจาก OptionButton ใน Editor โดยตรง)
+# ==============================================================================
 func _on_resolution_selected(idx: int) -> void:
-	var clamped: int = clampi(idx, 0, RESOLUTIONS.size() - 1)
-	if not _is_fullscreen:
-		DisplayServer.window_set_size(RESOLUTIONS[clamped])
+	if res_option == null or idx < 0 or idx >= res_option.item_count:
+		return
+	var res_text: String = res_option.get_item_text(idx).strip_edges().to_lower()
+	var parts: PackedStringArray = res_text.split("x")
+	if parts.size() == 2 and parts[0].is_valid_int() and parts[1].is_valid_int():
+		var target_size := Vector2i(int(parts[0]), int(parts[1]))
+		if not _is_fullscreen:
+			DisplayServer.window_set_size(target_size)
 	if not _is_loading_config:
 		save_settings()
 
@@ -333,17 +361,21 @@ func _set_screen_mode(fullscreen: bool) -> void:
 
 
 func _step_fps(delta_step: int) -> void:
-	_fps_index = posmod(_fps_index + delta_step, FPS_VALUES.size())
+	if fps_limits.is_empty():
+		return
+	_fps_index = posmod(_fps_index + delta_step, fps_limits.size())
 	_apply_fps_index(_fps_index)
 	if not _is_loading_config:
 		save_settings()
 
 
 func _apply_fps_index(idx: int) -> void:
-	_fps_index = clampi(idx, 0, FPS_VALUES.size() - 1)
-	Engine.max_fps = FPS_VALUES[_fps_index]
-	if fps_val_lbl:
-		fps_val_lbl.text = FPS_LABELS[_fps_index]
+	if fps_limits.is_empty():
+		return
+	_fps_index = clampi(idx, 0, fps_limits.size() - 1)
+	Engine.max_fps = fps_limits[_fps_index]
+	if fps_val_lbl and _fps_index < fps_labels.size():
+		fps_val_lbl.text = fps_labels[_fps_index]
 
 
 func _set_vsync(enabled: bool) -> void:
@@ -376,7 +408,7 @@ func _set_special_effect(high_fx: bool) -> void:
 
 
 # ==============================================================================
-# การทำงานจริงของหมวด AUDIO (Master / Music / SFX / Offset / Background Music)
+# การทำงานจริงของหมวด AUDIO
 # ==============================================================================
 func _ensure_audio_buses_exist() -> void:
 	if AudioServer.get_bus_index("Music") == -1:
@@ -394,7 +426,7 @@ func _ensure_audio_buses_exist() -> void:
 
 func _on_master_volume_changed(val: float) -> void:
 	if master_title_lbl:
-		master_title_lbl.text = "Master Volume:   %d" % int(round(val))
+		master_title_lbl.text = "%s   %d" % [_master_prefix, int(round(val))]
 	_set_bus_volume_percent("Master", val)
 	if not _is_loading_config:
 		save_settings()
@@ -402,7 +434,7 @@ func _on_master_volume_changed(val: float) -> void:
 
 func _on_music_volume_changed(val: float) -> void:
 	if music_title_lbl:
-		music_title_lbl.text = "Music Volume:   %d" % int(round(val))
+		music_title_lbl.text = "%s   %d" % [_music_prefix, int(round(val))]
 	_route_all_music_players_in_tree()
 	if _bgm_enabled:
 		_set_bus_volume_percent("Music", val)
@@ -412,7 +444,7 @@ func _on_music_volume_changed(val: float) -> void:
 
 func _on_sfx_volume_changed(val: float) -> void:
 	if sfx_title_lbl:
-		sfx_title_lbl.text = "Interactive Sound Effect Volume:   %d" % int(round(val))
+		sfx_title_lbl.text = "%s   %d" % [_sfx_prefix, int(round(val))]
 	_set_bus_volume_percent("SFX", val)
 	if not _is_loading_config:
 		save_settings()
@@ -445,7 +477,7 @@ func _set_bgm_enabled(enabled: bool) -> void:
 		if not enabled:
 			AudioServer.set_bus_mute(music_bus, true)
 		else:
-			var vol: float = music_slider.value if music_slider else 80.0
+			var vol: float = music_slider.value if music_slider else default_music_volume
 			_set_bus_volume_percent("Music", vol)
 	if not _is_loading_config:
 		save_settings()
@@ -476,7 +508,7 @@ func _set_bus_volume_percent(bus_name: String, pct: float) -> void:
 
 
 # ==============================================================================
-# หมวด CONTROLS, คีย์ลัด Q / E สลับแท็บ, และปุ่ม RESET TO DEFAULT
+# หมวด CONTROLS และปุ่ม RESET TO DEFAULT
 # ==============================================================================
 func _init_input_map() -> void:
 	for pair in [["lane_left", key_lane_left], ["lane_right", key_lane_right], ["pause_game", key_pause]]:
@@ -553,25 +585,26 @@ func reset_to_defaults() -> void:
 	_waiting_for_action = ""
 	_is_loading_config = true
 
-	if res_option:
+	if res_option and res_option.item_count > 0:
 		res_option.select(0)
-	_set_screen_mode(false)
-	_apply_fps_index(0) # 60 FPS
-	_set_vsync(true)
-	_set_special_effect(true)
+		_on_resolution_selected(0)
+	_set_screen_mode(default_fullscreen)
+	_apply_fps_index(0)
+	_set_vsync(default_vsync)
+	_set_special_effect(default_high_quality)
 
 	if master_slider:
-		master_slider.value = 85.0
-		_on_master_volume_changed(85.0)
+		master_slider.value = default_master_volume
+		_on_master_volume_changed(default_master_volume)
 	if music_slider:
-		music_slider.value = 80.0
-		_on_music_volume_changed(80.0)
+		music_slider.value = default_music_volume
+		_on_music_volume_changed(default_music_volume)
 	if sfx_slider:
-		sfx_slider.value = 75.0
-		_on_sfx_volume_changed(75.0)
+		sfx_slider.value = default_sfx_volume
+		_on_sfx_volume_changed(default_sfx_volume)
 
 	_set_audio_offset(0)
-	_set_bgm_enabled(true)
+	_set_bgm_enabled(default_bgm_enabled)
 
 	_apply_key_binding("lane_left", KEY_F)
 	_apply_key_binding("lane_right", KEY_J)
@@ -580,7 +613,6 @@ func reset_to_defaults() -> void:
 	_is_loading_config = false
 	save_settings()
 
-	# แอนิเมชั่นเด้งยืนยันการรีเซ็ต
 	var active_page: Control = _tab_pages[_current_tab_idx]
 	if active_page:
 		active_page.pivot_offset = active_page.size / 2.0
@@ -616,38 +648,39 @@ func save_settings() -> void:
 func load_settings() -> void:
 	_is_loading_config = true
 	if _config.load(CONFIG_PATH) != OK:
-		_set_screen_mode(false)
+		_set_screen_mode(default_fullscreen)
 		_apply_fps_index(0)
-		_set_vsync(true)
-		_set_special_effect(true)
-		_on_master_volume_changed(85.0)
-		_on_music_volume_changed(80.0)
-		_on_sfx_volume_changed(75.0)
+		_set_vsync(default_vsync)
+		_set_special_effect(default_high_quality)
+		_on_master_volume_changed(default_master_volume)
+		_on_music_volume_changed(default_music_volume)
+		_on_sfx_volume_changed(default_sfx_volume)
 		_set_audio_offset(0)
-		_set_bgm_enabled(true)
+		_set_bgm_enabled(default_bgm_enabled)
 		_is_loading_config = false
 		return
 
-	if res_option:
-		var r_idx: int = clampi(int(_config.get_value("display", "res_index", 0)), 0, RESOLUTIONS.size() - 1)
+	if res_option and res_option.item_count > 0:
+		var r_idx: int = clampi(int(_config.get_value("display", "res_index", 0)), 0, res_option.item_count - 1)
 		res_option.select(r_idx)
-	_set_screen_mode(bool(_config.get_value("display", "fullscreen", false)))
+		_on_resolution_selected(r_idx)
+	_set_screen_mode(bool(_config.get_value("display", "fullscreen", default_fullscreen)))
 	_apply_fps_index(int(_config.get_value("display", "fps_index", 0)))
-	_set_vsync(bool(_config.get_value("display", "vsync", true)))
-	_set_special_effect(bool(_config.get_value("display", "high_quality", true)))
+	_set_vsync(bool(_config.get_value("display", "vsync", default_vsync)))
+	_set_special_effect(bool(_config.get_value("display", "high_quality", default_high_quality)))
 
 	if master_slider:
-		master_slider.value = float(_config.get_value("audio", "master_volume", 85.0))
+		master_slider.value = float(_config.get_value("audio", "master_volume", default_master_volume))
 		_on_master_volume_changed(master_slider.value)
 	if music_slider:
-		music_slider.value = float(_config.get_value("audio", "music_volume", 80.0))
+		music_slider.value = float(_config.get_value("audio", "music_volume", default_music_volume))
 		_on_music_volume_changed(music_slider.value)
 	if sfx_slider:
-		sfx_slider.value = float(_config.get_value("audio", "sfx_volume", 75.0))
+		sfx_slider.value = float(_config.get_value("audio", "sfx_volume", default_sfx_volume))
 		_on_sfx_volume_changed(sfx_slider.value)
 
 	_set_audio_offset(int(_config.get_value("audio", "offset_ms", 0)))
-	_set_bgm_enabled(bool(_config.get_value("audio", "bgm_enabled", true)))
+	_set_bgm_enabled(bool(_config.get_value("audio", "bgm_enabled", default_bgm_enabled)))
 
 	_apply_key_binding("lane_left", int(_config.get_value("controls", "lane_left", KEY_F)) as Key)
 	_apply_key_binding("lane_right", int(_config.get_value("controls", "lane_right", KEY_J)) as Key)

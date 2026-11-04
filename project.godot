@@ -30,6 +30,19 @@ window/per_pixel_transparency/allowed=true
 
 enabled=PackedStringArray("res://addons/godot_midi/plugin.cfg")
 
+[file_customization]
+
+folder_colors={
+"res://Assets/": "orange",
+"res://Audios/": "yellow",
+"res://Prefabs/": "teal",
+"res://Scenes/": "blue",
+"res://Scripts/": "purple",
+"res://Shaders/": "pink",
+"res://addons/": "red",
+"res://levels/": "green"
+}
+
 [input]
 
 pause_game={

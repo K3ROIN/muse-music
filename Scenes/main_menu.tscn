@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bkl7rmy73raf1"]
 
-[ext_resource type="Script" uid="uid://hcb0mwbtbru6" path="res://Scripts/main_menu.gd" id="1_main_script"]
+[ext_resource type="Script" uid="uid://hcb0mwbtbru6" path="res://Scripts/UI_Menus/main_menu.gd" id="1_main_script"]
 [ext_resource type="AudioStream" uid="uid://bt3vm7jbcvxx7" path="res://Audios/BGM/1-17. After the Battle.mp3" id="2_48xlc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_juice_preview"]

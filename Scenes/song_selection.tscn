@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://yrda8pk1mom6"]
 
 [ext_resource type="Theme" uid="uid://dd6p6geacq4k0" path="res://main_theme.tres" id="1_1lfv0"]
-[ext_resource type="Script" uid="uid://qp54nb1og50k" path="res://Scripts/song_selection.gd" id="1_hjcgt"]
+[ext_resource type="Script" uid="uid://qp54nb1og50k" path="res://Scripts/UI_Menus/song_selection.gd" id="1_hjcgt"]
 
 [node name="SongSelection" type="Control" unique_id=1395709539]
 layout_mode = 3

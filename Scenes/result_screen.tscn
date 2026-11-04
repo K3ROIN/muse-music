@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://beouv3r8quua4"]
 
 [ext_resource type="Theme" uid="uid://dd6p6geacq4k0" path="res://main_theme.tres" id="1_qtxv5"]
-[ext_resource type="Script" uid="uid://c6q1y8d8oymj5" path="res://Scripts/result_screen.gd" id="2_t0wn3"]
+[ext_resource type="Script" uid="uid://c6q1y8d8oymj5" path="res://Scripts/UI_Menus/result_screen.gd" id="2_t0wn3"]
 
 [node name="ResultScreen" type="Control" unique_id=618987242]
 layout_mode = 3

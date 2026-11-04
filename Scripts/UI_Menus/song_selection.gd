@@ -1,13 +1,5 @@
 extends Control
 
-# ==============================================================================
-# Song Selection (res://Scripts/song_selection.gd)
-# เชื่อมต่อเสียงปุ่มจากโฟลเดอร์ res://Audios/SFX/ui/
-# - เลื่อนเมาส์ชี้ปุ่ม: เล่นเสียง Hover.wav
-# - กดปุ่มเลือกเพลง (Song1Button): เล่นเสียง Song_Selected.wav
-# - กดปุ่มย้อนกลับ (BackButton): เล่นเสียง Click.wav
-# ==============================================================================
-
 func _ready() -> void:
 	for child in find_children("*", "Button", true, false):
 		var btn := child as Button
