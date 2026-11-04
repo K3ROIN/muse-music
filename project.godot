@@ -21,8 +21,10 @@ GameManager="*uid://bic3l8drg21ey"
 
 [display]
 
+window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/per_pixel_transparency/allowed=true
 
 [editor_plugins]
 

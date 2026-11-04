@@ -86,3 +86,4 @@ text = "QUIT"
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=998649121]
 stream = ExtResource("2_48xlc")
 autoplay = true
+bus = &"Music"
