@@ -6,10 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://clo5p6qv54b2b" path="res://icon.svg" id="1_go701"]
 [ext_resource type="Script" uid="uid://5vn4le2hdf5w" path="res://Scripts/Entities/road.gd" id="2_5a7ea"]
 [ext_resource type="PackedScene" uid="uid://beouv3r8quua4" path="res://Scenes/result_screen.tscn" id="2_5v1tr"]
-[ext_resource type="AudioStream" uid="uid://30lor71sqgsv" path="res://Audios/Tracks/1-18. Talk.ogg" id="5_fo5ed"]
 [ext_resource type="Script" uid="uid://sn5c1px4m87k" path="res://Scripts/Gameplay/enemy_spawner.gd" id="6_5ukr8"]
-[ext_resource type="MidiResource" uid="uid://ccfqm0n32h6ae" path="res://levels/level_demo/Rick_Astley_-_Never_Gonna_Give_You_Up.mid" id="8_5v1tr"]
 [ext_resource type="PackedScene" uid="uid://bw7gefp2auc6q" path="res://Scenes/pause_menu.tscn" id="8_k7acu"]
+[ext_resource type="AudioStream" uid="uid://c8l5sshdxhgor" path="res://Audios/Tracks/Never gonna give you up - Rick Astley.mp3" id="9_0fj1v"]
+[ext_resource type="MidiResource" uid="uid://dhj7x170j4jve" path="res://levels/level_demo/Rick-Astley-Never-Gonna-Give-You-Up.mid" id="10_0fj1v"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8j60k"]
 shader = ExtResource("1_8j60k")
@@ -115,13 +115,13 @@ midi_player = NodePath("../MidiPlayer")
 midi_file_path = "uid://ccfqm0n32h6ae"
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="EnemySpawner" unique_id=1911983967]
-stream = ExtResource("5_fo5ed")
+stream = ExtResource("9_0fj1v")
 bus = &"Music"
 
 [node name="Timer" type="Timer" parent="EnemySpawner" unique_id=785041158]
 autostart = true
 
 [node name="MidiPlayer" type="MidiPlayer" parent="." unique_id=999243496]
-midi = ExtResource("8_5v1tr")
+midi = ExtResource("10_0fj1v")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=10189429]
