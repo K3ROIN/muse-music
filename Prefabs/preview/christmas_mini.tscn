@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bher434vt5u04"]
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_4pkc6"]
+albedo_color = Color(0.9372549, 0.09803922, 0.29803923, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_on1s7"]
+material = SubResource("ORMMaterial3D_4pkc6")
+
+[node name="ChristmasMini" type="Node3D" unique_id=1865322281]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1854260734]
+mesh = SubResource("BoxMesh_on1s7")

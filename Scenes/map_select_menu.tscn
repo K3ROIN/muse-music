@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://dyjqdu78kd5p6"]
+
+[ext_resource type="Script" uid="uid://c46fttyfr6kj8" path="res://Scripts/UI_Menus/map_select_menu.gd" id="1_klufv"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_klufv"]
+dof_blur_far_enabled = true
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vk8r8"]
+
+[sub_resource type="Sky" id="Sky_klufv"]
+sky_material = SubResource("ProceduralSkyMaterial_vk8r8")
+
+[sub_resource type="Environment" id="Environment_on1s7"]
+background_mode = 2
+sky = SubResource("Sky_klufv")
+ambient_light_source = 3
+ambient_light_color = Color(0.8776157, 0.8776158, 0.8776157, 1)
+ambient_light_energy = 1.5
+glow_enabled = true
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_klufv"]
+
+[node name="MapSelectMenu" type="Node3D" unique_id=868243593]
+script = ExtResource("1_klufv")
+
+[node name="Environment" type="Node3D" parent="." unique_id=43122788]
+
+[node name="Camera3D" type="Camera3D" parent="Environment" unique_id=1860528628]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 3.5)
+attributes = SubResource("CameraAttributesPractical_klufv")
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment" unique_id=1254497890]
+transform = Transform3D(0.70710677, -0.4055798, 0.579228, 0, 0.81915206, 0.57357645, -0.70710677, -0.4055798, 0.579228, 0, 2.2396207, 3.0424852)
+light_energy = 2.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=1967595727]
+environment = SubResource("Environment_on1s7")
+
+[node name="AnchorPoints" type="Node3D" parent="." unique_id=579748931]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="MapContainer" type="Node3D" parent="AnchorPoints" unique_id=1579974954]
+
+[node name="WeatherParticles" type="GPUParticles3D" parent="AnchorPoints" unique_id=774245603]
+process_material = SubResource("ParticleProcessMaterial_klufv")
+
+[node name="MenuUI" type="CanvasLayer" parent="." unique_id=2094945262]
+
+[node name="Control" type="Control" parent="MenuUI" unique_id=1169779269]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Header" type="MarginContainer" parent="MenuUI/Control" unique_id=1365344486]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuUI/Control/Header" unique_id=1285822711]
+layout_mode = 2
+
+[node name="TxtSeasonTitle" type="Label" parent="MenuUI/Control/Header/VBoxContainer" unique_id=1288337418]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "HALLOWEEN EVENT"
+horizontal_alignment = 1
+
+[node name="TxtMapName" type="Label" parent="MenuUI/Control/Header/VBoxContainer" unique_id=1947293631]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Spooky Forest"
+horizontal_alignment = 1
+
+[node name="Footer" type="MarginContainer" parent="MenuUI/Control" unique_id=1684686220]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MenuUI/Control/Footer" unique_id=1624736065]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnPrev" type="Button" parent="MenuUI/Control/Footer/HBoxContainer" unique_id=1185705001]
+layout_mode = 2
+text = "<"
+
+[node name="BtnOK" type="Button" parent="MenuUI/Control/Footer/HBoxContainer" unique_id=236994479]
+layout_mode = 2
+text = "OK"
+
+[node name="BtnNext" type="Button" parent="MenuUI/Control/Footer/HBoxContainer" unique_id=4562677]
+layout_mode = 2
+text = ">"
+
+[connection signal="pressed" from="MenuUI/Control/Footer/HBoxContainer/BtnPrev" to="." method="_on_btn_prev_pressed"]
+[connection signal="pressed" from="MenuUI/Control/Footer/HBoxContainer/BtnOK" to="." method="_on_btn_ok_pressed"]
+[connection signal="pressed" from="MenuUI/Control/Footer/HBoxContainer/BtnNext" to="." method="_on_btn_next_pressed"]

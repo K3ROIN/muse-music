@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bak5u8ik1a4q3"]
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_4pkc6"]
+albedo_color = Color(0.18039216, 0.8352941, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_on1s7"]
+material = SubResource("ORMMaterial3D_4pkc6")
+
+[node name="ForestMini" type="Node3D" unique_id=766794116]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1414021106]
+mesh = SubResource("BoxMesh_on1s7")
