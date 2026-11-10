@@ -1,5 +1,13 @@
 extends Control
 
+# ==============================================================================
+# Settings Menu UI + 5 Themes Switcher (res://Scripts/settings_menu.gd)
+# แก้ไขเรื่องการเปลี่ยนปุ่มควบคุมตัวละคร (เช่น เปลี่ยนจาก F/J เป็น D/K):
+# - บันทึกและอัปเดต InputMap ทันทีที่มีการเปลี่ยนปุ่มในหน้า Controls (แม้ยังไม่กดปิดหน้าต่าง)
+# - แยกสร้างทั้ง InputEventKey แบบ keycode และ physical_keycode เพื่อให้กดติด 100%
+#   แม้คีย์บอร์ดของ Windows จะสลับเป็นภาษาไทยอยู่
+# ==============================================================================
+
 const CONFIG_PATH: String = "user://settings.cfg"
 
 static var key_lane_left: Key = KEY_F
@@ -7,409 +15,737 @@ static var key_lane_right: Key = KEY_J
 static var key_pause: Key = KEY_ESCAPE
 static var custom_audio_offset_sec: float = 0.0
 
-@export_group("Tab Animation & Text (ปรับใน Inspector ได้)")
-## เปิด/ปิดแอนิเมชั่นยืด-หดความกว้างของปุ่มแท็บเวลาคลิกเลือก
-@export var animate_tab_width: bool = true
-@export var tab_expanded_width: float = 220.0
-@export var tab_collapsed_width: float = 84.0
-## หากเปิดไว้ จะสลับข้อความปุ่มแท็บระหว่างแบบเต็ม (ตอนเลือก) กับไอคอนย่อ (ตอนไม่ได้เลือก)
-## หากปิดไว้ จะใช้ข้อความตามที่พิมพ์ไว้บนปุ่มใน Editor ตลอดเวลา
-@export var use_collapsed_tab_icons: bool = true
-@export var tab_expanded_texts: Array[String] = ["⚙ DISPLAY", "🔊 AUDIO", "🎮 CONTROLS"]
-@export var tab_collapsed_texts: Array[String] = ["⚙", "🔊", "🎮"]
-
-@export_group("Display Options (ปรับใน Inspector ได้)")
-@export var fps_limits: Array[int] = [60, 120, 144, 0]
-@export var fps_labels: Array[String] = ["60 FPS", "120 FPS", "144 FPS", "Unlimited"]
-@export var offset_step_ms: int = 5
-@export var volume_step: float = 5.0
-
-@export_group("Default Values (สำหรับปุ่ม Reset to Default)")
-@export var default_master_volume: float = 85.0
+@export_group("Default Settings (ปรับใน Inspector ได้)")
+@export_enum("Night:0", "Light:1", "Ocean:2", "Candy:3", "Dusk:4") var default_theme: int = 3
+@export var default_master_volume: float = 100.0
 @export var default_music_volume: float = 80.0
-@export var default_sfx_volume: float = 75.0
+@export var default_sfx_volume: float = 100.0
+@export var default_resolution_index: int = 1
 @export var default_fullscreen: bool = false
 @export var default_vsync: bool = true
-@export var default_high_quality: bool = true
-@export var default_bgm_enabled: bool = true
+
+@export_group("Controls Action Names (แก้ไขชื่อ Action ใน Inspector ได้)")
+@export var row_1_action: String = "lane_left"
+@export var row_2_action: String = "lane_right"
+@export var row_3_action: String = "pause_game"
+
+@export_group("5 Theme Palettes (Card BG, Row BG, Border, Text, Muted, Accent)")
+@export var night_palette: Array[Color] = [
+	Color(0.075, 0.086, 0.122, 1.0),
+	Color(0.106, 0.122, 0.173, 1.0),
+	Color(0.165, 0.188, 0.259, 1.0),
+	Color(0.941, 0.957, 1.000, 1.0),
+	Color(0.545, 0.584, 0.690, 1.0),
+	Color(0.310, 0.431, 0.969, 1.0)
+]
+@export var light_palette: Array[Color] = [
+	Color(1.000, 1.000, 1.000, 1.0),
+	Color(0.965, 0.973, 0.984, 1.0),
+	Color(0.886, 0.906, 0.941, 1.0),
+	Color(0.102, 0.125, 0.173, 1.0),
+	Color(0.392, 0.455, 0.545, 1.0),
+	Color(0.310, 0.431, 0.969, 1.0)
+]
+@export var ocean_palette: Array[Color] = [
+	Color(0.063, 0.165, 0.263, 1.0),
+	Color(0.090, 0.227, 0.349, 1.0),
+	Color(0.149, 0.322, 0.478, 1.0),
+	Color(0.941, 0.973, 1.000, 1.0),
+	Color(0.561, 0.702, 0.831, 1.0),
+	Color(0.176, 0.831, 0.749, 1.0)
+]
+@export var candy_palette: Array[Color] = [
+	Color(0.992, 0.957, 0.973, 1.0),
+	Color(1.000, 1.000, 1.000, 1.0),
+	Color(0.941, 0.851, 0.894, 1.0),
+	Color(0.141, 0.098, 0.125, 1.0),
+	Color(0.490, 0.396, 0.451, 1.0),
+	Color(0.957, 0.318, 0.549, 1.0)
+]
+@export var dusk_palette: Array[Color] = [
+	Color(0.137, 0.098, 0.204, 1.0),
+	Color(0.180, 0.129, 0.267, 1.0),
+	Color(0.263, 0.192, 0.388, 1.0),
+	Color(0.973, 0.941, 1.000, 1.0),
+	Color(0.651, 0.584, 0.741, 1.0),
+	Color(0.976, 0.451, 0.086, 1.0)
+]
 
 var _config := ConfigFile.new()
 
-# โหนดอ้างอิง (ค้นหาตามชื่อโหนดด้วย find_child เพื่อให้ย้ายลำดับชั้นใน Editor ได้อิสระ)
-@onready var ribbon_bar: Control = find_child("RibbonBar", true, false) as Control
-@onready var back_btn: Button = find_child("BackButton", true, false) as Button
-@onready var prev_tab_btn: Button = find_child("PrevTabBtn", true, false) as Button
-@onready var next_tab_btn: Button = find_child("NextTabBtn", true, false) as Button
-@onready var tab_display_btn: Button = find_child("TabDisplayBtn", true, false) as Button
+@onready var main_card: PanelContainer = find_child("MainCard", true, false) as PanelContainer
+@onready var tab_strip_panel: PanelContainer = find_child("TabStripPanel", true, false) as PanelContainer
+@onready var title_label: Label = find_child("TitleLabel", true, false) as Label
+@onready var subtitle_label: Label = find_child("SubtitleLabel", true, false) as Label
+
 @onready var tab_audio_btn: Button = find_child("TabAudioBtn", true, false) as Button
+@onready var tab_graphics_btn: Button = find_child("TabGraphicsBtn", true, false) as Button
 @onready var tab_controls_btn: Button = find_child("TabControlsBtn", true, false) as Button
+@onready var tab_appearance_btn: Button = find_child("TabAppearanceBtn", true, false) as Button
 
-@onready var display_page: Control = find_child("DisplayPage", true, false) as Control
 @onready var audio_page: Control = find_child("AudioPage", true, false) as Control
+@onready var graphics_page: Control = find_child("GraphicsPage", true, false) as Control
 @onready var controls_page: Control = find_child("ControlsPage", true, false) as Control
+@onready var appearance_page: Control = find_child("AppearancePage", true, false) as Control
 
-# โหนดหมวด DISPLAY
-@onready var res_option: OptionButton = find_child("ResOption", true, false) as OptionButton
-@onready var screen_prev_btn: Button = find_child("ScreenPrevBtn", true, false) as Button
-@onready var screen_next_btn: Button = find_child("ScreenNextBtn", true, false) as Button
-@onready var screen_mode_val: Label = find_child("ScreenModeValue", true, false) as Label
-@onready var fps_prev_btn: Button = find_child("FPSPrevBtn", true, false) as Button
-@onready var fps_next_btn: Button = find_child("FPSNextBtn", true, false) as Button
-@onready var fps_val_lbl: Label = find_child("FPSValue", true, false) as Label
-@onready var vsync_on_check: CheckBox = find_child("VsyncOnCheck", true, false) as CheckBox
-@onready var vsync_off_check: CheckBox = find_child("VsyncOffCheck", true, false) as CheckBox
-@onready var fx_low_check: CheckBox = find_child("FXLowCheck", true, false) as CheckBox
-@onready var fx_high_check: CheckBox = find_child("FXHighCheck", true, false) as CheckBox
-
-# โหนดหมวด AUDIO
-@onready var master_title_lbl: Label = find_child("MasterTitle", true, false) as Label
 @onready var master_slider: HSlider = find_child("MasterSlider", true, false) as HSlider
-@onready var master_minus_btn: Button = find_child("MasterMinusBtn", true, false) as Button
-@onready var master_plus_btn: Button = find_child("MasterPlusBtn", true, false) as Button
-
-@onready var music_title_lbl: Label = find_child("MusicTitle", true, false) as Label
+@onready var master_val_label: Label = find_child("MasterValLabel", true, false) as Label
 @onready var music_slider: HSlider = find_child("MusicSlider", true, false) as HSlider
-@onready var music_minus_btn: Button = find_child("MusicMinusBtn", true, false) as Button
-@onready var music_plus_btn: Button = find_child("MusicPlusBtn", true, false) as Button
-
-@onready var sfx_title_lbl: Label = find_child("SFXTitle", true, false) as Label
+@onready var music_val_label: Label = find_child("MusicValLabel", true, false) as Label
 @onready var sfx_slider: HSlider = find_child("SFXSlider", true, false) as HSlider
-@onready var sfx_minus_btn: Button = find_child("SFXMinusBtn", true, false) as Button
-@onready var sfx_plus_btn: Button = find_child("SFXPlusBtn", true, false) as Button
+@onready var sfx_val_label: Label = find_child("SFXValLabel", true, false) as Label
 
-@onready var offset_minus_btn: Button = find_child("OffsetMinusBtn", true, false) as Button
-@onready var offset_plus_btn: Button = find_child("OffsetPlusBtn", true, false) as Button
-@onready var offset_val_lbl: Label = find_child("OffsetValueLabel", true, false) as Label
-@onready var bgm_on_check: CheckBox = find_child("BGMOnCheck", true, false) as CheckBox
-@onready var bgm_off_check: CheckBox = find_child("BGMOffCheck", true, false) as CheckBox
+@onready var res_option: OptionButton = find_child("ResolutionOption", true, false) as OptionButton
+@onready var fullscreen_check: CheckButton = find_child("FullscreenCheck", true, false) as CheckButton
+@onready var vsync_check: CheckButton = find_child("VsyncCheck", true, false) as CheckButton
 
-# โหนดหมวด CONTROLS & ปุ่ม Reset
-@onready var left_key_btn: Button = find_child("LeftKeyBtn", true, false) as Button
-@onready var right_key_btn: Button = find_child("RightKeyBtn", true, false) as Button
-@onready var pause_key_btn: Button = find_child("PauseKeyBtn", true, false) as Button
-@onready var reset_default_btn: Button = find_child("ResetDefaultButton", true, false) as Button
+@onready var control_row_1: HBoxContainer = find_child("ControlRow1", true, false) as HBoxContainer
+@onready var control_row_2: HBoxContainer = find_child("ControlRow2", true, false) as HBoxContainer
+@onready var control_row_3: HBoxContainer = find_child("ControlRow3", true, false) as HBoxContainer
 
-var _current_tab_idx: int = 0
+@onready var theme_option: OptionButton = find_child("ThemeOption", true, false) as OptionButton
+@onready var theme_night_btn: Button = find_child("ThemeNightBtn", true, false) as Button
+@onready var theme_light_btn: Button = find_child("ThemeLightBtn", true, false) as Button
+@onready var theme_ocean_btn: Button = find_child("ThemeOceanBtn", true, false) as Button
+@onready var theme_candy_btn: Button = find_child("ThemeCandyBtn", true, false) as Button
+@onready var theme_dusk_btn: Button = find_child("ThemeDuskBtn", true, false) as Button
+
+@onready var defaults_btn: Button = find_child("DefaultsBtn", true, false) as Button
+@onready var status_label: Label = find_child("StatusLabel", true, false) as Label
+@onready var close_btn: Button = find_child("CloseBtn", true, false) as Button
+@onready var save_btn: Button = find_child("SaveBtn", true, false) as Button
+
+@onready var conflict_overlay: ColorRect = find_child("ConflictOverlay", true, false) as ColorRect
+@onready var conflict_card: PanelContainer = find_child("ConflictCard", true, false) as PanelContainer
+@onready var conflict_title: Label = find_child("ConflictTitle", true, false) as Label
+@onready var conflict_message: Label = find_child("ConflictMessage", true, false) as Label
+@onready var conflict_cancel_btn: Button = find_child("ConflictCancelBtn", true, false) as Button
+@onready var conflict_swap_btn: Button = find_child("ConflictSwapBtn", true, false) as Button
+@onready var conflict_replace_btn: Button = find_child("ConflictReplaceBtn", true, false) as Button
+
 var _tab_buttons: Array[Button] = []
 var _tab_pages: Array[Control] = []
+var _current_theme_idx: int = 3
+var _is_loading: bool = false
 
-# เก็บคำนำหน้าของ Label ที่ตั้งไว้ใน Editor เพื่อไม่ให้โค้ดเขียนทับข้อความของคุณ
-var _master_prefix: String = "Master Volume:"
-var _music_prefix: String = "Music Volume:"
-var _sfx_prefix: String = "Sound Effect Volume:"
+var _bindings: Dictionary = {}
+var _waiting_action: String = ""
+var _waiting_slot: String = ""
 
-var _is_fullscreen: bool = false
-var _fps_index: int = 0
-var _vsync_enabled: bool = true
-var _high_quality_fx: bool = true
-var _bgm_enabled: bool = true
-var _offset_ms: int = 0
-var _waiting_for_action: String = ""
-var _is_loading_config: bool = false
+var _pending_conflict_action: String = ""
+var _pending_conflict_slot: String = ""
+var _pending_conflict_key: int = 0
+var _existing_owner_action: String = ""
+var _existing_owner_slot: String = ""
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_ensure_audio_buses_exist()
-	_cache_editor_prefixes_and_tabs()
-	_init_input_map()
+	_setup_tabs_list()
+	_setup_control_rows_data()
 	_connect_all_signals()
-	_attach_button_hover_effects()
 	load_settings()
-	_switch_section_tab(0, false)
+	_switch_tab(0)
+	_set_status_text("")
 
 
-func _cache_editor_prefixes_and_tabs() -> void:
-	_tab_buttons = [tab_display_btn, tab_audio_btn, tab_controls_btn]
-	_tab_pages = [display_page, audio_page, controls_page]
-
-	for btn in _tab_buttons:
-		if btn != null:
-			# ใช้ toggle_mode เพื่อให้ Godot สลับระหว่าง StyleBox "normal" กับ "pressed" ที่คุณตั้งใน Editor เอง
-			btn.toggle_mode = true
-
-	if master_title_lbl and ":" in master_title_lbl.text:
-		_master_prefix = master_title_lbl.text.split(":")[0] + ":"
-	if music_title_lbl and ":" in music_title_lbl.text:
-		_music_prefix = music_title_lbl.text.split(":")[0] + ":"
-	if sfx_title_lbl and ":" in sfx_title_lbl.text:
-		_sfx_prefix = sfx_title_lbl.text.split(":")[0] + ":"
-
-
-# ==============================================================================
-# แอนิเมชั่นเปิด-ปิดหน้าต่าง Settings และแอนิเมชั่นสลับแท็บ (ใช้ Style จาก Editor)
-# ==============================================================================
 func open_settings() -> void:
-	_waiting_for_action = ""
+	_cancel_waiting_input()
 	_route_all_music_players_in_tree()
 	show()
-
-	if ribbon_bar:
-		var base_x: float = ribbon_bar.position.x
-		ribbon_bar.position.x = -get_viewport_rect().size.x
-		var r_tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-		r_tw.tween_property(ribbon_bar, "position:x", base_x, 0.28).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
-
-	_switch_section_tab(_current_tab_idx, false)
+	_switch_tab(0)
+	_set_status_text("")
+	if main_card != null:
+		main_card.pivot_offset = main_card.size / 2.0
+		main_card.scale = Vector2(0.94, 0.94)
+		main_card.modulate.a = 0.0
+		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		tw.set_parallel(true)
+		tw.tween_property(main_card, "scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_property(main_card, "modulate:a", 1.0, 0.14)
 
 
 func close_settings() -> void:
-	_waiting_for_action = ""
+	_cancel_waiting_input()
 	save_settings()
 	if typeof(GameManager) != TYPE_NIL:
 		GameManager.play_close_settings()
 
-	if ribbon_bar:
-		var orig_x: float = ribbon_bar.position.x
-		var r_tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-		r_tw.tween_property(ribbon_bar, "position:x", -get_viewport_rect().size.x, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-		r_tw.chain().tween_callback(func():
-			ribbon_bar.position.x = orig_x
-			if get_tree().current_scene == self:
-				get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")
-			else:
-				hide()
-		)
+	if get_tree().current_scene == self:
+		get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")
 	else:
 		hide()
 
 
-func _switch_section_tab(new_idx: int, play_sound: bool = true) -> void:
-	if _tab_buttons.is_empty():
-		return
-	var prev_idx: int = _current_tab_idx
-	_current_tab_idx = posmod(new_idx, _tab_buttons.size())
-	_waiting_for_action = ""
-	_refresh_keybind_labels()
+func _setup_tabs_list() -> void:
+	_tab_buttons = [tab_audio_btn, tab_graphics_btn, tab_controls_btn, tab_appearance_btn]
+	_tab_pages = [audio_page, graphics_page, controls_page, appearance_page]
 
-	if play_sound and typeof(GameManager) != TYPE_NIL:
-		GameManager.play_ui_click()
 
-	var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	tw.set_parallel(true)
-
+func _switch_tab(tab_idx: int) -> void:
+	_cancel_waiting_input()
 	for i in range(_tab_buttons.size()):
 		var btn: Button = _tab_buttons[i]
-		if btn == null:
-			continue
-		var is_selected: bool = (i == _current_tab_idx)
-
-		# สลับสถานะ button_pressed เพื่อให้ใช้ StyleBox "pressed" (ตอนเลือก) และ "normal" (ตอนไม่ได้เลือก) จาก Editor
-		btn.set_pressed_no_signal(is_selected)
-
-		if use_collapsed_tab_icons and i < tab_expanded_texts.size() and i < tab_collapsed_texts.size():
-			btn.text = tab_expanded_texts[i] if is_selected else tab_collapsed_texts[i]
-
-		if animate_tab_width:
-			var target_w: float = tab_expanded_width if is_selected else tab_collapsed_width
-			tw.tween_property(
-				btn, "custom_minimum_size:x", target_w, 0.24
-			).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-
-	var slide_dir: float = 1.0 if _current_tab_idx >= prev_idx else -1.0
-	for i in range(_tab_pages.size()):
+		if btn != null:
+			btn.set_pressed_no_signal(i == tab_idx)
 		var page: Control = _tab_pages[i]
-		if page == null:
+		if page != null:
+			page.visible = (i == tab_idx)
+
+
+func _on_tab_audio_pressed() -> void:
+	_switch_tab(0)
+
+
+func _on_tab_graphics_pressed() -> void:
+	_switch_tab(1)
+
+
+func _on_tab_controls_pressed() -> void:
+	_switch_tab(2)
+
+
+func _on_tab_appearance_pressed() -> void:
+	_switch_tab(3)
+
+
+func apply_theme_preset(preset_idx: int, mark_unsaved: bool = true) -> void:
+	_current_theme_idx = clampi(preset_idx, 0, 4)
+	if theme_option != null and theme_option.selected != _current_theme_idx:
+		theme_option.select(_current_theme_idx)
+
+	var pal: Array[Color] = candy_palette
+	match _current_theme_idx:
+		0:
+			pal = night_palette
+		1:
+			pal = light_palette
+		2:
+			pal = ocean_palette
+		3:
+			pal = candy_palette
+		4:
+			pal = dusk_palette
+
+	if pal.size() < 6:
+		return
+
+	var col_card_bg: Color = pal[0]
+	var col_row_bg: Color = pal[1]
+	var col_border: Color = pal[2]
+	var col_text: Color = pal[3]
+	var col_muted: Color = pal[4]
+	var col_accent: Color = pal[5]
+
+	var modal_sb := StyleBoxFlat.new()
+	modal_sb.bg_color = col_card_bg
+	modal_sb.border_color = col_border
+	modal_sb.set_border_width_all(1)
+	modal_sb.set_corner_radius_all(16)
+	modal_sb.content_margin_left = 32
+	modal_sb.content_margin_top = 28
+	modal_sb.content_margin_right = 32
+	modal_sb.content_margin_bottom = 24
+	modal_sb.shadow_color = Color(0, 0, 0, 0.32)
+	modal_sb.shadow_size = 24
+	if main_card != null:
+		main_card.add_theme_stylebox_override("panel", modal_sb)
+	if conflict_card != null:
+		conflict_card.add_theme_stylebox_override("panel", modal_sb)
+
+	var strip_sb := StyleBoxFlat.new()
+	strip_sb.bg_color = col_row_bg.darkened(0.04) if col_card_bg.get_luminance() > 0.5 else col_card_bg.darkened(0.18)
+	strip_sb.border_color = col_border
+	strip_sb.set_border_width_all(1)
+	strip_sb.set_corner_radius_all(10)
+	strip_sb.content_margin_left = 6
+	strip_sb.content_margin_top = 5
+	strip_sb.content_margin_right = 6
+	strip_sb.content_margin_bottom = 5
+	if tab_strip_panel != null:
+		tab_strip_panel.add_theme_stylebox_override("panel", strip_sb)
+
+	var tab_act_sb := StyleBoxFlat.new()
+	tab_act_sb.bg_color = col_accent
+	tab_act_sb.set_corner_radius_all(8)
+	tab_act_sb.content_margin_left = 18
+	tab_act_sb.content_margin_top = 6
+	tab_act_sb.content_margin_right = 18
+	tab_act_sb.content_margin_bottom = 6
+
+	var tab_inact_sb := StyleBoxFlat.new()
+	tab_inact_sb.bg_color = Color(0, 0, 0, 0)
+	tab_inact_sb.set_corner_radius_all(8)
+	tab_inact_sb.content_margin_left = 18
+	tab_inact_sb.content_margin_top = 6
+	tab_inact_sb.content_margin_right = 18
+	tab_inact_sb.content_margin_bottom = 6
+
+	var active_tab_text_col: Color = Color(0.05, 0.10, 0.15, 1.0) if _current_theme_idx == 2 else Color.WHITE
+	for t_btn in _tab_buttons:
+		if t_btn == null:
 			continue
-		if i == _current_tab_idx:
-			page.show()
-			page.modulate.a = 0.0
-			page.pivot_offset = page.size / 2.0
-			page.scale = Vector2(0.96, 0.96)
-			page.position.x = 45.0 * slide_dir
-			tw.tween_property(page, "position:x", 0.0, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-			tw.tween_property(page, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-			tw.tween_property(page, "modulate:a", 1.0, 0.15)
+		t_btn.add_theme_stylebox_override("normal", tab_inact_sb)
+		t_btn.add_theme_stylebox_override("hover", tab_inact_sb)
+		t_btn.add_theme_stylebox_override("pressed", tab_act_sb)
+		t_btn.add_theme_color_override("font_color", col_muted)
+		t_btn.add_theme_color_override("font_hover_color", col_text)
+		t_btn.add_theme_color_override("font_pressed_color", active_tab_text_col)
+		t_btn.add_theme_color_override("font_hover_pressed_color", active_tab_text_col)
+
+	var row_sb := StyleBoxFlat.new()
+	row_sb.bg_color = col_row_bg
+	row_sb.border_color = col_border
+	row_sb.set_border_width_all(1)
+	row_sb.set_corner_radius_all(10)
+	row_sb.content_margin_left = 20
+	row_sb.content_margin_top = 12
+	row_sb.content_margin_right = 20
+	row_sb.content_margin_bottom = 12
+
+	for row_name in ["MasterRow", "MusicRow", "SFXRow", "ResolutionRow", "FullscreenRow", "VsyncRow", "HintCard", "ThemeSelectorRow", "QuickThemeRow"]:
+		var r_node: PanelContainer = find_child(row_name, true, false) as PanelContainer
+		if r_node != null:
+			r_node.add_theme_stylebox_override("panel", row_sb)
+
+	var track_sb := StyleBoxFlat.new()
+	track_sb.bg_color = col_border
+	track_sb.set_corner_radius_all(4)
+	track_sb.content_margin_top = 3
+	track_sb.content_margin_bottom = 3
+
+	var fill_sb := StyleBoxFlat.new()
+	fill_sb.bg_color = col_accent
+	fill_sb.set_corner_radius_all(4)
+	fill_sb.content_margin_top = 3
+	fill_sb.content_margin_bottom = 3
+
+	for sl in [master_slider, music_slider, sfx_slider]:
+		if sl != null:
+			sl.add_theme_stylebox_override("slider", track_sb)
+			sl.add_theme_stylebox_override("grabber_area", fill_sb)
+			sl.add_theme_stylebox_override("grabber_area_highlight", fill_sb)
+
+	var sec_sb := StyleBoxFlat.new()
+	sec_sb.bg_color = col_row_bg
+	sec_sb.border_color = col_border
+	sec_sb.set_border_width_all(1)
+	sec_sb.set_corner_radius_all(8)
+	sec_sb.content_margin_left = 16
+	sec_sb.content_margin_top = 8
+	sec_sb.content_margin_right = 16
+	sec_sb.content_margin_bottom = 8
+
+	var sec_hover_sb := sec_sb.duplicate() as StyleBoxFlat
+	sec_hover_sb.border_color = col_accent
+
+	var pri_sb := StyleBoxFlat.new()
+	pri_sb.bg_color = col_accent
+	pri_sb.set_corner_radius_all(8)
+	pri_sb.content_margin_left = 22
+	pri_sb.content_margin_top = 8
+	pri_sb.content_margin_right = 22
+	pri_sb.content_margin_bottom = 8
+
+	for btn_node in find_children("*", "Button", true, false):
+		var b: Button = btn_node as Button
+		if b == null or b in _tab_buttons:
+			continue
+		if b == save_btn or b == conflict_replace_btn:
+			b.add_theme_stylebox_override("normal", pri_sb)
+			b.add_theme_stylebox_override("hover", pri_sb)
+			b.add_theme_stylebox_override("pressed", pri_sb)
+			b.add_theme_color_override("font_color", active_tab_text_col)
+			b.add_theme_color_override("font_hover_color", active_tab_text_col)
 		else:
-			page.hide()
+			b.add_theme_stylebox_override("normal", sec_sb)
+			b.add_theme_stylebox_override("hover", sec_hover_sb)
+			b.add_theme_stylebox_override("pressed", sec_hover_sb)
+			b.add_theme_color_override("font_color", col_text)
+			b.add_theme_color_override("font_hover_color", col_accent)
+
+	for opt_node in [res_option, theme_option]:
+		if opt_node != null:
+			opt_node.add_theme_stylebox_override("normal", sec_sb)
+			opt_node.add_theme_stylebox_override("hover", sec_hover_sb)
+			opt_node.add_theme_stylebox_override("pressed", sec_hover_sb)
+			opt_node.add_theme_color_override("font_color", col_text)
+			opt_node.add_theme_color_override("font_hover_color", col_accent)
+
+	for lbl_node in find_children("*", "Label", true, false):
+		var l: Label = lbl_node as Label
+		if l == null:
+			continue
+		if l in [master_val_label, music_val_label, sfx_val_label, status_label]:
+			l.add_theme_color_override("font_color", col_accent)
+		elif l == subtitle_label or l.name == "Desc" or l.name == "HintLabel" or l.name.begins_with("Col"):
+			l.add_theme_color_override("font_color", col_muted)
+		else:
+			l.add_theme_color_override("font_color", col_text)
+
+	if mark_unsaved and not _is_loading:
+		_mark_unsaved_changes()
 
 
 # ==============================================================================
-# เชื่อมต่อสัญญาณปุ่มทั้งหมด
+# 3. ระบบตาราง Controls (ซิงก์ InputMap + บันทึกไฟล์ทันทีที่ตั้งปุ่มเสร็จ)
+# ==============================================================================
+func _setup_control_rows_data() -> void:
+	_bindings.clear()
+	_register_control_row(row_1_action, control_row_1, int(KEY_F), int(KEY_LEFT), "L Stick ←")
+	_register_control_row(row_2_action, control_row_2, int(KEY_J), int(KEY_RIGHT), "L Stick →")
+	_register_control_row(row_3_action, control_row_3, int(KEY_ESCAPE), int(KEY_NONE), "Start")
+	_sync_bindings_to_input_map()
+	_refresh_control_buttons_ui()
+
+
+func _register_control_row(action_name: String, row_node: HBoxContainer, def_kb1: int, def_kb2: int, def_joy: String) -> void:
+	if row_node == null:
+		return
+	var act_lbl: Label = row_node.find_child("ActionLabel", false, false) as Label
+	var btn_kb1: Button = row_node.find_child("SlotKB1", false, false) as Button
+	var btn_kb2: Button = row_node.find_child("SlotKB2", false, false) as Button
+	var btn_joy: Button = row_node.find_child("SlotGamepad", false, false) as Button
+
+	var disp_name: String = act_lbl.text if act_lbl != null else action_name
+	_bindings[action_name] = {
+		"kb1": def_kb1,
+		"kb2": def_kb2,
+		"joy": def_joy,
+		"default_kb1": def_kb1,
+		"default_kb2": def_kb2,
+		"default_joy": def_joy,
+		"display_name": disp_name,
+		"btn_kb1": btn_kb1,
+		"btn_kb2": btn_kb2,
+		"btn_joy": btn_joy
+	}
+
+	_bind_slot_button_events(action_name, "kb1", btn_kb1)
+	_bind_slot_button_events(action_name, "kb2", btn_kb2)
+	_bind_slot_button_events(action_name, "joy", btn_joy)
+
+
+func _bind_slot_button_events(action_name: String, slot_id: String, btn: Button) -> void:
+	if btn == null:
+		return
+	btn.pressed.connect(func(): _begin_slot_rebind(action_name, slot_id))
+	btn.gui_input.connect(func(ev: InputEvent):
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_RIGHT:
+			btn.accept_event()
+			_clear_slot_binding(action_name, slot_id)
+	)
+
+
+func _begin_slot_rebind(action_name: String, slot_id: String) -> void:
+	_cancel_waiting_input()
+	_waiting_action = action_name
+	_waiting_slot = slot_id
+
+	if not _bindings.has(action_name):
+		return
+	var entry: Dictionary = _bindings[action_name]
+	var btn: Button = entry.get("btn_" + slot_id) as Button
+	var disp_name: String = str(entry.get("display_name", action_name))
+
+	if btn != null:
+		btn.text = "Press a button..." if slot_id == "joy" else "Press a key..."
+	_set_status_text("Waiting for input for \"%s\" (Esc to cancel)." % disp_name)
+
+
+func _clear_slot_binding(action_name: String, slot_id: String) -> void:
+	_cancel_waiting_input()
+	if not _bindings.has(action_name):
+		return
+	var entry: Dictionary = _bindings[action_name]
+	if slot_id == "joy":
+		entry["joy"] = "—"
+	else:
+		entry[slot_id] = int(KEY_NONE)
+	_sync_bindings_to_input_map()
+	_refresh_control_buttons_ui()
+	save_settings()
+	_mark_unsaved_changes()
+
+
+func _cancel_waiting_input() -> void:
+	_waiting_action = ""
+	_waiting_slot = ""
+	_refresh_control_buttons_ui()
+
+
+func _input(event: InputEvent) -> void:
+	if not visible or (conflict_overlay != null and conflict_overlay.visible):
+		return
+	if _waiting_action == "":
+		return
+
+	if event is InputEventKey and event.pressed and not event.echo:
+		get_viewport().set_input_as_handled()
+		var k: int = int(event.physical_keycode) if event.physical_keycode != KEY_NONE else int(event.keycode)
+
+		if k == int(KEY_ESCAPE) and _waiting_action != row_3_action:
+			_cancel_waiting_input()
+			_set_status_text("")
+			return
+
+		if _waiting_slot == "kb1" or _waiting_slot == "kb2":
+			_try_assign_keyboard_key(_waiting_action, _waiting_slot, k)
+			return
+
+	if _waiting_slot == "joy" and event is InputEventJoypadButton and event.pressed:
+		get_viewport().set_input_as_handled()
+		var joy_name: String = _get_gamepad_button_label(event.button_index)
+		var entry: Dictionary = _bindings[_waiting_action]
+		entry["joy"] = joy_name
+		_cancel_waiting_input()
+		save_settings()
+		_mark_unsaved_changes()
+
+
+func _try_assign_keyboard_key(target_action: String, target_slot: String, new_key: int) -> void:
+	for act_name in _bindings.keys():
+		var entry: Dictionary = _bindings[act_name]
+		for s_id in ["kb1", "kb2"]:
+			if act_name == target_action and s_id == target_slot:
+				continue
+			if int(entry[s_id]) == new_key and new_key != int(KEY_NONE):
+				_open_conflict_dialog(target_action, target_slot, new_key, str(act_name), s_id)
+				return
+
+	var target_entry: Dictionary = _bindings[target_action]
+	target_entry[target_slot] = new_key
+	_cancel_waiting_input()
+	_sync_bindings_to_input_map()
+	_refresh_control_buttons_ui()
+	save_settings()
+	_mark_unsaved_changes()
+
+
+func _open_conflict_dialog(target_act: String, target_slot: String, key_code: int, owner_act: String, owner_slot: String) -> void:
+	_pending_conflict_action = target_act
+	_pending_conflict_slot = target_slot
+	_pending_conflict_key = key_code
+	_existing_owner_action = owner_act
+	_existing_owner_slot = owner_slot
+
+	var key_str: String = _format_key_name(key_code)
+	var owner_entry: Dictionary = _bindings[owner_act]
+	var owner_disp: String = str(owner_entry.get("display_name", owner_act))
+	if conflict_message != null:
+		conflict_message.text = "\"%s\" is already bound to \"%s\".\n\nSwap: \"%s\" gets the old key.\nReplace: \"%s\" loses this key." % [
+			key_str, owner_disp, owner_disp, owner_disp
+		]
+	if conflict_overlay != null:
+		conflict_overlay.show()
+
+
+func _on_conflict_cancel() -> void:
+	if conflict_overlay != null:
+		conflict_overlay.hide()
+	_cancel_waiting_input()
+	_set_status_text("")
+
+
+func _on_conflict_swap() -> void:
+	var pending_entry: Dictionary = _bindings[_pending_conflict_action]
+	var owner_entry: Dictionary = _bindings[_existing_owner_action]
+	var old_key: int = int(pending_entry[_pending_conflict_slot])
+	owner_entry[_existing_owner_slot] = old_key
+	pending_entry[_pending_conflict_slot] = _pending_conflict_key
+	if conflict_overlay != null:
+		conflict_overlay.hide()
+	_cancel_waiting_input()
+	_sync_bindings_to_input_map()
+	_refresh_control_buttons_ui()
+	save_settings()
+	_mark_unsaved_changes()
+
+
+func _on_conflict_replace() -> void:
+	var pending_entry: Dictionary = _bindings[_pending_conflict_action]
+	var owner_entry: Dictionary = _bindings[_existing_owner_action]
+	owner_entry[_existing_owner_slot] = int(KEY_NONE)
+	pending_entry[_pending_conflict_slot] = _pending_conflict_key
+	if conflict_overlay != null:
+		conflict_overlay.hide()
+	_cancel_waiting_input()
+	_sync_bindings_to_input_map()
+	_refresh_control_buttons_ui()
+	save_settings()
+	_mark_unsaved_changes()
+
+
+func _sync_bindings_to_input_map() -> void:
+	for act_name in _bindings.keys():
+		var act_str: String = str(act_name)
+		if not InputMap.has_action(act_str):
+			InputMap.add_action(act_str)
+		InputMap.action_erase_events(act_str)
+
+		var entry: Dictionary = _bindings[act_name]
+		for s_id in ["kb1", "kb2"]:
+			var k: int = int(entry[s_id])
+			if k != int(KEY_NONE) and k > 0:
+				# เพิ่มทั้ง keycode และ physical_keycode แยกกันเพื่อให้กดติดแม้คีย์บอร์ดเปลี่ยนภาษา
+				var ev_key := InputEventKey.new()
+				ev_key.keycode = k as Key
+				InputMap.action_add_event(act_str, ev_key)
+
+				var ev_phys := InputEventKey.new()
+				ev_phys.physical_keycode = k as Key
+				InputMap.action_add_event(act_str, ev_phys)
+
+	if _bindings.has(row_1_action):
+		var e1: Dictionary = _bindings[row_1_action]
+		var k1: int = int(e1["kb1"])
+		key_lane_left = (k1 as Key) if (k1 != int(KEY_NONE) and k1 > 0) else KEY_NONE
+	if _bindings.has(row_2_action):
+		var e2: Dictionary = _bindings[row_2_action]
+		var k2: int = int(e2["kb1"])
+		key_lane_right = (k2 as Key) if (k2 != int(KEY_NONE) and k2 > 0) else KEY_NONE
+	if _bindings.has(row_3_action):
+		var e3: Dictionary = _bindings[row_3_action]
+		var kp: int = int(e3["kb1"])
+		if kp != int(KEY_NONE) and kp > 0:
+			key_pause = kp as Key
+
+
+func _refresh_control_buttons_ui() -> void:
+	for act_name in _bindings.keys():
+		var entry: Dictionary = _bindings[act_name]
+		var b_kb1: Button = entry.get("btn_kb1") as Button
+		var b_kb2: Button = entry.get("btn_kb2") as Button
+		var b_joy: Button = entry.get("btn_joy") as Button
+		if b_kb1 != null:
+			b_kb1.text = _format_key_name(int(entry["kb1"]))
+		if b_kb2 != null:
+			b_kb2.text = _format_key_name(int(entry["kb2"]))
+		if b_joy != null:
+			b_joy.text = str(entry["joy"])
+
+
+func _format_key_name(k: int) -> String:
+	if k == int(KEY_NONE) or k <= 0:
+		return "—"
+	match k:
+		KEY_LEFT:
+			return "←"
+		KEY_RIGHT:
+			return "→"
+		KEY_UP:
+			return "↑"
+		KEY_DOWN:
+			return "↓"
+		_:
+			return OS.get_keycode_string(k as Key)
+
+
+func _get_gamepad_button_label(btn_idx: JoyButton) -> String:
+	match btn_idx:
+		JOY_BUTTON_A:
+			return "A / Cross"
+		JOY_BUTTON_B:
+			return "B / Circle"
+		JOY_BUTTON_X:
+			return "X / Square"
+		JOY_BUTTON_Y:
+			return "Y / Triangle"
+		JOY_BUTTON_START:
+			return "Start"
+		JOY_BUTTON_LEFT_SHOULDER:
+			return "LB / L1"
+		JOY_BUTTON_RIGHT_SHOULDER:
+			return "RB / R1"
+		_:
+			return "Button " + str(int(btn_idx))
+
+
+# ==============================================================================
+# 4. การเชื่อมสัญญาณและการทำงานของ Audio / Graphics / Defaults / Save
 # ==============================================================================
 func _connect_all_signals() -> void:
-	if back_btn:
-		back_btn.pressed.connect(close_settings)
-	if prev_tab_btn:
-		prev_tab_btn.pressed.connect(func(): _switch_section_tab(_current_tab_idx - 1))
-	if next_tab_btn:
-		next_tab_btn.pressed.connect(func(): _switch_section_tab(_current_tab_idx + 1))
+	if tab_audio_btn != null and not tab_audio_btn.pressed.is_connected(_on_tab_audio_pressed):
+		tab_audio_btn.pressed.connect(_on_tab_audio_pressed)
+	if tab_graphics_btn != null and not tab_graphics_btn.pressed.is_connected(_on_tab_graphics_pressed):
+		tab_graphics_btn.pressed.connect(_on_tab_graphics_pressed)
+	if tab_controls_btn != null and not tab_controls_btn.pressed.is_connected(_on_tab_controls_pressed):
+		tab_controls_btn.pressed.connect(_on_tab_controls_pressed)
+	if tab_appearance_btn != null and not tab_appearance_btn.pressed.is_connected(_on_tab_appearance_pressed):
+		tab_appearance_btn.pressed.connect(_on_tab_appearance_pressed)
 
-	if tab_display_btn:
-		tab_display_btn.pressed.connect(func(): _switch_section_tab(0))
-	if tab_audio_btn:
-		tab_audio_btn.pressed.connect(func(): _switch_section_tab(1))
-	if tab_controls_btn:
-		tab_controls_btn.pressed.connect(func(): _switch_section_tab(2))
-
-	if res_option:
-		res_option.item_selected.connect(_on_resolution_selected)
-	if screen_prev_btn:
-		screen_prev_btn.pressed.connect(func(): _set_screen_mode(not _is_fullscreen))
-	if screen_next_btn:
-		screen_next_btn.pressed.connect(func(): _set_screen_mode(not _is_fullscreen))
-	if fps_prev_btn:
-		fps_prev_btn.pressed.connect(func(): _step_fps(-1))
-	if fps_next_btn:
-		fps_next_btn.pressed.connect(func(): _step_fps(1))
-
-	if vsync_on_check:
-		vsync_on_check.pressed.connect(func(): _set_vsync(true))
-	if vsync_off_check:
-		vsync_off_check.pressed.connect(func(): _set_vsync(false))
-
-	if fx_low_check:
-		fx_low_check.pressed.connect(func(): _set_special_effect(false))
-	if fx_high_check:
-		fx_high_check.pressed.connect(func(): _set_special_effect(true))
-
-	if master_slider:
+	if master_slider != null and not master_slider.value_changed.is_connected(_on_master_volume_changed):
 		master_slider.value_changed.connect(_on_master_volume_changed)
-	if master_minus_btn:
-		master_minus_btn.pressed.connect(func(): master_slider.value = clampf(master_slider.value - volume_step, master_slider.min_value, master_slider.max_value))
-	if master_plus_btn:
-		master_plus_btn.pressed.connect(func(): master_slider.value = clampf(master_slider.value + volume_step, master_slider.min_value, master_slider.max_value))
-
-	if music_slider:
+	if music_slider != null and not music_slider.value_changed.is_connected(_on_music_volume_changed):
 		music_slider.value_changed.connect(_on_music_volume_changed)
-	if music_minus_btn:
-		music_minus_btn.pressed.connect(func(): music_slider.value = clampf(music_slider.value - volume_step, music_slider.min_value, music_slider.max_value))
-	if music_plus_btn:
-		music_plus_btn.pressed.connect(func(): music_slider.value = clampf(music_slider.value + volume_step, music_slider.min_value, music_slider.max_value))
-
-	if sfx_slider:
+	if sfx_slider != null and not sfx_slider.value_changed.is_connected(_on_sfx_volume_changed):
 		sfx_slider.value_changed.connect(_on_sfx_volume_changed)
-		sfx_slider.drag_ended.connect(func(_changed: bool):
-			if typeof(GameManager) != TYPE_NIL:
-				GameManager.play_ui_hover()
-		)
-	if sfx_minus_btn:
-		sfx_minus_btn.pressed.connect(func(): sfx_slider.value = clampf(sfx_slider.value - volume_step, sfx_slider.min_value, sfx_slider.max_value))
-	if sfx_plus_btn:
-		sfx_plus_btn.pressed.connect(func(): sfx_slider.value = clampf(sfx_slider.value + volume_step, sfx_slider.min_value, sfx_slider.max_value))
 
-	if offset_minus_btn:
-		offset_minus_btn.pressed.connect(func(): _set_audio_offset(_offset_ms - offset_step_ms))
-	if offset_plus_btn:
-		offset_plus_btn.pressed.connect(func(): _set_audio_offset(_offset_ms + offset_step_ms))
+	if res_option != null and not res_option.item_selected.is_connected(_on_resolution_selected):
+		res_option.item_selected.connect(_on_resolution_selected)
+	if fullscreen_check != null and not fullscreen_check.toggled.is_connected(_on_fullscreen_toggled):
+		fullscreen_check.toggled.connect(_on_fullscreen_toggled)
+	if vsync_check != null and not vsync_check.toggled.is_connected(_on_vsync_toggled):
+		vsync_check.toggled.connect(_on_vsync_toggled)
 
-	if bgm_on_check:
-		bgm_on_check.pressed.connect(func(): _set_bgm_enabled(true))
-	if bgm_off_check:
-		bgm_off_check.pressed.connect(func(): _set_bgm_enabled(false))
+	if theme_option != null and not theme_option.item_selected.is_connected(_on_theme_option_selected):
+		theme_option.item_selected.connect(_on_theme_option_selected)
+	if theme_night_btn != null and not theme_night_btn.pressed.is_connected(_on_theme_night_pressed):
+		theme_night_btn.pressed.connect(_on_theme_night_pressed)
+	if theme_light_btn != null and not theme_light_btn.pressed.is_connected(_on_theme_light_pressed):
+		theme_light_btn.pressed.connect(_on_theme_light_pressed)
+	if theme_ocean_btn != null and not theme_ocean_btn.pressed.is_connected(_on_theme_ocean_pressed):
+		theme_ocean_btn.pressed.connect(_on_theme_ocean_pressed)
+	if theme_candy_btn != null and not theme_candy_btn.pressed.is_connected(_on_theme_candy_pressed):
+		theme_candy_btn.pressed.connect(_on_theme_candy_pressed)
+	if theme_dusk_btn != null and not theme_dusk_btn.pressed.is_connected(_on_theme_dusk_pressed):
+		theme_dusk_btn.pressed.connect(_on_theme_dusk_pressed)
 
-	if left_key_btn:
-		left_key_btn.pressed.connect(func(): _start_rebinding("lane_left", left_key_btn))
-	if right_key_btn:
-		right_key_btn.pressed.connect(func(): _start_rebinding("lane_right", right_key_btn))
-	if pause_key_btn:
-		pause_key_btn.pressed.connect(func(): _start_rebinding("pause_game", pause_key_btn))
-	if reset_default_btn:
-		reset_default_btn.pressed.connect(reset_to_defaults)
+	if defaults_btn != null and not defaults_btn.pressed.is_connected(reset_to_defaults):
+		defaults_btn.pressed.connect(reset_to_defaults)
+	if close_btn != null and not close_btn.pressed.is_connected(close_settings):
+		close_btn.pressed.connect(close_settings)
+	if save_btn != null and not save_btn.pressed.is_connected(_on_save_button_pressed):
+		save_btn.pressed.connect(_on_save_button_pressed)
 
-
-func _attach_button_hover_effects() -> void:
-	for node in find_children("*", "BaseButton", true, false):
-		var btn := node as BaseButton
-		btn.set_meta("ui_sfx_bound", true)
-		btn.resized.connect(func(): btn.pivot_offset = btn.size / 2.0)
-		btn.pivot_offset = btn.size / 2.0
-
-		btn.mouse_entered.connect(func():
-			if typeof(GameManager) != TYPE_NIL:
-				GameManager.play_ui_hover()
-			if not (btn in _tab_buttons):
-				var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-				tw.tween_property(btn, "scale", Vector2(1.06, 1.06), 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		)
-		btn.mouse_exited.connect(func():
-			if not (btn in _tab_buttons):
-				var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-				tw.tween_property(btn, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		)
-		btn.button_down.connect(func():
-			if btn != back_btn and not (btn in _tab_buttons) and typeof(GameManager) != TYPE_NIL:
-				GameManager.play_ui_click()
-		)
+	if conflict_cancel_btn != null and not conflict_cancel_btn.pressed.is_connected(_on_conflict_cancel):
+		conflict_cancel_btn.pressed.connect(_on_conflict_cancel)
+	if conflict_swap_btn != null and not conflict_swap_btn.pressed.is_connected(_on_conflict_swap):
+		conflict_swap_btn.pressed.connect(_on_conflict_swap)
+	if conflict_replace_btn != null and not conflict_replace_btn.pressed.is_connected(_on_conflict_replace):
+		conflict_replace_btn.pressed.connect(_on_conflict_replace)
 
 
-# ==============================================================================
-# การทำงานจริงของหมวด DISPLAY (อ่านค่าจาก OptionButton ใน Editor โดยตรง)
-# ==============================================================================
-func _on_resolution_selected(idx: int) -> void:
-	if res_option == null or idx < 0 or idx >= res_option.item_count:
-		return
-	var res_text: String = res_option.get_item_text(idx).strip_edges().to_lower()
-	var parts: PackedStringArray = res_text.split("x")
-	if parts.size() == 2 and parts[0].is_valid_int() and parts[1].is_valid_int():
-		var target_size := Vector2i(int(parts[0]), int(parts[1]))
-		if not _is_fullscreen:
-			DisplayServer.window_set_size(target_size)
-	if not _is_loading_config:
-		save_settings()
+func _on_theme_option_selected(idx: int) -> void:
+	apply_theme_preset(idx, true)
 
 
-func _set_screen_mode(fullscreen: bool) -> void:
-	_is_fullscreen = fullscreen
-	if screen_mode_val:
-		screen_mode_val.text = "Fullscreen" if _is_fullscreen else "Windowed"
-	DisplayServer.window_set_mode(
-		DisplayServer.WINDOW_MODE_FULLSCREEN if _is_fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
-	)
-	if not _is_loading_config:
-		save_settings()
+func _on_theme_night_pressed() -> void:
+	apply_theme_preset(0, true)
 
 
-func _step_fps(delta_step: int) -> void:
-	if fps_limits.is_empty():
-		return
-	_fps_index = posmod(_fps_index + delta_step, fps_limits.size())
-	_apply_fps_index(_fps_index)
-	if not _is_loading_config:
-		save_settings()
+func _on_theme_light_pressed() -> void:
+	apply_theme_preset(1, true)
 
 
-func _apply_fps_index(idx: int) -> void:
-	if fps_limits.is_empty():
-		return
-	_fps_index = clampi(idx, 0, fps_limits.size() - 1)
-	Engine.max_fps = fps_limits[_fps_index]
-	if fps_val_lbl and _fps_index < fps_labels.size():
-		fps_val_lbl.text = fps_labels[_fps_index]
+func _on_theme_ocean_pressed() -> void:
+	apply_theme_preset(2, true)
 
 
-func _set_vsync(enabled: bool) -> void:
-	_vsync_enabled = enabled
-	if vsync_on_check:
-		vsync_on_check.set_pressed_no_signal(enabled)
-	if vsync_off_check:
-		vsync_off_check.set_pressed_no_signal(not enabled)
-	DisplayServer.window_set_vsync_mode(
-		DisplayServer.VSYNC_ENABLED if enabled else DisplayServer.VSYNC_DISABLED
-	)
-	if not _is_loading_config:
-		save_settings()
+func _on_theme_candy_pressed() -> void:
+	apply_theme_preset(3, true)
 
 
-func _set_special_effect(high_fx: bool) -> void:
-	_high_quality_fx = high_fx
-	if fx_low_check:
-		fx_low_check.set_pressed_no_signal(not high_fx)
-	if fx_high_check:
-		fx_high_check.set_pressed_no_signal(high_fx)
-
-	var root_scene: Node = get_tree().current_scene
-	if root_scene != null:
-		var world_env: WorldEnvironment = root_scene.find_child("WorldEnvironment", true, false) as WorldEnvironment
-		if world_env and world_env.environment:
-			world_env.environment.fog_enabled = high_fx
-	if not _is_loading_config:
-		save_settings()
+func _on_theme_dusk_pressed() -> void:
+	apply_theme_preset(4, true)
 
 
-# ==============================================================================
-# การทำงานจริงของหมวด AUDIO
-# ==============================================================================
+func _on_save_button_pressed() -> void:
+	save_settings()
+	_set_status_text("Settings saved.")
+
+
 func _ensure_audio_buses_exist() -> void:
 	if AudioServer.get_bus_index("Music") == -1:
 		var m_idx: int = AudioServer.bus_count
@@ -425,74 +761,70 @@ func _ensure_audio_buses_exist() -> void:
 
 
 func _on_master_volume_changed(val: float) -> void:
-	if master_title_lbl:
-		master_title_lbl.text = "%s   %d" % [_master_prefix, int(round(val))]
+	if master_val_label != null:
+		master_val_label.text = "%d %%" % int(round(val))
 	_set_bus_volume_percent("Master", val)
-	if not _is_loading_config:
-		save_settings()
+	if not _is_loading:
+		_mark_unsaved_changes()
 
 
 func _on_music_volume_changed(val: float) -> void:
-	if music_title_lbl:
-		music_title_lbl.text = "%s   %d" % [_music_prefix, int(round(val))]
+	if music_val_label != null:
+		music_val_label.text = "%d %%" % int(round(val))
 	_route_all_music_players_in_tree()
-	if _bgm_enabled:
-		_set_bus_volume_percent("Music", val)
-	if not _is_loading_config:
-		save_settings()
+	_set_bus_volume_percent("Music", val)
+	if not _is_loading:
+		_mark_unsaved_changes()
 
 
 func _on_sfx_volume_changed(val: float) -> void:
-	if sfx_title_lbl:
-		sfx_title_lbl.text = "%s   %d" % [_sfx_prefix, int(round(val))]
+	if sfx_val_label != null:
+		sfx_val_label.text = "%d %%" % int(round(val))
 	_set_bus_volume_percent("SFX", val)
-	if not _is_loading_config:
-		save_settings()
+	if not _is_loading:
+		_mark_unsaved_changes()
 
 
-func _set_audio_offset(new_offset_ms: int) -> void:
-	_offset_ms = clampi(new_offset_ms, -150, 150)
-	custom_audio_offset_sec = float(_offset_ms) / 1000.0
-	if offset_val_lbl:
-		offset_val_lbl.text = "%+d ms" % _offset_ms if _offset_ms != 0 else "0 ms"
+func _on_resolution_selected(idx: int) -> void:
+	if res_option == null or idx < 0 or idx >= res_option.item_count:
+		return
+	var raw_txt: String = res_option.get_item_text(idx).replace("×", "x").to_lower()
+	var parts: PackedStringArray = raw_txt.split("x")
+	if parts.size() == 2:
+		var w: int = int(parts[0].strip_edges())
+		var h: int = int(parts[1].strip_edges())
+		if w > 0 and h > 0 and (fullscreen_check == null or not fullscreen_check.button_pressed):
+			DisplayServer.window_set_size(Vector2i(w, h))
+	if not _is_loading:
+		_mark_unsaved_changes()
 
-	var root_scene: Node = get_tree().current_scene
-	if root_scene != null:
-		var spawner: Node = root_scene.find_child("EnemySpawner", true, false)
-		if spawner != null and "audio_offset" in spawner:
-			spawner.audio_offset = custom_audio_offset_sec
-	if not _is_loading_config:
-		save_settings()
+
+func _on_fullscreen_toggled(enabled: bool) -> void:
+	DisplayServer.window_set_mode(
+		DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED
+	)
+	if not _is_loading:
+		_mark_unsaved_changes()
 
 
-func _set_bgm_enabled(enabled: bool) -> void:
-	_bgm_enabled = enabled
-	if bgm_on_check:
-		bgm_on_check.set_pressed_no_signal(enabled)
-	if bgm_off_check:
-		bgm_off_check.set_pressed_no_signal(not enabled)
-
-	var music_bus: int = AudioServer.get_bus_index("Music")
-	if music_bus >= 0:
-		if not enabled:
-			AudioServer.set_bus_mute(music_bus, true)
-		else:
-			var vol: float = music_slider.value if music_slider else default_music_volume
-			_set_bus_volume_percent("Music", vol)
-	if not _is_loading_config:
-		save_settings()
+func _on_vsync_toggled(enabled: bool) -> void:
+	DisplayServer.window_set_vsync_mode(
+		DisplayServer.VSYNC_ENABLED if enabled else DisplayServer.VSYNC_DISABLED
+	)
+	if not _is_loading:
+		_mark_unsaved_changes()
 
 
 func _route_all_music_players_in_tree() -> void:
-	var tree_root: Node = get_tree().root if get_tree() else null
+	var tree_root: Node = get_tree().root if get_tree() != null else null
 	if tree_root == null or AudioServer.get_bus_index("Music") == -1:
 		return
 	if typeof(GameManager) != TYPE_NIL and GameManager.has_method("bind_ui_and_audio_buses_recursive"):
 		GameManager.bind_ui_and_audio_buses_recursive(tree_root)
 		return
 	for node in tree_root.find_children("*", "AudioStreamPlayer", true, false):
-		var p := node as AudioStreamPlayer
-		if not p.name.begins_with("UISFXPlayer") and p.bus == &"Master":
+		var p: AudioStreamPlayer = node as AudioStreamPlayer
+		if p != null and not p.name.begins_with("UISFXPlayer") and p.bus == &"Master":
 			p.bus = &"Music"
 
 
@@ -507,182 +839,125 @@ func _set_bus_volume_percent(bus_name: String, pct: float) -> void:
 		AudioServer.set_bus_volume_db(idx, linear_to_db(pct / 100.0))
 
 
+func _mark_unsaved_changes() -> void:
+	_set_status_text("Unsaved changes.")
+
+
+func _set_status_text(txt: String) -> void:
+	if status_label != null:
+		status_label.text = txt
+
+
 # ==============================================================================
-# หมวด CONTROLS และปุ่ม RESET TO DEFAULT
+# 5. ปุ่ม Defaults และการบันทึก/โหลดไฟล์ user://settings.cfg
 # ==============================================================================
-func _init_input_map() -> void:
-	for pair in [["lane_left", key_lane_left], ["lane_right", key_lane_right], ["pause_game", key_pause]]:
-		var act: String = pair[0]
-		var def_k: Key = pair[1]
-		if not InputMap.has_action(act):
-			InputMap.add_action(act)
-		if InputMap.action_get_events(act).is_empty():
-			var ev := InputEventKey.new()
-			ev.keycode = def_k
-			ev.physical_keycode = def_k
-			InputMap.action_add_event(act, ev)
-
-
-func _start_rebinding(action_name: String, btn: Button) -> void:
-	_refresh_keybind_labels()
-	_waiting_for_action = action_name
-	if btn:
-		btn.text = "PRESS KEY..."
-
-
-func _apply_key_binding(action_name: String, new_key: Key) -> void:
-	InputMap.action_erase_events(action_name)
-	var ev := InputEventKey.new()
-	ev.keycode = new_key
-	ev.physical_keycode = new_key
-	InputMap.action_add_event(action_name, ev)
-
-	match action_name:
-		"lane_left":
-			key_lane_left = new_key
-		"lane_right":
-			key_lane_right = new_key
-		"pause_game":
-			key_pause = new_key
-
-	_refresh_keybind_labels()
-
-
-func _refresh_keybind_labels() -> void:
-	if left_key_btn:
-		left_key_btn.text = "KEY: " + OS.get_keycode_string(key_lane_left).to_upper()
-	if right_key_btn:
-		right_key_btn.text = "KEY: " + OS.get_keycode_string(key_lane_right).to_upper()
-	if pause_key_btn:
-		pause_key_btn.text = OS.get_keycode_string(key_pause).to_upper()
-
-
-func _input(event: InputEvent) -> void:
-	if not visible:
-		return
-
-	if event is InputEventKey and event.pressed and not event.echo:
-		var pressed_k: Key = event.keycode if event.keycode != KEY_NONE else event.physical_keycode
-
-		if _waiting_for_action != "":
-			get_viewport().set_input_as_handled()
-			_apply_key_binding(_waiting_for_action, pressed_k)
-			_waiting_for_action = ""
-			if typeof(GameManager) != TYPE_NIL:
-				GameManager.play_ui_click()
-			save_settings()
-			return
-
-		if pressed_k == KEY_Q:
-			get_viewport().set_input_as_handled()
-			_switch_section_tab(_current_tab_idx - 1)
-		elif pressed_k == KEY_E:
-			get_viewport().set_input_as_handled()
-			_switch_section_tab(_current_tab_idx + 1)
-
-
 func reset_to_defaults() -> void:
-	_waiting_for_action = ""
-	_is_loading_config = true
+	_cancel_waiting_input()
+	_is_loading = true
 
-	if res_option and res_option.item_count > 0:
-		res_option.select(0)
-		_on_resolution_selected(0)
-	_set_screen_mode(default_fullscreen)
-	_apply_fps_index(0)
-	_set_vsync(default_vsync)
-	_set_special_effect(default_high_quality)
-
-	if master_slider:
+	if master_slider != null:
 		master_slider.value = default_master_volume
 		_on_master_volume_changed(default_master_volume)
-	if music_slider:
+	if music_slider != null:
 		music_slider.value = default_music_volume
 		_on_music_volume_changed(default_music_volume)
-	if sfx_slider:
+	if sfx_slider != null:
 		sfx_slider.value = default_sfx_volume
 		_on_sfx_volume_changed(default_sfx_volume)
 
-	_set_audio_offset(0)
-	_set_bgm_enabled(default_bgm_enabled)
+	if res_option != null and res_option.item_count > 0:
+		var r_idx: int = clampi(default_resolution_index, 0, res_option.item_count - 1)
+		res_option.select(r_idx)
+		_on_resolution_selected(r_idx)
 
-	_apply_key_binding("lane_left", KEY_F)
-	_apply_key_binding("lane_right", KEY_J)
-	_apply_key_binding("pause_game", KEY_ESCAPE)
+	if fullscreen_check != null:
+		fullscreen_check.button_pressed = default_fullscreen
+		_on_fullscreen_toggled(default_fullscreen)
+	if vsync_check != null:
+		vsync_check.button_pressed = default_vsync
+		_on_vsync_toggled(default_vsync)
 
-	_is_loading_config = false
+	for act_name in _bindings.keys():
+		var entry: Dictionary = _bindings[act_name]
+		entry["kb1"] = int(entry["default_kb1"])
+		entry["kb2"] = int(entry["default_kb2"])
+		entry["joy"] = str(entry["default_joy"])
+	_sync_bindings_to_input_map()
+	_refresh_control_buttons_ui()
+
+	apply_theme_preset(default_theme, false)
 	save_settings()
 
-	var active_page: Control = _tab_pages[_current_tab_idx]
-	if active_page:
-		active_page.pivot_offset = active_page.size / 2.0
-		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-		tw.tween_property(active_page, "scale", Vector2(1.04, 0.96), 0.06)
-		tw.tween_property(active_page, "scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_is_loading = false
+	_mark_unsaved_changes()
 
 
 func save_settings() -> void:
-	if res_option:
-		_config.set_value("display", "res_index", res_option.selected)
-	_config.set_value("display", "fullscreen", _is_fullscreen)
-	_config.set_value("display", "fps_index", _fps_index)
-	_config.set_value("display", "vsync", _vsync_enabled)
-	_config.set_value("display", "high_quality", _high_quality_fx)
-
-	if master_slider:
+	if master_slider != null:
 		_config.set_value("audio", "master_volume", master_slider.value)
-	if music_slider:
+	if music_slider != null:
 		_config.set_value("audio", "music_volume", music_slider.value)
-	if sfx_slider:
+	if sfx_slider != null:
 		_config.set_value("audio", "sfx_volume", sfx_slider.value)
-	_config.set_value("audio", "offset_ms", _offset_ms)
-	_config.set_value("audio", "bgm_enabled", _bgm_enabled)
 
-	_config.set_value("controls", "lane_left", int(key_lane_left))
-	_config.set_value("controls", "lane_right", int(key_lane_right))
-	_config.set_value("controls", "pause_game", int(key_pause))
+	if res_option != null:
+		_config.set_value("graphics", "res_index", res_option.selected)
+	if fullscreen_check != null:
+		_config.set_value("graphics", "fullscreen", fullscreen_check.button_pressed)
+	if vsync_check != null:
+		_config.set_value("graphics", "vsync", vsync_check.button_pressed)
+
+	_config.set_value("appearance", "theme_index", _current_theme_idx)
+
+	for act_name in _bindings.keys():
+		var entry: Dictionary = _bindings[act_name]
+		_config.set_value("controls_kb1", str(act_name), int(entry["kb1"]))
+		_config.set_value("controls_kb2", str(act_name), int(entry["kb2"]))
+		_config.set_value("controls_joy", str(act_name), str(entry["joy"]))
 
 	_config.save(CONFIG_PATH)
 
 
 func load_settings() -> void:
-	_is_loading_config = true
+	_is_loading = true
 	if _config.load(CONFIG_PATH) != OK:
-		_set_screen_mode(default_fullscreen)
-		_apply_fps_index(0)
-		_set_vsync(default_vsync)
-		_set_special_effect(default_high_quality)
-		_on_master_volume_changed(default_master_volume)
-		_on_music_volume_changed(default_music_volume)
-		_on_sfx_volume_changed(default_sfx_volume)
-		_set_audio_offset(0)
-		_set_bgm_enabled(default_bgm_enabled)
-		_is_loading_config = false
+		reset_to_defaults()
+		_set_status_text("")
+		_is_loading = false
 		return
 
-	if res_option and res_option.item_count > 0:
-		var r_idx: int = clampi(int(_config.get_value("display", "res_index", 0)), 0, res_option.item_count - 1)
-		res_option.select(r_idx)
-		_on_resolution_selected(r_idx)
-	_set_screen_mode(bool(_config.get_value("display", "fullscreen", default_fullscreen)))
-	_apply_fps_index(int(_config.get_value("display", "fps_index", 0)))
-	_set_vsync(bool(_config.get_value("display", "vsync", default_vsync)))
-	_set_special_effect(bool(_config.get_value("display", "high_quality", default_high_quality)))
-
-	if master_slider:
+	if master_slider != null:
 		master_slider.value = float(_config.get_value("audio", "master_volume", default_master_volume))
 		_on_master_volume_changed(master_slider.value)
-	if music_slider:
+	if music_slider != null:
 		music_slider.value = float(_config.get_value("audio", "music_volume", default_music_volume))
 		_on_music_volume_changed(music_slider.value)
-	if sfx_slider:
+	if sfx_slider != null:
 		sfx_slider.value = float(_config.get_value("audio", "sfx_volume", default_sfx_volume))
 		_on_sfx_volume_changed(sfx_slider.value)
 
-	_set_audio_offset(int(_config.get_value("audio", "offset_ms", 0)))
-	_set_bgm_enabled(bool(_config.get_value("audio", "bgm_enabled", default_bgm_enabled)))
+	if res_option != null and res_option.item_count > 0:
+		var r_idx: int = clampi(int(_config.get_value("graphics", "res_index", default_resolution_index)), 0, res_option.item_count - 1)
+		res_option.select(r_idx)
+		_on_resolution_selected(r_idx)
 
-	_apply_key_binding("lane_left", int(_config.get_value("controls", "lane_left", KEY_F)) as Key)
-	_apply_key_binding("lane_right", int(_config.get_value("controls", "lane_right", KEY_J)) as Key)
-	_apply_key_binding("pause_game", int(_config.get_value("controls", "pause_game", KEY_ESCAPE)) as Key)
-	_is_loading_config = false
+	if fullscreen_check != null:
+		fullscreen_check.button_pressed = bool(_config.get_value("graphics", "fullscreen", default_fullscreen))
+		_on_fullscreen_toggled(fullscreen_check.button_pressed)
+	if vsync_check != null:
+		vsync_check.button_pressed = bool(_config.get_value("graphics", "vsync", default_vsync))
+		_on_vsync_toggled(vsync_check.button_pressed)
+
+	for act_name in _bindings.keys():
+		var entry: Dictionary = _bindings[act_name]
+		entry["kb1"] = int(_config.get_value("controls_kb1", str(act_name), entry["default_kb1"]))
+		entry["kb2"] = int(_config.get_value("controls_kb2", str(act_name), entry["default_kb2"]))
+		entry["joy"] = str(_config.get_value("controls_joy", str(act_name), entry["default_joy"]))
+	_sync_bindings_to_input_map()
+	_refresh_control_buttons_ui()
+
+	var saved_theme: int = int(_config.get_value("appearance", "theme_index", default_theme))
+	apply_theme_preset(saved_theme, false)
+
+	_is_loading = false
+	_set_status_text("")

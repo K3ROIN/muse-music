@@ -1,11 +1,18 @@
 extends Node
 
+# ==============================================================================
+# GameManager (Autoload Singleton) - res://Scripts/game_manager.gd
+# โหลดปุ่มควบคุมที่ผู้เล่นตั้งค่าไว้ใน "user://settings.cfg" เข้าสู่ InputMap ทันทีที่เปิดเกม
+# เพื่อให้กดปุ่มที่ตั้งใหม่ (เช่น D กับ K) ในด่านวิ่งได้ทันทีแม้ไม่ได้เปิดหน้า Settings ก่อนเข้าเล่น
+# ==============================================================================
+
 signal score_changed(new_score: int, new_combo: int, judgment: String)
 signal stamina_changed(current_hp: float, max_hp: float)
 signal player_died()
 signal song_finished_for_result()
 
 const PERFECT_SCORE: int = 300
+const CONFIG_PATH: String = "user://settings.cfg"
 
 const SFX_PATHS: Dictionary = {
 	"hover": "res://Audios/SFX/ui/Hover.wav",
@@ -34,15 +41,58 @@ var _sfx_streams: Dictionary = {}
 var _sfx_players: Array[AudioStreamPlayer] = []
 var _next_player_idx: int = 0
 
+var saved_map_index: int = 0
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_ensure_audio_buses()
+	_load_saved_keybinds_and_audio_on_startup()
 	_init_ui_sfx_players()
 
 	get_tree().node_added.connect(_on_tree_node_added)
 	if get_tree().root:
 		bind_ui_and_audio_buses_recursive(get_tree().root)
+
+
+func _load_saved_keybinds_and_audio_on_startup() -> void:
+	var cfg := ConfigFile.new()
+	var err: Error = cfg.load(CONFIG_PATH)
+
+	var left_kb1: int = int(KEY_F)
+	var left_kb2: int = int(KEY_LEFT)
+	var right_kb1: int = int(KEY_J)
+	var right_kb2: int = int(KEY_RIGHT)
+	var pause_kb1: int = int(KEY_ESCAPE)
+	var pause_kb2: int = int(KEY_NONE)
+
+	if err == OK:
+		left_kb1 = int(cfg.get_value("controls_kb1", "lane_left", int(KEY_F)))
+		left_kb2 = int(cfg.get_value("controls_kb2", "lane_left", int(KEY_LEFT)))
+		right_kb1 = int(cfg.get_value("controls_kb1", "lane_right", int(KEY_J)))
+		right_kb2 = int(cfg.get_value("controls_kb2", "lane_right", int(KEY_RIGHT)))
+		pause_kb1 = int(cfg.get_value("controls_kb1", "pause_game", int(KEY_ESCAPE)))
+		pause_kb2 = int(cfg.get_value("controls_kb2", "pause_game", int(KEY_NONE)))
+
+	_register_action_events("lane_left", [left_kb1, left_kb2])
+	_register_action_events("lane_right", [right_kb1, right_kb2])
+	_register_action_events("pause_game", [pause_kb1, pause_kb2])
+
+
+func _register_action_events(action_name: String, keys: Array[int]) -> void:
+	if not InputMap.has_action(action_name):
+		InputMap.add_action(action_name)
+	InputMap.action_erase_events(action_name)
+
+	for k in keys:
+		if k != int(KEY_NONE) and k > 0:
+			var ev_key := InputEventKey.new()
+			ev_key.keycode = k as Key
+			InputMap.action_add_event(action_name, ev_key)
+
+			var ev_phys := InputEventKey.new()
+			ev_phys.physical_keycode = k as Key
+			InputMap.action_add_event(action_name, ev_phys)
 
 
 func _ensure_audio_buses() -> void:

@@ -1,90 +1,149 @@
 [gd_scene format=3 uid="uid://urm7ur7343b5"]
 
 [ext_resource type="Script" uid="uid://civo31ke5gc54" path="res://Scripts/UI_Menus/settings_menu.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://dfi2f3m20m8ly" path="res://Assets/icons/1x/backward.png" id="2_7y5a0"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_idle"]
-bg_color = Color(0.2, 0, 0.22, 0)
-skew = Vector2(0.32, 0)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_card"]
+content_margin_left = 32.0
+content_margin_top = 28.0
+content_margin_right = 32.0
+content_margin_bottom = 24.0
+bg_color = Color(0.992157, 0.956863, 0.972549, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.94902, 0.862745, 0.901961, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 24
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_btn"]
-bg_color = Color(1, 0.0862745, 0.517647, 1)
-skew = Vector2(0.32, 0)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_strip"]
+content_margin_left = 6.0
+content_margin_top = 5.0
+content_margin_right = 6.0
+content_margin_bottom = 5.0
+bg_color = Color(0.968627, 0.917647, 0.945098, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.933333, 0.839216, 0.882353, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_inactive"]
-bg_color = Color(0.78, 0, 0.42, 1)
-skew = Vector2(0.32, 0)
-border_color = Color(0.55, 0, 0.3, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_active"]
-bg_color = Color(1, 0.133333, 0.533333, 1)
-skew = Vector2(0.32, 0)
-border_color = Color(0.65, 0, 0.35, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dark_pill"]
-content_margin_left = 28.0
-content_margin_top = 8.0
-content_margin_right = 28.0
-content_margin_bottom = 8.0
-bg_color = Color(0.180392, 0, 0.203922, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pink_dropdown"]
 content_margin_left = 18.0
 content_margin_top = 6.0
 content_margin_right = 18.0
 content_margin_bottom = 6.0
-bg_color = Color(1, 0.0862745, 0.517647, 1)
+bg_color = Color(1, 1, 1, 0)
+skew = Vector2(0.32, 0)
+border_color = Color(0.55, 0, 0.3, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_groove"]
-content_margin_top = 14.0
-content_margin_bottom = 14.0
-bg_color = Color(0.32, 0.02, 0.26, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.18, 0, 0.19, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_active"]
+content_margin_left = 18.0
+content_margin_top = 6.0
+content_margin_right = 18.0
+content_margin_bottom = 6.0
+bg_color = Color(0.956863, 0.317647, 0.54902, 1)
+skew = Vector2(0.32, 0)
+border_color = Color(0.65, 0, 0.35, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_row_card"]
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.941176, 0.858824, 0.898039, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_track"]
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0.929412, 0.847059, 0.886275, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_fill"]
-content_margin_top = 14.0
-content_margin_bottom = 14.0
-bg_color = Color(0.85, 0.06, 0.46, 1)
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0.956863, 0.317647, 0.54902, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_bottom = 4
 border_color = Color(0.18, 0, 0.19, 1)
-corner_radius_top_left = 14
-corner_radius_bottom_left = 14
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reset_pill"]
-content_margin_left = 24.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_secondary"]
+content_margin_left = 18.0
 content_margin_top = 8.0
-content_margin_right = 24.0
+content_margin_right = 18.0
 content_margin_bottom = 8.0
-bg_color = Color(0.28, 0.02, 0.26, 1)
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.901961, 0.807843, 0.854902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_waiting"]
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+bg_color = Color(0.992157, 0.894118, 0.937255, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 0.133333, 0.533333, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+border_color = Color(0.956863, 0.317647, 0.54902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
-[node name="SettingsMenu" type="Control" unique_id=571541930]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_primary"]
+content_margin_left = 22.0
+content_margin_top = 8.0
+content_margin_right = 22.0
+content_margin_bottom = 8.0
+bg_color = Color(0.956863, 0.317647, 0.54902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="SettingsMenu" type="Control" unique_id=965233952]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -94,620 +153,722 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1341661237]
+[node name="Backdrop" type="ColorRect" parent="." unique_id=2115579299]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.258824, 0, 0.278431, 0.98)
+color = Color(0.05, 0.06, 0.12, 0.65)
 
-[node name="RibbonBar" type="ColorRect" parent="." unique_id=530114099]
-custom_minimum_size = Vector2(0, 58)
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1173070083]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
-color = Color(0.847059, 0, 0.439216, 1)
-
-[node name="BackCon" type="BoxContainer" parent="RibbonBar" unique_id=279133719]
-layout_mode = 1
-anchors_preset = 9
-anchor_bottom = 1.0
-offset_right = 88.0
 grow_vertical = 2
 
-[node name="BackButton" type="Button" parent="RibbonBar/BackCon" unique_id=1597337013]
-custom_minimum_size = Vector2(88, 56)
+[node name="MainCard" type="PanelContainer" parent="CenterContainer" unique_id=2062438645]
+custom_minimum_size = Vector2(820, 520)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.65, 0.45, 0.68, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_card")
+
+[node name="CardVBox" type="VBoxContainer" parent="CenterContainer/MainCard" unique_id=1206410931]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="HeaderVBox" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox" unique_id=1613005256]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/HeaderVBox" unique_id=2074751617]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
 theme_override_font_sizes/font_size = 26
-theme_override_styles/normal = SubResource("StyleBoxFlat_back_idle")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_back_btn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_back_btn")
-icon = ExtResource("2_7y5a0")
+text = "Settings"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="RibbonBar" unique_id=1931743482]
-layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -404.0
-grow_horizontal = 0
-grow_vertical = 2
-
-[node name="RibbonCenter" type="HBoxContainer" parent="RibbonBar/HBoxContainer" unique_id=463507662]
+[node name="SubtitleLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/HeaderVBox" unique_id=168301203]
 layout_mode = 2
-theme_override_constants/separation = 8
-alignment = 1
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 14
+text = "Tune sound, display, controls and appearance to your liking."
 
-[node name="TabDisplayBtn" type="Button" parent="RibbonBar/HBoxContainer/RibbonCenter" unique_id=984635843]
-custom_minimum_size = Vector2(220, 58)
+[node name="TabStripPanel" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox" unique_id=1495998594]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.38, 0, 0.22, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_tab_strip")
+
+[node name="TabBarHBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/TabStripPanel" unique_id=1372846810]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TabAudioBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/TabStripPanel/TabBarHBox" unique_id=423731177]
+custom_minimum_size = Vector2(84, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.26, 0.31, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_tab_inactive")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_active")
-theme_override_styles/hover = SubResource("StyleBoxFlat_tab_active")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_inactive")
 toggle_mode = true
 button_pressed = true
-text = "⚙  DISPLAY"
+text = "Audio"
 
-[node name="TabAudioBtn" type="Button" parent="RibbonBar/HBoxContainer/RibbonCenter" unique_id=604272192]
-custom_minimum_size = Vector2(84, 58)
+[node name="TabGraphicsBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/TabStripPanel/TabBarHBox" unique_id=1076802339]
+custom_minimum_size = Vector2(96, 34)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.38, 0, 0.22, 1)
+theme_override_colors/font_color = Color(0.35, 0.26, 0.31, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_tab_inactive")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_active")
-theme_override_styles/hover = SubResource("StyleBoxFlat_tab_active")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_inactive")
 toggle_mode = true
-text = "🔊"
+text = "Graphics"
 
-[node name="TabControlsBtn" type="Button" parent="RibbonBar/HBoxContainer/RibbonCenter" unique_id=1779124544]
-custom_minimum_size = Vector2(84, 58)
+[node name="TabControlsBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/TabStripPanel/TabBarHBox" unique_id=2053383220]
+custom_minimum_size = Vector2(96, 34)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.38, 0, 0.22, 1)
+theme_override_colors/font_color = Color(0.35, 0.26, 0.31, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_tab_inactive")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_active")
-theme_override_styles/hover = SubResource("StyleBoxFlat_tab_active")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_inactive")
 toggle_mode = true
-text = "🎮"
+text = "Controls"
 
-[node name="BoxContainer" type="BoxContainer" parent="." unique_id=1725142830]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -380.0
-offset_top = -166.0
-offset_right = 380.0
-offset_bottom = 166.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ContentArea" type="CenterContainer" parent="BoxContainer" unique_id=461602384]
+[node name="TabAppearanceBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/TabStripPanel/TabBarHBox" unique_id=215430687]
+custom_minimum_size = Vector2(114, 34)
 layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.26, 0.31, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_inactive")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_active")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_inactive")
+toggle_mode = true
+text = "Appearance"
 
-[node name="DisplayPage" type="VBoxContainer" parent="BoxContainer/ContentArea" unique_id=704688087]
-custom_minimum_size = Vector2(760, 0)
+[node name="PagesContainer" type="MarginContainer" parent="CenterContainer/MainCard/CardVBox" unique_id=1979523703]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="AudioPage" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer" unique_id=2121211206]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MasterRow" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage" unique_id=1829769312]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MasterRow" unique_id=1957999401]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="ResPill" type="PanelContainer" parent="BoxContainer/ContentArea/DisplayPage" unique_id=17623887]
-custom_minimum_size = Vector2(760, 50)
+[node name="MasterLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MasterRow/HBox" unique_id=1806076223]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 16
+text = "Master Volume"
 
-[node name="HBox" type="HBoxContainer" parent="BoxContainer/ContentArea/DisplayPage/ResPill" unique_id=2080779097]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BoxContainer/ContentArea/DisplayPage/ResPill/HBox" unique_id=160345675]
-custom_minimum_size = Vector2(280, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.55, 0.78, 1)
-theme_override_font_sizes/font_size = 20
-text = "Resolution"
-horizontal_alignment = 1
-
-[node name="ResOption" type="OptionButton" parent="BoxContainer/ContentArea/DisplayPage/ResPill/HBox" unique_id=1695304151]
-custom_minimum_size = Vector2(320, 36)
-layout_mode = 2
-size_flags_horizontal = 6
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_pink_dropdown")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pink_dropdown")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pink_dropdown")
-alignment = 1
-selected = 0
-item_count = 4
-popup/item_0/text = "1152x648"
-popup/item_0/id = 0
-popup/item_1/text = "1280x720"
-popup/item_1/id = 1
-popup/item_2/text = "1360x768"
-popup/item_2/id = 2
-popup/item_3/text = "1920x1080"
-popup/item_3/id = 3
-
-[node name="ScreenModePill" type="PanelContainer" parent="BoxContainer/ContentArea/DisplayPage" unique_id=980766064]
-custom_minimum_size = Vector2(760, 50)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
-
-[node name="HBox" type="HBoxContainer" parent="BoxContainer/ContentArea/DisplayPage/ScreenModePill" unique_id=1896082450]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BoxContainer/ContentArea/DisplayPage/ScreenModePill/HBox" unique_id=495057377]
-custom_minimum_size = Vector2(280, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.55, 0.78, 1)
-theme_override_font_sizes/font_size = 20
-text = "Screen Mode"
-horizontal_alignment = 1
-
-[node name="ScreenPrevBtn" type="Button" parent="BoxContainer/ContentArea/DisplayPage/ScreenModePill/HBox" unique_id=1756465113]
-custom_minimum_size = Vector2(44, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.13, 0.53, 1)
-theme_override_font_sizes/font_size = 22
-text = "❮"
-flat = true
-
-[node name="ScreenModeValue" type="Label" parent="BoxContainer/ContentArea/DisplayPage/ScreenModePill/HBox" unique_id=980477588]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.85, 0.25, 0.58, 1)
-theme_override_font_sizes/font_size = 20
-text = "Windowed"
-horizontal_alignment = 1
-
-[node name="ScreenNextBtn" type="Button" parent="BoxContainer/ContentArea/DisplayPage/ScreenModePill/HBox" unique_id=447519306]
-custom_minimum_size = Vector2(44, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.13, 0.53, 1)
-theme_override_font_sizes/font_size = 22
-text = "❯"
-flat = true
-
-[node name="FrameratePill" type="PanelContainer" parent="BoxContainer/ContentArea/DisplayPage" unique_id=1273122602]
-custom_minimum_size = Vector2(760, 50)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
-
-[node name="HBox" type="HBoxContainer" parent="BoxContainer/ContentArea/DisplayPage/FrameratePill" unique_id=45793908]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BoxContainer/ContentArea/DisplayPage/FrameratePill/HBox" unique_id=1769516600]
-custom_minimum_size = Vector2(280, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.55, 0.78, 1)
-theme_override_font_sizes/font_size = 20
-text = "Framerate"
-horizontal_alignment = 1
-
-[node name="FPSPrevBtn" type="Button" parent="BoxContainer/ContentArea/DisplayPage/FrameratePill/HBox" unique_id=408340957]
-custom_minimum_size = Vector2(44, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.13, 0.53, 1)
-theme_override_font_sizes/font_size = 22
-text = "❮"
-flat = true
-
-[node name="FPSValue" type="Label" parent="BoxContainer/ContentArea/DisplayPage/FrameratePill/HBox" unique_id=228439833]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.85, 0.25, 0.58, 1)
-theme_override_font_sizes/font_size = 20
-text = "60 FPS"
-horizontal_alignment = 1
-
-[node name="FPSNextBtn" type="Button" parent="BoxContainer/ContentArea/DisplayPage/FrameratePill/HBox" unique_id=1435983927]
-custom_minimum_size = Vector2(44, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.13, 0.53, 1)
-theme_override_font_sizes/font_size = 22
-text = "❯"
-flat = true
-
-[node name="VsyncPill" type="PanelContainer" parent="BoxContainer/ContentArea/DisplayPage" unique_id=1091698983]
-custom_minimum_size = Vector2(760, 50)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
-
-[node name="HBox" type="HBoxContainer" parent="BoxContainer/ContentArea/DisplayPage/VsyncPill" unique_id=1712510422]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BoxContainer/ContentArea/DisplayPage/VsyncPill/HBox" unique_id=1339065303]
-custom_minimum_size = Vector2(280, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.55, 0.78, 1)
-theme_override_font_sizes/font_size = 20
-text = "V-Sync"
-horizontal_alignment = 1
-
-[node name="VsyncOnCheck" type="CheckBox" parent="BoxContainer/ContentArea/DisplayPage/VsyncPill/HBox" unique_id=1057924703]
-layout_mode = 2
-size_flags_horizontal = 6
-theme_override_colors/font_color = Color(0.85, 0.25, 0.58, 1)
-theme_override_font_sizes/font_size = 19
-button_pressed = true
-text = " ON"
-
-[node name="VsyncOffCheck" type="CheckBox" parent="BoxContainer/ContentArea/DisplayPage/VsyncPill/HBox" unique_id=1480502261]
-layout_mode = 2
-size_flags_horizontal = 6
-theme_override_colors/font_color = Color(0.85, 0.25, 0.58, 1)
-theme_override_font_sizes/font_size = 19
-text = " OFF"
-
-[node name="EffectPill" type="PanelContainer" parent="BoxContainer/ContentArea/DisplayPage" unique_id=1766908310]
-custom_minimum_size = Vector2(760, 50)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
-
-[node name="HBox" type="HBoxContainer" parent="BoxContainer/ContentArea/DisplayPage/EffectPill" unique_id=1034389666]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BoxContainer/ContentArea/DisplayPage/EffectPill/HBox" unique_id=570545379]
-custom_minimum_size = Vector2(280, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.55, 0.78, 1)
-theme_override_font_sizes/font_size = 20
-text = "Special Effect"
-horizontal_alignment = 1
-
-[node name="FXLowCheck" type="CheckBox" parent="BoxContainer/ContentArea/DisplayPage/EffectPill/HBox" unique_id=1845486068]
-layout_mode = 2
-size_flags_horizontal = 6
-theme_override_colors/font_color = Color(0.85, 0.25, 0.58, 1)
-theme_override_font_sizes/font_size = 19
-text = " LOW"
-
-[node name="FXHighCheck" type="CheckBox" parent="BoxContainer/ContentArea/DisplayPage/EffectPill/HBox" unique_id=40342495]
-layout_mode = 2
-size_flags_horizontal = 6
-theme_override_colors/font_color = Color(0.85, 0.25, 0.58, 1)
-theme_override_font_sizes/font_size = 19
-button_pressed = true
-text = " HIGH"
-
-[node name="AudioPage" type="VBoxContainer" parent="BoxContainer/ContentArea" unique_id=638188779]
-visible = false
-custom_minimum_size = Vector2(780, 0)
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="MasterBlock" type="VBoxContainer" parent="BoxContainer/ContentArea/AudioPage" unique_id=1675875713]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="MasterTitle" type="Label" parent="BoxContainer/ContentArea/AudioPage/MasterBlock" unique_id=1634026729]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.82, 0.62, 0.86, 1)
-theme_override_font_sizes/font_size = 20
-text = "Master Volume:   85"
-horizontal_alignment = 1
-
-[node name="SliderRow" type="HBoxContainer" parent="BoxContainer/ContentArea/AudioPage/MasterBlock" unique_id=361643821]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="MasterMinusBtn" type="Button" parent="BoxContainer/ContentArea/AudioPage/MasterBlock/SliderRow" unique_id=244907161]
-custom_minimum_size = Vector2(42, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.08, 0.52, 1)
-theme_override_font_sizes/font_size = 24
-text = "◀"
-flat = true
-
-[node name="MasterSlider" type="HSlider" parent="BoxContainer/ContentArea/AudioPage/MasterBlock/SliderRow" unique_id=1316515251]
-custom_minimum_size = Vector2(640, 32)
+[node name="MasterSlider" type="HSlider" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MasterRow/HBox" unique_id=1633635542]
+custom_minimum_size = Vector2(200, 24)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-theme_override_styles/slider = SubResource("StyleBoxFlat_slider_groove")
+theme_override_styles/slider = SubResource("StyleBoxFlat_slider_track")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
-value = 85.0
+value = 100.0
 
-[node name="MasterPlusBtn" type="Button" parent="BoxContainer/ContentArea/AudioPage/MasterBlock/SliderRow" unique_id=2117364484]
-custom_minimum_size = Vector2(42, 36)
+[node name="MasterValLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MasterRow/HBox" unique_id=1377374598]
+custom_minimum_size = Vector2(58, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.08, 0.52, 1)
-theme_override_font_sizes/font_size = 24
-text = "▶"
-flat = true
+theme_override_colors/font_color = Color(0.956863, 0.317647, 0.54902, 1)
+theme_override_font_sizes/font_size = 15
+text = "100 %"
+horizontal_alignment = 2
 
-[node name="MusicBlock" type="VBoxContainer" parent="BoxContainer/ContentArea/AudioPage" unique_id=26328166]
+[node name="MusicRow" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage" unique_id=502688248]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
 
-[node name="MusicTitle" type="Label" parent="BoxContainer/ContentArea/AudioPage/MusicBlock" unique_id=361989522]
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MusicRow" unique_id=446099494]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.82, 0.62, 0.86, 1)
-theme_override_font_sizes/font_size = 20
-text = "Music Volume:   80"
-horizontal_alignment = 1
+theme_override_constants/separation = 16
 
-[node name="SliderRow" type="HBoxContainer" parent="BoxContainer/ContentArea/AudioPage/MusicBlock" unique_id=1605780362]
+[node name="MusicLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MusicRow/HBox" unique_id=458857051]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 16
+text = "Music"
 
-[node name="MusicMinusBtn" type="Button" parent="BoxContainer/ContentArea/AudioPage/MusicBlock/SliderRow" unique_id=1215742643]
-custom_minimum_size = Vector2(42, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.08, 0.52, 1)
-theme_override_font_sizes/font_size = 24
-text = "◀"
-flat = true
-
-[node name="MusicSlider" type="HSlider" parent="BoxContainer/ContentArea/AudioPage/MusicBlock/SliderRow" unique_id=1503885158]
-custom_minimum_size = Vector2(640, 32)
+[node name="MusicSlider" type="HSlider" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MusicRow/HBox" unique_id=708762491]
+custom_minimum_size = Vector2(200, 24)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-theme_override_styles/slider = SubResource("StyleBoxFlat_slider_groove")
+theme_override_styles/slider = SubResource("StyleBoxFlat_slider_track")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
 value = 80.0
 
-[node name="MusicPlusBtn" type="Button" parent="BoxContainer/ContentArea/AudioPage/MusicBlock/SliderRow" unique_id=1513260776]
-custom_minimum_size = Vector2(42, 36)
+[node name="MusicValLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MusicRow/HBox" unique_id=1623455991]
+custom_minimum_size = Vector2(58, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.08, 0.52, 1)
-theme_override_font_sizes/font_size = 24
-text = "▶"
-flat = true
+theme_override_colors/font_color = Color(0.956863, 0.317647, 0.54902, 1)
+theme_override_font_sizes/font_size = 15
+text = "80 %"
+horizontal_alignment = 2
 
-[node name="SFXBlock" type="VBoxContainer" parent="BoxContainer/ContentArea/AudioPage" unique_id=1522889968]
+[node name="SFXRow" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage" unique_id=1994072389]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
 
-[node name="SFXTitle" type="Label" parent="BoxContainer/ContentArea/AudioPage/SFXBlock" unique_id=2074072210]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.82, 0.62, 0.86, 1)
-theme_override_font_sizes/font_size = 20
-text = "Sound Effect Volume:   75"
-horizontal_alignment = 1
-
-[node name="SliderRow" type="HBoxContainer" parent="BoxContainer/ContentArea/AudioPage/SFXBlock" unique_id=1153494362]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="SFXMinusBtn" type="Button" parent="BoxContainer/ContentArea/AudioPage/SFXBlock/SliderRow" unique_id=154139593]
-custom_minimum_size = Vector2(42, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.08, 0.52, 1)
-theme_override_font_sizes/font_size = 24
-text = "◀"
-flat = true
-
-[node name="SFXSlider" type="HSlider" parent="BoxContainer/ContentArea/AudioPage/SFXBlock/SliderRow" unique_id=1825335363]
-custom_minimum_size = Vector2(640, 32)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_override_styles/slider = SubResource("StyleBoxFlat_slider_groove")
-theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
-theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
-value = 75.0
-
-[node name="SFXPlusBtn" type="Button" parent="BoxContainer/ContentArea/AudioPage/SFXBlock/SliderRow" unique_id=2034844361]
-custom_minimum_size = Vector2(42, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.08, 0.52, 1)
-theme_override_font_sizes/font_size = 24
-text = "▶"
-flat = true
-
-[node name="BottomAudioPills" type="HBoxContainer" parent="BoxContainer/ContentArea/AudioPage" unique_id=1367521313]
-layout_mode = 2
-theme_override_constants/separation = 18
-
-[node name="OffsetPill" type="PanelContainer" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills" unique_id=1082737788]
-custom_minimum_size = Vector2(370, 48)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
-
-[node name="HBox" type="HBoxContainer" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/OffsetPill" unique_id=751222846]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/OffsetPill/HBox" unique_id=467694757]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.75, 0.55, 0.78, 1)
-theme_override_font_sizes/font_size = 18
-text = "Audio Offset"
-
-[node name="OffsetMinusBtn" type="Button" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/OffsetPill/HBox" unique_id=492571343]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.13, 0.53, 1)
-text = "❮"
-flat = true
-
-[node name="OffsetValueLabel" type="Label" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/OffsetPill/HBox" unique_id=2008273935]
-custom_minimum_size = Vector2(80, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.13, 0.53, 1)
-theme_override_font_sizes/font_size = 18
-text = "0 ms"
-horizontal_alignment = 1
-
-[node name="OffsetPlusBtn" type="Button" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/OffsetPill/HBox" unique_id=45389698]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.13, 0.53, 1)
-text = "❯"
-flat = true
-
-[node name="BGMPill" type="PanelContainer" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills" unique_id=581239892]
-custom_minimum_size = Vector2(370, 48)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
-
-[node name="HBox" type="HBoxContainer" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/BGMPill" unique_id=574506932]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/BGMPill/HBox" unique_id=1000524447]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.75, 0.55, 0.78, 1)
-theme_override_font_sizes/font_size = 18
-text = "Background Music"
-
-[node name="BGMOnCheck" type="CheckBox" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/BGMPill/HBox" unique_id=735765420]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.25, 0.58, 1)
-button_pressed = true
-text = " ON"
-
-[node name="BGMOffCheck" type="CheckBox" parent="BoxContainer/ContentArea/AudioPage/BottomAudioPills/BGMPill/HBox" unique_id=120806764]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.25, 0.58, 1)
-text = " OFF"
-
-[node name="ControlsPage" type="VBoxContainer" parent="BoxContainer/ContentArea" unique_id=682092681]
-visible = false
-custom_minimum_size = Vector2(760, 0)
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/SFXRow" unique_id=597800532]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="DiagramCard" type="PanelContainer" parent="BoxContainer/ContentArea/ControlsPage" unique_id=138829854]
-custom_minimum_size = Vector2(760, 140)
+[node name="SFXLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/SFXRow/HBox" unique_id=1668688887]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 16
+text = "Sound Effects"
 
-[node name="DiagramHBox" type="HBoxContainer" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard" unique_id=134436556]
-layout_mode = 2
-alignment = 1
-
-[node name="LeftAirCol" type="VBoxContainer" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox" unique_id=1391450809]
+[node name="SFXSlider" type="HSlider" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/SFXRow/HBox" unique_id=131873581]
+custom_minimum_size = Vector2(200, 24)
 layout_mode = 2
 size_flags_horizontal = 3
-alignment = 1
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxFlat_slider_track")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
+value = 100.0
 
-[node name="Title" type="Label" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox/LeftAirCol" unique_id=1806386307]
+[node name="SFXValLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/SFXRow/HBox" unique_id=949741517]
+custom_minimum_size = Vector2(58, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.898039, 1, 1)
-theme_override_font_sizes/font_size = 22
-text = "LEFT LANE (X = 2.0)"
-horizontal_alignment = 1
-
-[node name="LeftKeyBtn" type="Button" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox/LeftAirCol" unique_id=43289787]
-custom_minimum_size = Vector2(180, 44)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_pink_dropdown")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pink_dropdown")
-text = "KEY: F"
-
-[node name="CenterCol" type="VBoxContainer" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox" unique_id=25826124]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-
-[node name="GamepadIcon" type="Label" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox/CenterCol" unique_id=785028161]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.45, 0.88, 1)
-theme_override_font_sizes/font_size = 42
-text = "🎮  +  ⌨"
-horizontal_alignment = 1
-
-[node name="CenterHint" type="Label" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox/CenterCol" unique_id=763540327]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.65, 0.9, 1)
+theme_override_colors/font_color = Color(0.956863, 0.317647, 0.54902, 1)
 theme_override_font_sizes/font_size = 15
-text = "CENTER LANE = LEFT + RIGHT"
-horizontal_alignment = 1
+text = "100 %"
+horizontal_alignment = 2
 
-[node name="RightGroundCol" type="VBoxContainer" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox" unique_id=922465014]
+[node name="GraphicsPage" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer" unique_id=934972338]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ResolutionRow" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage" unique_id=1139957490]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/ResolutionRow" unique_id=1851744127]
+layout_mode = 2
+
+[node name="TextVBox" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/ResolutionRow/HBox" unique_id=1589326849]
 layout_mode = 2
 size_flags_horizontal = 3
-alignment = 1
+theme_override_constants/separation = 2
 
-[node name="Title" type="Label" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox/RightGroundCol" unique_id=2044612198]
+[node name="Title" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/ResolutionRow/HBox/TextVBox" unique_id=345059108]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.25, 0.68, 1)
-theme_override_font_sizes/font_size = 22
-text = "RIGHT LANE (X = -2.0)"
-horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 16
+text = "Resolution"
 
-[node name="RightKeyBtn" type="Button" parent="BoxContainer/ContentArea/ControlsPage/DiagramCard/DiagramHBox/RightGroundCol" unique_id=1386636004]
-custom_minimum_size = Vector2(180, 44)
+[node name="Desc" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/ResolutionRow/HBox/TextVBox" unique_id=1987143445]
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_pink_dropdown")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pink_dropdown")
-text = "KEY: J"
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 13
+text = "Window size in windowed mode."
 
-[node name="PauseKeyPill" type="PanelContainer" parent="BoxContainer/ContentArea/ControlsPage" unique_id=1551794590]
-custom_minimum_size = Vector2(760, 50)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dark_pill")
-
-[node name="HBox" type="HBoxContainer" parent="BoxContainer/ContentArea/ControlsPage/PauseKeyPill" unique_id=347363054]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="BoxContainer/ContentArea/ControlsPage/PauseKeyPill/HBox" unique_id=1912238965]
-custom_minimum_size = Vector2(280, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.55, 0.78, 1)
-theme_override_font_sizes/font_size = 20
-text = "PAUSE MENU KEY"
-horizontal_alignment = 1
-
-[node name="PauseKeyBtn" type="Button" parent="BoxContainer/ContentArea/ControlsPage/PauseKeyPill/HBox" unique_id=1255709036]
+[node name="ResolutionOption" type="OptionButton" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/ResolutionRow/HBox" unique_id=107861770]
 custom_minimum_size = Vector2(260, 36)
 layout_mode = 2
-size_flags_horizontal = 6
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 19
-theme_override_styles/normal = SubResource("StyleBoxFlat_pink_dropdown")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pink_dropdown")
-text = "ESCAPE"
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+selected = 1
+item_count = 4
+popup/item_0/text = "1152 × 648"
+popup/item_0/id = 0
+popup/item_1/text = "1280 × 720"
+popup/item_1/id = 1
+popup/item_2/text = "1600 × 900"
+popup/item_2/id = 2
+popup/item_3/text = "1920 × 1080"
+popup/item_3/id = 3
 
-[node name="BottomBar" type="HBoxContainer" parent="." unique_id=1051485904]
+[node name="FullscreenRow" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage" unique_id=747656209]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/FullscreenRow" unique_id=967914718]
+layout_mode = 2
+
+[node name="TextVBox" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/FullscreenRow/HBox" unique_id=726225333]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/FullscreenRow/HBox/TextVBox" unique_id=1769602958]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 16
+text = "Fullscreen"
+
+[node name="Desc" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/FullscreenRow/HBox/TextVBox" unique_id=209506472]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 13
+text = "Switch between fullscreen and windowed."
+
+[node name="FullscreenCheck" type="CheckButton" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/FullscreenRow/HBox" unique_id=151366567]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="VsyncRow" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage" unique_id=2057441035]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/VsyncRow" unique_id=218805244]
+layout_mode = 2
+
+[node name="TextVBox" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/VsyncRow/HBox" unique_id=1598358394]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/VsyncRow/HBox/TextVBox" unique_id=2113015107]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 16
+text = "Vertical Sync"
+
+[node name="Desc" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/VsyncRow/HBox/TextVBox" unique_id=199058079]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 13
+text = "VSync: removes screen tearing."
+
+[node name="VsyncCheck" type="CheckButton" parent="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/VsyncRow/HBox" unique_id=193735260]
+layout_mode = 2
+size_flags_vertical = 4
+button_pressed = true
+
+[node name="ControlsPage" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer" unique_id=1182213243]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HintCard" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage" unique_id=1667982167]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
+
+[node name="HintLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/HintCard" unique_id=1344840483]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 13
+text = "Click a slot, then press the key you want. Esc: cancel. Right-click: clear."
+
+[node name="TableHeaderHBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage" unique_id=875731372]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ColAction" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/TableHeaderHBox" unique_id=39015623]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 12
+text = "ACTION"
+
+[node name="ColKB1" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/TableHeaderHBox" unique_id=105596867]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 12
+text = "KEYBOARD / MOUSE 1"
+horizontal_alignment = 1
+
+[node name="ColKB2" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/TableHeaderHBox" unique_id=2136535211]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 12
+text = "KEYBOARD / MOUSE 2"
+horizontal_alignment = 1
+
+[node name="ColGamepad" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/TableHeaderHBox" unique_id=455008784]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 12
+text = "GAMEPAD"
+horizontal_alignment = 1
+
+[node name="ControlRow1" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage" unique_id=1118555653]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ActionLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow1" unique_id=276973335]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 15
+text = "Move Left (Lane L)"
+
+[node name="SlotKB1" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow1" unique_id=1080249989]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "F"
+
+[node name="SlotKB2" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow1" unique_id=1471831902]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "←"
+
+[node name="SlotGamepad" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow1" unique_id=1522091075]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "L Stick ←"
+
+[node name="ControlRow2" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage" unique_id=1438540943]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ActionLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow2" unique_id=2046909173]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 15
+text = "Move Right (Lane R)"
+
+[node name="SlotKB1" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow2" unique_id=1946881532]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "J"
+
+[node name="SlotKB2" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow2" unique_id=1593376794]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "→"
+
+[node name="SlotGamepad" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow2" unique_id=446108445]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "L Stick →"
+
+[node name="ControlRow3" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage" unique_id=224909719]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ActionLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow3" unique_id=474370042]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 15
+text = "Pause Menu"
+
+[node name="SlotKB1" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow3" unique_id=91846976]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "Escape"
+
+[node name="SlotKB2" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow3" unique_id=480487076]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "—"
+
+[node name="SlotGamepad" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow3" unique_id=1967372157]
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_waiting")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "Start"
+
+[node name="AppearancePage" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer" unique_id=1013842122]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ThemeSelectorRow" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage" unique_id=264824541]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/ThemeSelectorRow" unique_id=1348395070]
+layout_mode = 2
+
+[node name="TextVBox" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/ThemeSelectorRow/HBox" unique_id=684040027]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/ThemeSelectorRow/HBox/TextVBox" unique_id=794423004]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 16
+text = "UI Color Theme"
+
+[node name="Desc" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/ThemeSelectorRow/HBox/TextVBox" unique_id=157832257]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
+theme_override_font_sizes/font_size = 13
+text = "Switch between Night, Light, Ocean, Candy and Dusk themes."
+
+[node name="ThemeOption" type="OptionButton" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/ThemeSelectorRow/HBox" unique_id=1957729701]
+custom_minimum_size = Vector2(240, 36)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+selected = 3
+item_count = 5
+popup/item_0/text = "1. Night"
+popup/item_0/id = 0
+popup/item_1/text = "2. Light"
+popup/item_1/id = 1
+popup/item_2/text = "3. Ocean"
+popup/item_2/id = 2
+popup/item_3/text = "4. Candy (default)"
+popup/item_3/id = 3
+popup/item_4/text = "5. Dusk"
+popup/item_4/id = 4
+
+[node name="QuickThemeRow" type="PanelContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage" unique_id=779801457]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow" unique_id=75974019]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox" unique_id=1470297729]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 15
+text = "Quick Theme Presets"
+
+[node name="ThemeButtonsHBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox" unique_id=559092332]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ThemeNightBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox" unique_id=1124302237]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "1. Night"
+
+[node name="ThemeLightBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox" unique_id=610624246]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "2. Light"
+
+[node name="ThemeOceanBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox" unique_id=1208642067]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "3. Ocean"
+
+[node name="ThemeCandyBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox" unique_id=1332832209]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "4. Candy"
+
+[node name="ThemeDuskBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox" unique_id=490635586]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "5. Dusk"
+
+[node name="FooterHBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox" unique_id=1667761567]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DefaultsBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/FooterHBox" unique_id=666317871]
+custom_minimum_size = Vector2(110, 38)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "Defaults"
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/MainCard/CardVBox/FooterHBox" unique_id=651148278]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.956863, 0.317647, 0.54902, 1)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+
+[node name="CloseBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/FooterHBox" unique_id=665967963]
+custom_minimum_size = Vector2(96, 38)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_secondary")
+text = "Close"
+
+[node name="SaveBtn" type="Button" parent="CenterContainer/MainCard/CardVBox/FooterHBox" unique_id=1045763788]
+custom_minimum_size = Vector2(106, 38)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_primary")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_primary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_primary")
+text = "Save"
+
+[node name="ConflictOverlay" type="ColorRect" parent="." unique_id=908800884]
+visible = false
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -58.0
-offset_bottom = -14.0
 grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 24
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="ConflictCenter" type="CenterContainer" parent="ConflictOverlay" unique_id=998860979]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConflictCard" type="PanelContainer" parent="ConflictOverlay/ConflictCenter" unique_id=706355774]
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_card")
+
+[node name="VBox" type="VBoxContainer" parent="ConflictOverlay/ConflictCenter/ConflictCard" unique_id=1988396140]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ConflictTitle" type="Label" parent="ConflictOverlay/ConflictCenter/ConflictCard/VBox" unique_id=1539781290]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_font_sizes/font_size = 18
+text = "Key Already in Use"
+horizontal_alignment = 1
+
+[node name="ConflictMessage" type="Label" parent="ConflictOverlay/ConflictCenter/ConflictCard/VBox" unique_id=1977124559]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.26, 0.31, 1)
+theme_override_font_sizes/font_size = 14
+text = "\"F\" is already bound to \"Move Left\".
+
+Swap: \"Move Left\" gets the old key.
+Replace: \"Move Left\" loses this key."
+autowrap_mode = 2
+
+[node name="ButtonsHBox" type="HBoxContainer" parent="ConflictOverlay/ConflictCenter/ConflictCard/VBox" unique_id=1242118881]
+layout_mode = 2
+theme_override_constants/separation = 10
 alignment = 1
 
-[node name="ResetDefaultButton" type="Button" parent="BottomBar" unique_id=503661198]
-custom_minimum_size = Vector2(220, 42)
+[node name="ConflictCancelBtn" type="Button" parent="ConflictOverlay/ConflictCenter/ConflictCard/VBox/ButtonsHBox" unique_id=1900817691]
+custom_minimum_size = Vector2(90, 34)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.75, 0.88, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxFlat_reset_pill")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pink_dropdown")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pink_dropdown")
-text = "↺  RESET TO DEFAULT"
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+text = "Cancel"
+
+[node name="ConflictSwapBtn" type="Button" parent="ConflictOverlay/ConflictCenter/ConflictCard/VBox/ButtonsHBox" unique_id=1688841527]
+custom_minimum_size = Vector2(90, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_secondary")
+text = "Swap"
+
+[node name="ConflictReplaceBtn" type="Button" parent="ConflictOverlay/ConflictCenter/ConflictCard/VBox/ButtonsHBox" unique_id=335598215]
+custom_minimum_size = Vector2(90, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_primary")
+text = "Replace"
+
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/TabStripPanel/TabBarHBox/TabAudioBtn" to="." method="_on_tab_audio_pressed"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/TabStripPanel/TabBarHBox/TabGraphicsBtn" to="." method="_on_tab_graphics_pressed"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/TabStripPanel/TabBarHBox/TabControlsBtn" to="." method="_on_tab_controls_pressed"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/TabStripPanel/TabBarHBox/TabAppearanceBtn" to="." method="_on_tab_appearance_pressed"]
+[connection signal="value_changed" from="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MasterRow/HBox/MasterSlider" to="." method="_on_master_volume_changed"]
+[connection signal="value_changed" from="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/MusicRow/HBox/MusicSlider" to="." method="_on_music_volume_changed"]
+[connection signal="value_changed" from="CenterContainer/MainCard/CardVBox/PagesContainer/AudioPage/SFXRow/HBox/SFXSlider" to="." method="_on_sfx_volume_changed"]
+[connection signal="item_selected" from="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/ResolutionRow/HBox/ResolutionOption" to="." method="_on_resolution_selected"]
+[connection signal="toggled" from="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/FullscreenRow/HBox/FullscreenCheck" to="." method="_on_fullscreen_toggled"]
+[connection signal="toggled" from="CenterContainer/MainCard/CardVBox/PagesContainer/GraphicsPage/VsyncRow/HBox/VsyncCheck" to="." method="_on_vsync_toggled"]
+[connection signal="item_selected" from="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/ThemeSelectorRow/HBox/ThemeOption" to="." method="_on_theme_option_selected"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox/ThemeNightBtn" to="." method="_on_theme_night_pressed"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox/ThemeLightBtn" to="." method="_on_theme_light_pressed"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox/ThemeOceanBtn" to="." method="_on_theme_ocean_pressed"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox/ThemeCandyBtn" to="." method="_on_theme_candy_pressed"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/PagesContainer/AppearancePage/QuickThemeRow/VBox/ThemeButtonsHBox/ThemeDuskBtn" to="." method="_on_theme_dusk_pressed"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/FooterHBox/DefaultsBtn" to="." method="reset_to_defaults"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/FooterHBox/CloseBtn" to="." method="close_settings"]
+[connection signal="pressed" from="CenterContainer/MainCard/CardVBox/FooterHBox/SaveBtn" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="ConflictOverlay/ConflictCenter/ConflictCard/VBox/ButtonsHBox/ConflictCancelBtn" to="." method="_on_conflict_cancel"]
+[connection signal="pressed" from="ConflictOverlay/ConflictCenter/ConflictCard/VBox/ButtonsHBox/ConflictSwapBtn" to="." method="_on_conflict_swap"]
+[connection signal="pressed" from="ConflictOverlay/ConflictCenter/ConflictCard/VBox/ButtonsHBox/ConflictReplaceBtn" to="." method="_on_conflict_replace"]
