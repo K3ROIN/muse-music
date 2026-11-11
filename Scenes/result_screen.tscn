@@ -1,28 +1,106 @@
 [gd_scene format=3 uid="uid://beouv3r8quua4"]
 
-[ext_resource type="Theme" uid="uid://dd6p6geacq4k0" path="res://main_theme.tres" id="1_qtxv5"]
 [ext_resource type="Script" uid="uid://c6q1y8d8oymj5" path="res://Scripts/UI_Menus/result_screen.gd" id="2_t0wn3"]
 
-[node name="ResultScreen" type="Control" unique_id=618987242]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_card"]
+content_margin_left = 36.0
+content_margin_top = 32.0
+content_margin_right = 36.0
+content_margin_bottom = 32.0
+bg_color = Color(0.67058825, 0.63529414, 0.8666667, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_blend = true
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 28
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge_tag"]
+content_margin_left = 14.0
+content_margin_top = 4.0
+content_margin_right = 14.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 0.3, 0.55, 1)
+skew = Vector2(0.28, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rank_circle"]
+bg_color = Color(0.14, 0.11, 0.25, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 0.84, 0.2, 1)
+corner_radius_top_left = 160
+corner_radius_top_right = 160
+corner_radius_bottom_right = 160
+corner_radius_bottom_left = 160
+shadow_color = Color(1, 0.84, 0.2, 0.35)
+shadow_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stat_box"]
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
+bg_color = Color(0.39607844, 0.24705882, 0.47843137, 0.9490196)
+border_width_left = 3
+border_color = Color(1, 0.72, 0.18, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_acc_bg"]
+bg_color = Color(0.05, 0.04, 0.1, 0.95)
+skew = Vector2(0.24, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.22, 0.25, 0.38, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_acc_fill"]
+bg_color = Color(0.24, 0.96, 1, 1)
+skew = Vector2(0.24, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_juice_btn"]
+bg_color = Color(0.960784, 0.937255, 0.886275, 1)
+border_width_left = 3
+border_width_top = 3
+border_color = Color(0.0431373, 0.0313726, 0.0705882, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.0431373, 0.0313726, 0.0705882, 1)
+shadow_size = 1
+shadow_offset = Vector2(5, 5)
+
+[node name="ResultScreen" type="Control" unique_id=283309646]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_qtxv5")
 script = ExtResource("2_t0wn3")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1748680166]
+[node name="Backdrop" type="ColorRect" parent="." unique_id=1341395454]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.003921569)
+color = Color(0.04, 0.03, 0.08, 0.82)
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1603459081]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=987414148]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,88 +108,242 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="CenterContainer" unique_id=1309153727]
-custom_minimum_size = Vector2(480, 420)
+[node name="Panel" type="PanelContainer" parent="CenterContainer" unique_id=1308221014]
+custom_minimum_size = Vector2(780, 470)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_main_card")
 
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Panel" unique_id=54016990]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -217.5
-offset_top = -209.0
-offset_right = 217.5
-offset_bottom = 209.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+[node name="MainVBox" type="VBoxContainer" parent="CenterContainer/Panel" unique_id=1155277378]
+layout_mode = 2
+theme_override_constants/separation = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer" unique_id=1666316231]
+[node name="HeaderHBox" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox" unique_id=1132515169]
 layout_mode = 2
 theme_override_constants/separation = 16
+
+[node name="HeaderLeftVBox" type="VBoxContainer" parent="CenterContainer/Panel/MainVBox/HeaderHBox" unique_id=1080538317]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/Panel/MainVBox/HeaderHBox/HeaderLeftVBox" unique_id=179912854]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.94, 0.89, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.65)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 36
+text = "STAGE CLEAR!"
+
+[node name="SongNameLabel" type="Label" parent="CenterContainer/Panel/MainVBox/HeaderHBox/HeaderLeftVBox" unique_id=1304115333]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.18, 1)
+theme_override_font_sizes/font_size = 16
+text = "TRACK // Talk (Demo Track)"
+
+[node name="FullComboBadge" type="Label" parent="CenterContainer/Panel/MainVBox/HeaderHBox" unique_id=1777919046]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge_tag")
+text = "★ FULL COMBO ★"
+
+[node name="BodyHBox" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox" unique_id=1768381910]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="LeftRankColumn" type="VBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox" unique_id=1424082101]
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=948323354]
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "STAGE CLEAR!"
-horizontal_alignment = 1
-
-[node name="RankLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=2095155504]
-layout_mode = 2
-theme_override_font_sizes/font_size = 34
-text = "RANK: S"
-horizontal_alignment = 1
-
-[node name="StatsVBox" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=966681758]
-layout_mode = 2
-
-[node name="ScoreLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=1506766030]
-layout_mode = 2
-text = "SCORE: 0"
-
-[node name="AccuracyLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=1903289353]
-layout_mode = 2
-text = "Accuracy: 0"
-
-[node name="MaxComboLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=1496578410]
-layout_mode = 2
-text = "Max Combo: 0"
-
-[node name="PerfectLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=562013798]
-layout_mode = 2
-text = "PERFECT: 0"
-
-[node name="MissLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/StatsVBox" unique_id=276247918]
-layout_mode = 2
-text = "MISS: 0"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=261324888]
+[node name="RankCirclePanel" type="Panel" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn" unique_id=52355636]
+custom_minimum_size = Vector2(185, 185)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 16
+theme_override_styles/panel = SubResource("StyleBoxFlat_rank_circle")
 
-[node name="RetryButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1544801080]
-custom_minimum_size = Vector2(130, 65)
+[node name="RankLabel" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn/RankCirclePanel" unique_id=936028663]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 82
+text = "S"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StarsLabel" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn" unique_id=1826119315]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.15, 1)
+theme_override_colors/font_shadow_color = Color(0.5, 0.25, 0, 0.85)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 26
+text = "★ ★ ★ ★ ★"
+horizontal_alignment = 1
+
+[node name="RightStatsColumn" type="VBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox" unique_id=303677958]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="ScoreCard" type="PanelContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn" unique_id=568713229]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_box")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/ScoreCard" unique_id=610318277]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/ScoreCard/HBox" unique_id=415987428]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.68, 0.76, 0.88, 1)
+theme_override_font_sizes/font_size = 16
+text = "TOTAL SCORE"
+
+[node name="ScoreLabel" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/ScoreCard/HBox" unique_id=664567114]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.94, 0.89, 1)
+theme_override_font_sizes/font_size = 32
+text = "000000"
+horizontal_alignment = 2
+
+[node name="AccuracyCard" type="PanelContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn" unique_id=1694315109]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_box")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/AccuracyCard" unique_id=1470740663]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/AccuracyCard/VBox" unique_id=1730679788]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/AccuracyCard/VBox/HBox" unique_id=198077313]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.68, 0.76, 0.88, 1)
+theme_override_font_sizes/font_size = 15
+text = "ACCURACY"
+
+[node name="AccuracyLabel" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/AccuracyCard/VBox/HBox" unique_id=437682729]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.24, 0.96, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "100.00%"
+horizontal_alignment = 2
+
+[node name="AccuracyBar" type="ProgressBar" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/AccuracyCard/VBox" unique_id=1078329536]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_acc_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_acc_fill")
+value = 100.0
+show_percentage = false
+
+[node name="JudgmentsGrid" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn" unique_id=362876700]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ComboCard" type="PanelContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid" unique_id=14476385]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_box")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/ComboCard" unique_id=1813529228]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/ComboCard/VBox" unique_id=1027732109]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.76, 0.88, 1)
+theme_override_font_sizes/font_size = 13
+text = "MAX COMBO"
+
+[node name="MaxComboLabel" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/ComboCard/VBox" unique_id=2123410357]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.18, 1)
+theme_override_font_sizes/font_size = 24
+text = "0X"
+
+[node name="PerfectCard" type="PanelContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid" unique_id=1864064424]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_box")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/PerfectCard" unique_id=2117268181]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/PerfectCard/VBox" unique_id=1267415614]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.76, 0.88, 1)
+theme_override_font_sizes/font_size = 13
+text = "PERFECT"
+
+[node name="PerfectLabel" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/PerfectCard/VBox" unique_id=1719673816]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 1, 0.62, 1)
+theme_override_font_sizes/font_size = 24
+text = "0"
+
+[node name="MissCard" type="PanelContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid" unique_id=873294544]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_box")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/MissCard" unique_id=2014969489]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/MissCard/VBox" unique_id=634148251]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.76, 0.88, 1)
+theme_override_font_sizes/font_size = 13
+text = "MISS"
+
+[node name="MissLabel" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/RightStatsColumn/JudgmentsGrid/MissCard/VBox" unique_id=2074728300]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.36, 0.42, 1)
+theme_override_font_sizes/font_size = 24
+text = "0"
+
+[node name="ButtonsHBox" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox" unique_id=1407419177]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="RetryButton" type="Button" parent="CenterContainer/Panel/MainVBox/ButtonsHBox" unique_id=2118128380]
+custom_minimum_size = Vector2(210, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0862745, 0.0705882, 0.141176, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_juice_btn")
 text = "RETRY"
 
-[node name="SongSelectButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=51438898]
-custom_minimum_size = Vector2(130, 65)
+[node name="SongSelectButton" type="Button" parent="CenterContainer/Panel/MainVBox/ButtonsHBox" unique_id=97442001]
+custom_minimum_size = Vector2(210, 48)
 layout_mode = 2
+theme_override_colors/font_color = Color(0.0862745, 0.0705882, 0.141176, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_juice_btn")
 text = "SONGS"
 
-[node name="MainMenuButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1061083875]
-custom_minimum_size = Vector2(130, 0)
+[node name="MainMenuButton" type="Button" parent="CenterContainer/Panel/MainVBox/ButtonsHBox" unique_id=752611058]
+custom_minimum_size = Vector2(210, 48)
 layout_mode = 2
-text = "MENU"
+theme_override_colors/font_color = Color(0.0862745, 0.0705882, 0.141176, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_juice_btn")
+text = "MAIN MENU"
 
-[connection signal="pressed" from="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
-[connection signal="pressed" from="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/SongSelectButton" to="." method="_on_song_select_button_pressed"]
-[connection signal="pressed" from="CenterContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CenterContainer/Panel/MainVBox/ButtonsHBox/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="CenterContainer/Panel/MainVBox/ButtonsHBox/SongSelectButton" to="." method="_on_song_select_button_pressed"]
+[connection signal="pressed" from="CenterContainer/Panel/MainVBox/ButtonsHBox/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
