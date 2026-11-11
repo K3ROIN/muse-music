@@ -2,8 +2,14 @@ extends Node
 
 # ==============================================================================
 # GameManager (Autoload Singleton) - res://Scripts/game_manager.gd
-# โหลดปุ่มควบคุมที่ผู้เล่นตั้งค่าไว้ใน "user://settings.cfg" เข้าสู่ InputMap ทันทีที่เปิดเกม
-# เพื่อให้กดปุ่มที่ตั้งใหม่ (เช่น D กับ K) ในด่านวิ่งได้ทันทีแม้ไม่ได้เปิดหน้า Settings ก่อนเข้าเล่น
+# ------------------------------------------------------------------------------
+# จุดที่อัปเดตเพิ่ม:
+# 1. ระบบเพลงคลอเมนูต่อเนื่อง (Persistent Menu BGM):
+#    - เล่นเพลง BGM ("res://Audios/BGM/1-17. After the Battle.mp3") ต่อเนื่องข้ามฉาก
+#      ระหว่าง Main Menu <-> Song Selection <-> Settings โดยเพลงไม่เริ่มใหม่และไม่สะดุด
+#    - หยุดเพลง BGM อัตโนมัติทันทีเมื่อกดเข้าสู่ด่านเล่นเกมจริง (world.tscn)
+# 2. เก็บข้อมูลเพลงที่ผู้เล่นเลือกจากหน้า Song Selection (selected_song_audio_path,
+#    selected_song_midi_path) เพื่อส่งต่อให้ด่าน world.tscn
 # ==============================================================================
 
 signal score_changed(new_score: int, new_combo: int, judgment: String)
@@ -22,10 +28,19 @@ const SFX_PATHS: Dictionary = {
 	"song_selected": "res://Audios/SFX/ui/Song_Selected.wav"
 }
 
+@export_group("Menu BGM Settings")
+@export_file("*.mp3", "*.ogg", "*.wav") var menu_bgm_path: String = "res://Audios/BGM/1-17. After the Battle.mp3"
+
 @export_group("Stamina / HP Settings")
 @export var max_stamina: float = 100.0
 @export var miss_stamina_damage: float = 15.0
 @export var perfect_stamina_heal: float = 2.5
+
+# ข้อมูลเพลงที่เลือกจากหน้า Song Selection
+var selected_song_index: int = 0
+var selected_song_title: String = "Talk - Demo Track"
+var selected_song_audio_path: String = "res://Audios/1-18. Talk.ogg"
+var selected_song_midi_path: String = "res://Audios/song1.mid"
 
 var score: int = 0
 var combo: int = 0
@@ -37,11 +52,12 @@ var total_notes_in_chart: int = 0
 var current_stamina: float = 100.0
 var is_game_over: bool = false
 
+var saved_map_index: int = 0
+
 var _sfx_streams: Dictionary = {}
 var _sfx_players: Array[AudioStreamPlayer] = []
 var _next_player_idx: int = 0
-
-var saved_map_index: int = 0
+var _menu_bgm_player: AudioStreamPlayer = null
 
 
 func _ready() -> void:
@@ -49,12 +65,79 @@ func _ready() -> void:
 	_ensure_audio_buses()
 	_load_saved_keybinds_and_audio_on_startup()
 	_init_ui_sfx_players()
+	_init_menu_bgm_player()
 
 	get_tree().node_added.connect(_on_tree_node_added)
-	if get_tree().root:
+	if get_tree().root != null:
 		bind_ui_and_audio_buses_recursive(get_tree().root)
 
+	_check_scene_for_menu_bgm(get_tree().current_scene)
 
+
+# ==============================================================================
+# ระบบเพลง BGM เล่นต่อเนื่องข้ามฉาก (Main Menu <-> Song Selection)
+# ==============================================================================
+func _init_menu_bgm_player() -> void:
+	_menu_bgm_player = AudioStreamPlayer.new()
+	_menu_bgm_player.name = "MenuBGMPlayer"
+	_menu_bgm_player.bus = &"Music" if AudioServer.get_bus_index("Music") != -1 else &"Master"
+	_menu_bgm_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_menu_bgm_player)
+
+	if ResourceLoader.exists(menu_bgm_path):
+		var stream: AudioStream = load(menu_bgm_path)
+		if stream != null:
+			# เปิด Loop ให้เพลงเมนูเล่นวนซ้ำอัตโนมัติ
+			if "loop" in stream:
+				stream.set("loop", true)
+			_menu_bgm_player.stream = stream
+
+
+## เรียกเพื่อเล่นเพลง BGM เมนู (หากกำลังเล่นอยู่แล้วจะเล่นต่อทันทีโดยไม่เริ่มใหม่)
+func play_menu_bgm(custom_stream: AudioStream = null) -> void:
+	if _menu_bgm_player == null:
+		return
+	if custom_stream != null and _menu_bgm_player.stream != custom_stream:
+		_menu_bgm_player.stream = custom_stream
+	if _menu_bgm_player.stream != null and not _menu_bgm_player.playing:
+		_menu_bgm_player.bus = &"Music" if AudioServer.get_bus_index("Music") != -1 else &"Master"
+		_menu_bgm_player.play()
+
+
+## เรียกเมื่อกดเข้าสู่ด่านเล่นเกมจริง (world.tscn) เพื่อหยุดเพลง BGM เมนู
+func stop_menu_bgm() -> void:
+	if _menu_bgm_player != null and _menu_bgm_player.playing:
+		_menu_bgm_player.stop()
+
+
+func _check_scene_for_menu_bgm(scene_root: Node) -> void:
+	if scene_root == null:
+		return
+	var scene_name: String = scene_root.name.to_lower()
+	var scene_file: String = scene_root.scene_file_path.to_lower()
+
+	# ถ้าเข้าสู่ฉากเล่นเกม (world.tscn) ให้หยุดเพลงเมนูทันที
+	if "world" in scene_name or "world" in scene_file:
+		stop_menu_bgm()
+		return
+
+	# ถ้าอยู่ในหน้า MainMenu หรือ SongSelection ให้ดูด Stream จากโหนด AudioStreamPlayer ในฉาก (ถ้ามี)
+	# มาเล่นบน _menu_bgm_player ของ GameManager แทน เพื่อให้เปลี่ยนฉากแล้วเพลงไม่ตัด
+	if "mainmenu" in scene_name or "main_menu" in scene_file or "song" in scene_name or "song" in scene_file:
+		for child in scene_root.find_children("*", "AudioStreamPlayer", true, false):
+			var p: AudioStreamPlayer = child as AudioStreamPlayer
+			if p != null and p != _menu_bgm_player and p.stream != null:
+				var stream_to_use: AudioStream = p.stream
+				p.stop()
+				p.autoplay = false
+				play_menu_bgm(stream_to_use)
+				return
+		play_menu_bgm()
+
+
+# ==============================================================================
+# โหลดปุ่มควบคุมและระดับเสียงตอนเริ่มเกม
+# ==============================================================================
 func _load_saved_keybinds_and_audio_on_startup() -> void:
 	var cfg := ConfigFile.new()
 	var err: Error = cfg.load(CONFIG_PATH)
@@ -74,9 +157,27 @@ func _load_saved_keybinds_and_audio_on_startup() -> void:
 		pause_kb1 = int(cfg.get_value("controls_kb1", "pause_game", int(KEY_ESCAPE)))
 		pause_kb2 = int(cfg.get_value("controls_kb2", "pause_game", int(KEY_NONE)))
 
+		var m_vol: float = float(cfg.get_value("audio", "master_volume", 100.0))
+		var mus_vol: float = float(cfg.get_value("audio", "music_volume", 80.0))
+		var sfx_vol: float = float(cfg.get_value("audio", "sfx_volume", 100.0))
+		_apply_bus_vol("Master", m_vol)
+		_apply_bus_vol("Music", mus_vol)
+		_apply_bus_vol("SFX", sfx_vol)
+
 	_register_action_events("lane_left", [left_kb1, left_kb2])
 	_register_action_events("lane_right", [right_kb1, right_kb2])
 	_register_action_events("pause_game", [pause_kb1, pause_kb2])
+
+
+func _apply_bus_vol(bus_name: String, pct: float) -> void:
+	var idx: int = AudioServer.get_bus_index(bus_name)
+	if idx < 0:
+		return
+	if pct <= 0.0:
+		AudioServer.set_bus_mute(idx, true)
+	else:
+		AudioServer.set_bus_mute(idx, false)
+		AudioServer.set_bus_volume_db(idx, linear_to_db(pct / 100.0))
 
 
 func _register_action_events(action_name: String, keys: Array[int]) -> void:
@@ -161,6 +262,9 @@ func play_song_selected() -> void:
 
 
 func _on_tree_node_added(node: Node) -> void:
+	if get_tree() != null and node == get_tree().current_scene:
+		_check_scene_for_menu_bgm.call_deferred(node)
+
 	if node is BaseButton:
 		bind_button_sound(node as BaseButton)
 	elif node is AudioStreamPlayer or node is AudioStreamPlayer3D or node is AudioStreamPlayer2D:
@@ -180,6 +284,11 @@ func bind_ui_and_audio_buses_recursive(root: Node) -> void:
 
 
 func _auto_assign_audio_bus(audio_node: Node) -> void:
+	if audio_node == _menu_bgm_player:
+		if AudioServer.get_bus_index("Music") != -1:
+			audio_node.set("bus", &"Music")
+		return
+
 	if audio_node.get_parent() == self or audio_node.name.begins_with("UISFXPlayer"):
 		if AudioServer.get_bus_index("SFX") != -1:
 			audio_node.set("bus", &"SFX")

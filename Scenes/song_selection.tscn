@@ -1,59 +1,576 @@
 [gd_scene format=3 uid="uid://yrda8pk1mom6"]
 
-[ext_resource type="Theme" uid="uid://dd6p6geacq4k0" path="res://main_theme.tres" id="1_1lfv0"]
 [ext_resource type="Script" uid="uid://qp54nb1og50k" path="res://Scripts/UI_Menus/song_selection.gd" id="1_hjcgt"]
 
-[node name="SongSelection" type="Control" unique_id=1395709539]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top_dome"]
+bg_color = Color(0.28, 0.38, 0.95, 0.5)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.72, 0.84, 1, 0.75)
+corner_radius_top_left = 200
+corner_radius_top_right = 200
+corner_radius_bottom_right = 200
+corner_radius_bottom_left = 200
+shadow_color = Color(0.2, 0.45, 1, 0.5)
+shadow_size = 32
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reflection"]
+bg_color = Color(0.35, 0.55, 0.95, 0.14)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.65, 0.82, 1, 0.16)
+corner_radius_top_left = 200
+corner_radius_top_right = 200
+corner_radius_bottom_right = 200
+corner_radius_bottom_left = 200
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_disc_side"]
+bg_color = Color(0.2, 0.25, 0.52, 0.96)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.12, 0.16, 0.35, 0.95)
+corner_radius_top_left = 200
+corner_radius_top_right = 200
+corner_radius_bottom_right = 200
+corner_radius_bottom_left = 200
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_disc_center_unlit"]
+bg_color = Color(0.18, 0.52, 0.85, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.15, 0.2, 0.42, 0.95)
+corner_radius_top_left = 200
+corner_radius_top_right = 200
+corner_radius_bottom_right = 200
+corner_radius_bottom_left = 200
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_center_glow_ring"]
+bg_color = Color(1, 1, 1, 0)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 0.98)
+corner_radius_top_left = 200
+corner_radius_top_right = 200
+corner_radius_bottom_right = 200
+corner_radius_bottom_left = 200
+shadow_color = Color(0.45, 0.82, 1, 0.9)
+shadow_size = 28
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_play_overlay"]
+bg_color = Color(1, 1, 1, 0.2)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.55)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_arrow"]
+bg_color = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_corner_circle"]
+bg_color = Color(0.18, 0.28, 0.58, 0.9)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.85, 0.92, 1, 0.95)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+shadow_color = Color(0.25, 0.5, 1, 0.5)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_corner_hover"]
+bg_color = Color(0.28, 0.45, 0.88, 0.98)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+shadow_color = Color(0.4, 0.75, 1, 0.8)
+shadow_size = 18
+
+[node name="SongSelection" type="Control" unique_id=541034428]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_1lfv0")
 script = ExtResource("1_hjcgt")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=442034306]
+[node name="Background" type="ColorRect" parent="." unique_id=1514009720]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.46394128, 0.5708061, 0.82213825, 1)
+color = Color(0.0588235, 0.113725, 0.309804, 1)
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=721921476]
+[node name="FloorHorizon" type="ColorRect" parent="." unique_id=1064486177]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -175.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.11, 0.23, 0.54, 0.55)
+
+[node name="TopHeaderRibbon" type="ColorRect" parent="." unique_id=1711478278]
+custom_minimum_size = Vector2(0, 104)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 104.0
+grow_horizontal = 2
+color = Color(0.16, 0.22, 0.56, 0.65)
+
+[node name="CenterGlowDome" type="Panel" parent="." unique_id=1877471614]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -185.0
+offset_top = 8.0
+offset_right = 185.0
+offset_bottom = 378.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_top_dome")
+
+[node name="HeaderVBox" type="VBoxContainer" parent="." unique_id=1685497289]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -360.0
+offset_top = 18.0
+offset_right = 360.0
+offset_bottom = 205.0
+grow_horizontal = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="HeaderTitleLabel" type="Label" parent="HeaderVBox" unique_id=1338398693]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.45)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 30
+text = "Songs"
+horizontal_alignment = 1
+
+[node name="HeaderLine" type="ColorRect" parent="HeaderVBox" unique_id=1328144611]
+custom_minimum_size = Vector2(210, 2)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.75, 0.85, 1, 0.7)
+
+[node name="Spacer" type="Control" parent="HeaderVBox" unique_id=62768826]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="SongTitleLabel" type="Label" parent="HeaderVBox" unique_id=368602057]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 26
+text = "Talk (Demo Track)"
+horizontal_alignment = 1
+
+[node name="ArtistLabel" type="Label" parent="HeaderVBox" unique_id=1914048479]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.94, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 21
+text = "K3ROIN"
+horizontal_alignment = 1
+
+[node name="DifficultyRow" type="HBoxContainer" parent="HeaderVBox" unique_id=240261912]
+layout_mode = 2
+theme_override_constants/separation = 175
+alignment = 1
+
+[node name="DiffStarsLabel" type="Label" parent="HeaderVBox/DifficultyRow" unique_id=1347616676]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 20
+text = "⚙ ⚙ ⚙"
+
+[node name="SweatDropsLabel" type="Label" parent="HeaderVBox/DifficultyRow" unique_id=1875708029]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.88, 1, 0.95)
+theme_override_font_sizes/font_size = 20
+text = "💧 💧"
+
+[node name="CarouselStage" type="Control" parent="." unique_id=930067463]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -130.0
+offset_right = 500.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RefLeft2" type="Panel" parent="CarouselStage" unique_id=1288789470]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 295.0
+offset_right = 172.0
+offset_bottom = 350.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
+
+[node name="RefLeft1" type="Panel" parent="CarouselStage" unique_id=780082950]
+layout_mode = 0
+offset_left = 185.0
+offset_top = 285.0
+offset_right = 365.0
+offset_bottom = 355.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
+
+[node name="RefCenter" type="Panel" parent="CarouselStage" unique_id=361047207]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 290.0
+offset_right = 620.0
+offset_bottom = 375.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
+
+[node name="RefRight1" type="Panel" parent="CarouselStage" unique_id=1996138857]
+layout_mode = 0
+offset_left = 635.0
+offset_top = 285.0
+offset_right = 815.0
+offset_bottom = 355.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
+
+[node name="RefRight2" type="Panel" parent="CarouselStage" unique_id=227407458]
+layout_mode = 0
+offset_left = 828.0
+offset_top = 295.0
+offset_right = 958.0
+offset_bottom = 350.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
+
+[node name="DiscLeft2" type="Button" parent="CarouselStage" unique_id=793877766]
+z_index = 1
+custom_minimum_size = Vector2(140, 140)
+layout_mode = 0
+offset_left = 35.0
+offset_top = 135.0
+offset_right = 175.0
+offset_bottom = 275.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.85)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_disc_side")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_disc_side")
+theme_override_styles/hover = SubResource("StyleBoxFlat_disc_side")
+text = "SONG 4"
+
+[node name="DiscRight2" type="Button" parent="CarouselStage" unique_id=999035383]
+z_index = 1
+custom_minimum_size = Vector2(140, 140)
+layout_mode = 0
+offset_left = 825.0
+offset_top = 135.0
+offset_right = 965.0
+offset_bottom = 275.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.85)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_disc_side")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_disc_side")
+theme_override_styles/hover = SubResource("StyleBoxFlat_disc_side")
+text = "SONG 3"
+
+[node name="DiscLeft1" type="Button" parent="CarouselStage" unique_id=680626559]
+z_index = 5
+custom_minimum_size = Vector2(190, 190)
+layout_mode = 0
+offset_left = 175.0
+offset_top = 90.0
+offset_right = 365.0
+offset_bottom = 280.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_disc_side")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_disc_side")
+theme_override_styles/hover = SubResource("StyleBoxFlat_disc_side")
+text = "SONG 5"
+
+[node name="DiscRight1" type="Button" parent="CarouselStage" unique_id=1717267733]
+z_index = 5
+custom_minimum_size = Vector2(190, 190)
+layout_mode = 0
+offset_left = 635.0
+offset_top = 90.0
+offset_right = 825.0
+offset_bottom = 280.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_disc_side")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_disc_side")
+theme_override_styles/hover = SubResource("StyleBoxFlat_disc_side")
+text = "SONG 2"
+
+[node name="DiscCenter" type="Button" parent="CarouselStage" unique_id=416260972]
+z_index = 10
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 0
+offset_left = 370.0
+offset_top = 30.0
+offset_right = 630.0
+offset_bottom = 290.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_disc_center_unlit")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_disc_center_unlit")
+theme_override_styles/hover = SubResource("StyleBoxFlat_disc_center_unlit")
+
+[node name="CoverLabel" type="Label" parent="CarouselStage/DiscCenter" unique_id=1127539055]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -62.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_font_sizes/font_size = 18
+text = "Talk (Demo Track)"
+horizontal_alignment = 1
+
+[node name="CenterFocusOverlay" type="Panel" parent="CarouselStage/DiscCenter" unique_id=1883157492]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_center_glow_ring")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=825314263]
-layout_mode = 2
-theme_override_constants/separation = 100
+[node name="PlayIconCircle" type="Panel" parent="CarouselStage/DiscCenter/CenterFocusOverlay" unique_id=1936934258]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -54.0
+offset_right = 48.0
+offset_bottom = 42.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_play_overlay")
 
-[node name="Label" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1121860960]
-layout_mode = 2
-theme_override_font_sizes/font_size = 48
-text = "SELECT A SONG"
+[node name="PlayTriangle" type="Label" parent="CarouselStage/DiscCenter/CenterFocusOverlay/PlayIconCircle" unique_id=1413191296]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_font_sizes/font_size = 46
+text = "▶"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer" unique_id=1737436956]
-layout_mode = 2
-theme_override_constants/separation = 10
+[node name="ScoreStarsVBox" type="VBoxContainer" parent="CarouselStage" unique_id=841831579]
+z_index = 12
+layout_mode = 0
+offset_left = 370.0
+offset_top = 294.0
+offset_right = 630.0
+offset_bottom = 360.0
+mouse_filter = 2
+theme_override_constants/separation = 0
+alignment = 1
 
-[node name="Song1Button" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer" unique_id=705584272]
-custom_minimum_size = Vector2(250, 60)
+[node name="StarsLabel" type="Label" parent="CarouselStage/ScoreStarsVBox" unique_id=1857735141]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(0.55, 0.3, 0, 0.9)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 24
+text = "★ ★ ★ ★ ☆"
+horizontal_alignment = 1
+
+[node name="HighScoreLabel" type="Label" parent="CarouselStage/ScoreStarsVBox" unique_id=31241972]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.35, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 22
+text = "11047   K3R"
+horizontal_alignment = 1
+
+[node name="PrevSongBtn" type="Button" parent="." unique_id=1434896750]
+z_index = 15
+custom_minimum_size = Vector2(74, 74)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -365.0
+offset_top = -95.0
+offset_right = -291.0
+offset_bottom = -21.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.75, 0.88, 1, 0.9)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 54
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_arrow")
+text = "‹"
+flat = true
+
+[node name="NextSongBtn" type="Button" parent="." unique_id=160453877]
+z_index = 15
+custom_minimum_size = Vector2(74, 74)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 291.0
+offset_top = -95.0
+offset_right = 365.0
+offset_bottom = -21.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.75, 0.88, 1, 0.9)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 54
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_arrow")
+text = "›"
+flat = true
+
+[node name="BottomLeftNav" type="HBoxContainer" parent="." unique_id=1435864815]
+z_index = 15
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 48.0
+offset_top = -112.0
+offset_right = 260.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="BackButton" type="Button" parent="BottomLeftNav" unique_id=971380969]
+custom_minimum_size = Vector2(78, 78)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 34
-text = "Song 1 - Demo Track"
+theme_override_styles/normal = SubResource("StyleBoxFlat_corner_circle")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_corner_hover")
+text = "❮"
 
-[node name="BackButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1683787851]
-custom_minimum_size = Vector2(250, 65)
+[node name="MainMenuLabel" type="Label" parent="BottomLeftNav" unique_id=1089797007]
 layout_mode = 2
-theme_override_font_sizes/font_size = 34
-text = "Back"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
+theme_override_font_sizes/font_size = 24
+text = "Main
+menu"
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/Song1Button" to="." method="_on_song_1_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
+[node name="BottomRightNav" type="HBoxContainer" parent="." unique_id=519681282]
+z_index = 15
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -290.0
+offset_top = -112.0
+offset_right = -48.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 14
+alignment = 2
+
+[node name="CollectionLabel" type="Label" parent="BottomRightNav" unique_id=1906700813]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
+theme_override_font_sizes/font_size = 24
+text = "Song
+Collection"
+horizontal_alignment = 2
+
+[node name="CollectionButton" type="Button" parent="BottomRightNav" unique_id=238519716]
+custom_minimum_size = Vector2(78, 78)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_corner_circle")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_corner_hover")
+text = "❖"
+
+[connection signal="pressed" from="CarouselStage/DiscLeft2" to="." method="_on_disc_left_2_pressed"]
+[connection signal="pressed" from="CarouselStage/DiscRight2" to="." method="_on_disc_right_2_pressed"]
+[connection signal="pressed" from="CarouselStage/DiscLeft1" to="." method="_on_disc_left_1_pressed"]
+[connection signal="pressed" from="CarouselStage/DiscRight1" to="." method="_on_disc_right_1_pressed"]
+[connection signal="pressed" from="CarouselStage/DiscCenter" to="." method="_on_disc_center_pressed"]
+[connection signal="pressed" from="PrevSongBtn" to="." method="_on_prev_song_pressed"]
+[connection signal="pressed" from="NextSongBtn" to="." method="_on_next_song_pressed"]
+[connection signal="pressed" from="BottomLeftNav/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="BottomRightNav/CollectionButton" to="." method="_on_collection_button_pressed"]

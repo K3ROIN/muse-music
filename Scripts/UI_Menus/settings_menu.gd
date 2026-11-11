@@ -1,13 +1,5 @@
 extends Control
 
-# ==============================================================================
-# Settings Menu UI + 5 Themes Switcher (res://Scripts/settings_menu.gd)
-# แก้ไขเรื่องการเปลี่ยนปุ่มควบคุมตัวละคร (เช่น เปลี่ยนจาก F/J เป็น D/K):
-# - บันทึกและอัปเดต InputMap ทันทีที่มีการเปลี่ยนปุ่มในหน้า Controls (แม้ยังไม่กดปิดหน้าต่าง)
-# - แยกสร้างทั้ง InputEventKey แบบ keycode และ physical_keycode เพื่อให้กดติด 100%
-#   แม้คีย์บอร์ดของ Windows จะสลับเป็นภาษาไทยอยู่
-# ==============================================================================
-
 const CONFIG_PATH: String = "user://settings.cfg"
 
 static var key_lane_left: Key = KEY_F
@@ -150,27 +142,62 @@ func _ready() -> void:
 	_set_status_text("")
 
 
+var _card_tween: Tween
+var _is_closing: bool = false
+
+
 func open_settings() -> void:
+	_is_closing = false
 	_cancel_waiting_input()
 	_route_all_music_players_in_tree()
 	show()
 	_switch_tab(0)
 	_set_status_text("")
+	
 	if main_card != null:
+		# ยกเลิกแอนิเมชันเก่าหากกำลังทำงานค้างอยู่
+		if _card_tween != null and _card_tween.is_valid():
+			_card_tween.kill()
+			
 		main_card.pivot_offset = main_card.size / 2.0
 		main_card.scale = Vector2(0.94, 0.94)
 		main_card.modulate.a = 0.0
-		var tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-		tw.set_parallel(true)
-		tw.tween_property(main_card, "scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		tw.tween_property(main_card, "modulate:a", 1.0, 0.14)
+		
+		_card_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		_card_tween.set_parallel(true)
+		_card_tween.tween_property(main_card, "scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		_card_tween.tween_property(main_card, "modulate:a", 1.0, 0.14)
 
 
 func close_settings() -> void:
+	# ป้องกันผู้เล่นกดปุ่มปิดซ้ำรัวๆ ระหว่างที่หน้าต่างกำลังเล่นแอนิเมชันปิด
+	if _is_closing:
+		return
+	_is_closing = true
+	
 	_cancel_waiting_input()
 	save_settings()
 	if typeof(GameManager) != TYPE_NIL:
 		GameManager.play_close_settings()
+
+	# เล่นแอนิเมชันย่อตัวและค่อยๆ จางหายก่อนปิดจริง
+	if main_card != null:
+		if _card_tween != null and _card_tween.is_valid():
+			_card_tween.kill()
+			
+		main_card.pivot_offset = main_card.size / 2.0
+		_card_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		_card_tween.set_parallel(true)
+		_card_tween.tween_property(main_card, "scale", Vector2(0.94, 0.94), 0.15).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		_card_tween.tween_property(main_card, "modulate:a", 0.0, 0.14)
+		
+		# รอจนกว่าแอนิเมชันจะเล่นจบก่อนทำคำสั่งถัดไป
+		await _card_tween.finished
+
+	# ป้องกันกรณีผู้เล่นกดเปิดหน้าต่างขึ้นมาใหม่ระหว่างรอ await
+	if not _is_closing:
+		return
+	_is_closing = false
 
 	if get_tree().current_scene == self:
 		get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")
@@ -183,15 +210,28 @@ func _setup_tabs_list() -> void:
 	_tab_pages = [audio_page, graphics_page, controls_page, appearance_page]
 
 
+var _tab_tween: Tween
+
 func _switch_tab(tab_idx: int) -> void:
 	_cancel_waiting_input()
+	
+	if _tab_tween != null and _tab_tween.is_valid():
+		_tab_tween.kill()
+		
 	for i in range(_tab_buttons.size()):
 		var btn: Button = _tab_buttons[i]
 		if btn != null:
 			btn.set_pressed_no_signal(i == tab_idx)
+			
 		var page: Control = _tab_pages[i]
 		if page != null:
-			page.visible = (i == tab_idx)
+			var is_selected := (i == tab_idx)
+			page.visible = is_selected
+			
+			if is_selected:
+				page.modulate.a = 0.0
+				_tab_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+				_tab_tween.tween_property(page, "modulate:a", 1.0, 0.16)
 
 
 func _on_tab_audio_pressed() -> void:
