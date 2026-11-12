@@ -139,7 +139,7 @@ text = "STAGE CLEAR!"
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.72, 0.18, 1)
 theme_override_font_sizes/font_size = 16
-text = "TRACK // Talk (Demo Track)"
+text = "Talk (Demo Track)"
 
 [node name="FullComboBadge" type="Label" parent="CenterContainer/Panel/MainVBox/HeaderHBox" unique_id=1777919046]
 visible = false

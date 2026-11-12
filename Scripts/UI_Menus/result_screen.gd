@@ -83,17 +83,22 @@ func _style_juice_button(btn: Button, target_hover_color: Color) -> void:
 
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = button_normal_color
-	sb.skew = Vector2(0.28, 0.0)
+	sb.skew = Vector2(0.0, 0.0)
 	sb.border_width_left = 3
 	sb.border_width_top = 3
-	sb.border_width_right = 6
-	sb.border_width_bottom = 6
+	sb.border_width_right = 3
+	sb.border_width_bottom = 3
 	sb.border_color = button_shadow_color
 	sb.shadow_color = button_shadow_color
 	sb.shadow_size = 1
-	sb.shadow_offset = Vector2(5, 5)
+	sb.shadow_offset = Vector2(3, 3)
+	sb.corner_radius_top_left = 10
+	sb.corner_radius_top_right = 10
+	sb.corner_radius_bottom_left = 10
+	sb.corner_radius_bottom_right = 10
 	sb.content_margin_top = 8
 	sb.content_margin_bottom = 8
+
 
 	btn.add_theme_stylebox_override("normal", sb)
 	btn.add_theme_stylebox_override("hover", sb)
@@ -143,9 +148,6 @@ func _animate_button_hover(btn: Button, target_col: Color, is_hovered: bool) -> 
 	_btn_hover_tweens[btn] = tw
 
 
-# ==============================================================================
-# แสดงหน้าสรุปผลพร้อมแอนิเมชั่นนับคะแนน หลอดความแม่นยำ และตราประทับเกรด
-# ==============================================================================
 func show_result() -> void:
 	show()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -157,7 +159,7 @@ func show_result() -> void:
 	var final_miss: int = GameManager.miss_count if typeof(GameManager) != TYPE_NIL else 0
 	var rank_text: String = GameManager.get_rank() if typeof(GameManager) != TYPE_NIL else "F"
 	var failed: bool = GameManager.is_game_over if typeof(GameManager) != TYPE_NIL else false
-	var track_title: String = GameManager.selected_song_title if typeof(GameManager) != TYPE_NIL else "Talk (Demo Track)"
+	var track_title: String = GameManager.selected_song_title if typeof(GameManager) != TYPE_NIL else "Demo Track"
 
 	if title_label != null:
 		if failed:
@@ -168,7 +170,7 @@ func show_result() -> void:
 			title_label.add_theme_color_override("font_color", Color(0.96, 0.94, 0.89, 1.0))
 
 	if song_name_label != null:
-		song_name_label.text = "TRACK // " + track_title
+		song_name_label.text = track_title
 
 	if full_combo_badge != null:
 		full_combo_badge.visible = (not failed and final_miss == 0 and final_perfect > 0)

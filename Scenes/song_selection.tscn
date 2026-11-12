@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://yrda8pk1mom6"]
 
 [ext_resource type="Script" uid="uid://qp54nb1og50k" path="res://Scripts/UI_Menus/song_selection.gd" id="1_hjcgt"]
+[ext_resource type="Texture2D" uid="uid://dfi2f3m20m8ly" path="res://Assets/icons/1x/backward.png" id="2_0b3ay"]
+[ext_resource type="Texture2D" uid="uid://31bh8nhrnmgv" path="res://Assets/icons/1x/forward.png" id="3_iwmk6"]
+[ext_resource type="Texture2D" uid="uid://dqfa1yug84rm0" path="res://Assets/icons/1x/home.png" id="4_g42s2"]
+[ext_resource type="Texture2D" uid="uid://bvb6oe2b7kmhu" path="res://Assets/icons/1x/star.png" id="5_bbmjn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top_dome"]
 bg_color = Color(0.28, 0.38, 0.95, 0.5)
@@ -15,18 +19,6 @@ corner_radius_bottom_right = 200
 corner_radius_bottom_left = 200
 shadow_color = Color(0.2, 0.45, 1, 0.5)
 shadow_size = 32
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reflection"]
-bg_color = Color(0.35, 0.55, 0.95, 0.14)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.65, 0.82, 1, 0.16)
-corner_radius_top_left = 200
-corner_radius_top_right = 200
-corner_radius_bottom_right = 200
-corner_radius_bottom_left = 200
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_disc_side"]
 bg_color = Color(0.2, 0.25, 0.52, 0.96)
@@ -211,7 +203,7 @@ theme_override_colors/font_color = Color(0.88, 0.94, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
 theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 21
-text = "K3ROIN"
+text = "N/A"
 horizontal_alignment = 1
 
 [node name="DifficultyRow" type="HBoxContainer" parent="HeaderVBox" unique_id=240261912]
@@ -245,51 +237,6 @@ offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="RefLeft2" type="Panel" parent="CarouselStage" unique_id=1288789470]
-layout_mode = 0
-offset_left = 42.0
-offset_top = 295.0
-offset_right = 172.0
-offset_bottom = 350.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
-
-[node name="RefLeft1" type="Panel" parent="CarouselStage" unique_id=780082950]
-layout_mode = 0
-offset_left = 185.0
-offset_top = 285.0
-offset_right = 365.0
-offset_bottom = 355.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
-
-[node name="RefCenter" type="Panel" parent="CarouselStage" unique_id=361047207]
-layout_mode = 0
-offset_left = 380.0
-offset_top = 290.0
-offset_right = 620.0
-offset_bottom = 375.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
-
-[node name="RefRight1" type="Panel" parent="CarouselStage" unique_id=1996138857]
-layout_mode = 0
-offset_left = 635.0
-offset_top = 285.0
-offset_right = 815.0
-offset_bottom = 355.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
-
-[node name="RefRight2" type="Panel" parent="CarouselStage" unique_id=227407458]
-layout_mode = 0
-offset_left = 828.0
-offset_top = 295.0
-offset_right = 958.0
-offset_bottom = 350.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_reflection")
 
 [node name="DiscLeft2" type="Button" parent="CarouselStage" unique_id=793877766]
 z_index = 1
@@ -448,7 +395,7 @@ theme_override_colors/font_color = Color(1, 0.88, 0.35, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
 theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 22
-text = "11047   K3R"
+text = "11047"
 horizontal_alignment = 1
 
 [node name="PrevSongBtn" type="Button" parent="." unique_id=1434896750]
@@ -470,8 +417,9 @@ theme_override_colors/font_color = Color(0.75, 0.88, 1, 0.9)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 54
 theme_override_styles/normal = SubResource("StyleBoxFlat_nav_arrow")
-text = "‹"
+icon = ExtResource("2_0b3ay")
 flat = true
+icon_alignment = 1
 
 [node name="NextSongBtn" type="Button" parent="." unique_id=160453877]
 z_index = 15
@@ -492,8 +440,9 @@ theme_override_colors/font_color = Color(0.75, 0.88, 1, 0.9)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 54
 theme_override_styles/normal = SubResource("StyleBoxFlat_nav_arrow")
-text = "›"
+icon = ExtResource("3_iwmk6")
 flat = true
+icon_alignment = 1
 
 [node name="BottomLeftNav" type="HBoxContainer" parent="." unique_id=1435864815]
 z_index = 15
@@ -518,7 +467,8 @@ theme_override_font_sizes/font_size = 34
 theme_override_styles/normal = SubResource("StyleBoxFlat_corner_circle")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_corner_hover")
-text = "❮"
+icon = ExtResource("4_g42s2")
+icon_alignment = 1
 
 [node name="MainMenuLabel" type="Label" parent="BottomLeftNav" unique_id=1089797007]
 layout_mode = 2
@@ -563,7 +513,8 @@ theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_corner_circle")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_corner_hover")
-text = "❖"
+icon = ExtResource("5_bbmjn")
+icon_alignment = 1
 
 [connection signal="pressed" from="CarouselStage/DiscLeft2" to="." method="_on_disc_left_2_pressed"]
 [connection signal="pressed" from="CarouselStage/DiscRight2" to="." method="_on_disc_right_2_pressed"]

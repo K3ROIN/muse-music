@@ -1,19 +1,9 @@
 extends Node
 
-# ==============================================================================
-# GameManager (Autoload Singleton) - res://Scripts/game_manager.gd
-# ------------------------------------------------------------------------------
-# จุดที่อัปเดตเพิ่ม:
-# 1. ระบบเพลงคลอเมนูต่อเนื่อง (Persistent Menu BGM):
-#    - เล่นเพลง BGM ("res://Audios/BGM/1-17. After the Battle.mp3") ต่อเนื่องข้ามฉาก
-#      ระหว่าง Main Menu <-> Song Selection <-> Settings โดยเพลงไม่เริ่มใหม่และไม่สะดุด
-#    - หยุดเพลง BGM อัตโนมัติทันทีเมื่อกดเข้าสู่ด่านเล่นเกมจริง (world.tscn)
-# 2. เก็บข้อมูลเพลงที่ผู้เล่นเลือกจากหน้า Song Selection (selected_song_audio_path,
-#    selected_song_midi_path) เพื่อส่งต่อให้ด่าน world.tscn
-# ==============================================================================
-
 signal score_changed(new_score: int, new_combo: int, judgment: String)
 signal stamina_changed(current_hp: float, max_hp: float)
+signal fever_changed(current_fever: float, max_fever: float, is_fever_active: bool)
+signal song_progress_changed(current_sec: float, total_sec: float)
 signal player_died()
 signal song_finished_for_result()
 
@@ -31,16 +21,28 @@ const SFX_PATHS: Dictionary = {
 @export_group("Menu BGM Settings")
 @export_file("*.mp3", "*.ogg", "*.wav") var menu_bgm_path: String = "res://Audios/BGM/1-17. After the Battle.mp3"
 
-@export_group("Stamina / HP Settings")
-@export var max_stamina: float = 100.0
-@export var miss_stamina_damage: float = 15.0
-@export var perfect_stamina_heal: float = 2.5
+@export_group("Stamina / HP Settings (350/350 สไตล์ Muse Dash)")
+@export var max_stamina: float = 350.0
+@export var miss_stamina_damage: float = 50.0
+@export var perfect_stamina_heal: float = 8.0
+
+@export_group("Fever Bar Settings (หลอด Fever สีฟ้า)")
+@export var max_fever: float = 100.0
+@export var fever_gain_per_perfect: float = 5.0
+@export var fever_duration_seconds: float = 6.0
 
 # ข้อมูลเพลงที่เลือกจากหน้า Song Selection
+var saved_map_index: int = 0
 var selected_song_index: int = 0
-var selected_song_title: String = "Talk - Demo Track"
+var selected_song_title: String = "Demo Track"
 var selected_song_audio_path: String = "res://Audios/1-18. Talk.ogg"
 var selected_song_midi_path: String = "res://Audios/song1.mid"
+
+# ตัวแปรสำรองเพื่อรองรับโค้ดทั้งสองรูปแบบ
+var current_song_name: String = "Demo Track"
+var current_artist_name: String = "N/A"
+var current_midi_path: String = "res://Audios/song1.mid"
+var current_bgm_path: String = "res://Audios/Tracks/Never gonna give you up - Rick Astley.mp3"
 
 var score: int = 0
 var combo: int = 0
@@ -49,10 +51,20 @@ var perfect_count: int = 0
 var miss_count: int = 0
 var total_notes_in_chart: int = 0
 
-var current_stamina: float = 100.0
+var last_score: int = 0
+var last_max_combo: int = 0
+var last_perfect_count: int = 0
+var last_good_count: int = 0
+var last_bad_count: int = 0
+var last_miss_count: int = 0
+
+var current_stamina: float = 350.0
+var current_fever: float = 0.0
+var is_fever_active: bool = false
 var is_game_over: bool = false
 
-var saved_map_index: int = 0
+var song_current_time: float = 0.0
+var song_total_duration: float = 0.0
 
 var _sfx_streams: Dictionary = {}
 var _sfx_players: Array[AudioStreamPlayer] = []
@@ -62,6 +74,7 @@ var _menu_bgm_player: AudioStreamPlayer = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	current_stamina = max_stamina
 	_ensure_audio_buses()
 	_load_saved_keybinds_and_audio_on_startup()
 	_init_ui_sfx_players()
@@ -72,6 +85,24 @@ func _ready() -> void:
 		bind_ui_and_audio_buses_recursive(get_tree().root)
 
 	_check_scene_for_menu_bgm(get_tree().current_scene)
+
+
+func _process(delta: float) -> void:
+	if is_fever_active and not get_tree().paused and not is_game_over:
+		var drain_rate: float = max_fever / maxf(0.5, fever_duration_seconds)
+		current_fever = maxf(0.0, current_fever - drain_rate * delta)
+		if current_fever <= 0.0:
+			is_fever_active = false
+		fever_changed.emit(current_fever, max_fever, is_fever_active)
+
+
+# ==============================================================================
+# อัปเดตความคืบหน้าของเวลาเพลงตามไฟล์ MIDI (.mid)
+# ==============================================================================
+func update_song_progress(current_sec: float, total_sec: float) -> void:
+	song_current_time = maxf(0.0, current_sec)
+	song_total_duration = maxf(0.0, total_sec)
+	song_progress_changed.emit(song_current_time, song_total_duration)
 
 
 # ==============================================================================
@@ -87,13 +118,11 @@ func _init_menu_bgm_player() -> void:
 	if ResourceLoader.exists(menu_bgm_path):
 		var stream: AudioStream = load(menu_bgm_path)
 		if stream != null:
-			# เปิด Loop ให้เพลงเมนูเล่นวนซ้ำอัตโนมัติ
 			if "loop" in stream:
 				stream.set("loop", true)
 			_menu_bgm_player.stream = stream
 
 
-## เรียกเพื่อเล่นเพลง BGM เมนู (หากกำลังเล่นอยู่แล้วจะเล่นต่อทันทีโดยไม่เริ่มใหม่)
 func play_menu_bgm(custom_stream: AudioStream = null) -> void:
 	if _menu_bgm_player == null:
 		return
@@ -104,7 +133,6 @@ func play_menu_bgm(custom_stream: AudioStream = null) -> void:
 		_menu_bgm_player.play()
 
 
-## เรียกเมื่อกดเข้าสู่ด่านเล่นเกมจริง (world.tscn) เพื่อหยุดเพลง BGM เมนู
 func stop_menu_bgm() -> void:
 	if _menu_bgm_player != null and _menu_bgm_player.playing:
 		_menu_bgm_player.stop()
@@ -116,13 +144,10 @@ func _check_scene_for_menu_bgm(scene_root: Node) -> void:
 	var scene_name: String = scene_root.name.to_lower()
 	var scene_file: String = scene_root.scene_file_path.to_lower()
 
-	# ถ้าเข้าสู่ฉากเล่นเกม (world.tscn) ให้หยุดเพลงเมนูทันที
 	if "world" in scene_name or "world" in scene_file:
 		stop_menu_bgm()
 		return
 
-	# ถ้าอยู่ในหน้า MainMenu หรือ SongSelection ให้ดูด Stream จากโหนด AudioStreamPlayer ในฉาก (ถ้ามี)
-	# มาเล่นบน _menu_bgm_player ของ GameManager แทน เพื่อให้เปลี่ยนฉากแล้วเพลงไม่ตัด
 	if "mainmenu" in scene_name or "main_menu" in scene_file or "song" in scene_name or "song" in scene_file:
 		for child in scene_root.find_children("*", "AudioStreamPlayer", true, false):
 			var p: AudioStreamPlayer = child as AudioStreamPlayer
@@ -276,11 +301,15 @@ func bind_ui_and_audio_buses_recursive(root: Node) -> void:
 		return
 	if root is BaseButton:
 		bind_button_sound(root as BaseButton)
-	elif root is AudioStreamPlayer or root is AudioStreamPlayer3D or root is AudioStreamPlayer2D:
+	elif root is AudioStreamPlayer or root is AudioStreamPlayer3D or node_is_audio_2d(root):
 		_auto_assign_audio_bus(root)
 
 	for child in root.get_children():
 		bind_ui_and_audio_buses_recursive(child)
+
+
+func node_is_audio_2d(node: Node) -> bool:
+	return node is AudioStreamPlayer2D
 
 
 func _auto_assign_audio_bus(audio_node: Node) -> void:
@@ -334,9 +363,17 @@ func reset_stats() -> void:
 	miss_count = 0
 	total_notes_in_chart = 0
 	current_stamina = max_stamina
+	current_fever = 0.0
+	is_fever_active = false
 	is_game_over = false
+	song_current_time = 0.0
 	score_changed.emit(score, combo, "")
 	stamina_changed.emit(current_stamina, max_stamina)
+	fever_changed.emit(current_fever, max_fever, is_fever_active)
+
+
+func reset_results() -> void:
+	reset_stats()
 
 
 func register_perfect() -> void:
@@ -349,11 +386,22 @@ func register_perfect() -> void:
 		max_combo = combo
 
 	var multiplier: int = clampi(1 + int(floor(float(combo) / 10.0)), 1, 4)
-	score += PERFECT_SCORE * multiplier
+	var fever_bonus: int = 2 if is_fever_active else 1
+	score += PERFECT_SCORE * multiplier * fever_bonus
+
+	last_score = score
+	last_max_combo = max_combo
+	last_perfect_count = perfect_count
 
 	if current_stamina < max_stamina:
 		current_stamina = minf(max_stamina, current_stamina + perfect_stamina_heal)
 		stamina_changed.emit(current_stamina, max_stamina)
+
+	if not is_fever_active:
+		current_fever = minf(max_fever, current_fever + fever_gain_per_perfect)
+		if current_fever >= max_fever:
+			is_fever_active = true
+		fever_changed.emit(current_fever, max_fever, is_fever_active)
 
 	score_changed.emit(score, combo, "PERFECT")
 
@@ -364,6 +412,7 @@ func register_miss() -> void:
 
 	miss_count += 1
 	combo = 0
+	last_miss_count = miss_count
 
 	current_stamina = maxf(0.0, current_stamina - miss_stamina_damage)
 	stamina_changed.emit(current_stamina, max_stamina)
