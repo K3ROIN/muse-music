@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cih8fek40xrlf"]
 
-[ext_resource type="PackedScene" uid="uid://dt186ajhnq5ou" path="res://Scenes/hud.tscn" id="1_0fj1v"]
+[ext_resource type="PackedScene" uid="uid://d14q6h36ypwga" path="res://Scenes/hud.tscn" id="1_0fj1v"]
 [ext_resource type="Shader" uid="uid://bkgfuy8n04tyr" path="res://Shaders/sky.gdshader" id="1_8j60k"]
 [ext_resource type="PackedScene" uid="uid://mbxso3cde1ki" path="res://Prefabs/player.tscn" id="1_a02cp"]
 [ext_resource type="Texture2D" uid="uid://clo5p6qv54b2b" path="res://icon.svg" id="1_go701"]
