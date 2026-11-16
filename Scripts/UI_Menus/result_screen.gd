@@ -1,6 +1,6 @@
 extends Control
 
-@export_group("Behavior & Button Colors (ปรับใน Inspector ได้)")
+@export_group("Behavior & Button Colors")
 @export var is_overlay_in_world: bool = true
 @export var button_normal_color: Color = Color(0.961, 0.937, 0.886, 1.0)
 @export var button_text_color: Color = Color(0.086, 0.071, 0.141, 1.0)

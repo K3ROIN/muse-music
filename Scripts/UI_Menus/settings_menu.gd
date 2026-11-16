@@ -7,7 +7,7 @@ static var key_lane_right: Key = KEY_J
 static var key_pause: Key = KEY_ESCAPE
 static var custom_audio_offset_sec: float = 0.0
 
-@export_group("Default Settings (ปรับใน Inspector ได้)")
+@export_group("Default Settings")
 @export_enum("Night:0", "Light:1", "Ocean:2", "Candy:3", "Dusk:4") var default_theme: int = 3
 @export var default_master_volume: float = 100.0
 @export var default_music_volume: float = 80.0
@@ -16,12 +16,12 @@ static var custom_audio_offset_sec: float = 0.0
 @export var default_fullscreen: bool = false
 @export var default_vsync: bool = true
 
-@export_group("Controls Action Names (แก้ไขชื่อ Action ใน Inspector ได้)")
-@export var row_1_action: String = "lane_left"
-@export var row_2_action: String = "lane_right"
-@export var row_3_action: String = "pause_game"
+@export_group("Controls Action")
+@export var row_1_action: String = "move_left"
+@export var row_2_action: String = "move_right"
+@export var row_3_action: String = "option"
 
-@export_group("5 Theme Palettes (Card BG, Row BG, Border, Text, Muted, Accent)")
+@export_group("5 Theme Palettes")
 @export var night_palette: Array[Color] = [
 	Color(0.075, 0.086, 0.122, 1.0),
 	Color(0.106, 0.122, 0.173, 1.0),
@@ -155,7 +155,6 @@ func open_settings() -> void:
 	_set_status_text("")
 	
 	if main_card != null:
-		# ยกเลิกแอนิเมชันเก่าหากกำลังทำงานค้างอยู่
 		if _card_tween != null and _card_tween.is_valid():
 			_card_tween.kill()
 			
@@ -170,7 +169,6 @@ func open_settings() -> void:
 
 
 func close_settings() -> void:
-	# ป้องกันผู้เล่นกดปุ่มปิดซ้ำรัวๆ ระหว่างที่หน้าต่างกำลังเล่นแอนิเมชันปิด
 	if _is_closing:
 		return
 	_is_closing = true
@@ -180,7 +178,6 @@ func close_settings() -> void:
 	if typeof(GameManager) != TYPE_NIL:
 		GameManager.play_close_settings()
 
-	# เล่นแอนิเมชันย่อตัวและค่อยๆ จางหายก่อนปิดจริง
 	if main_card != null:
 		if _card_tween != null and _card_tween.is_valid():
 			_card_tween.kill()
@@ -191,10 +188,8 @@ func close_settings() -> void:
 		_card_tween.tween_property(main_card, "scale", Vector2(0.94, 0.94), 0.15).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 		_card_tween.tween_property(main_card, "modulate:a", 0.0, 0.14)
 		
-		# รอจนกว่าแอนิเมชันจะเล่นจบก่อนทำคำสั่งถัดไป
 		await _card_tween.finished
 
-	# ป้องกันกรณีผู้เล่นกดเปิดหน้าต่างขึ้นมาใหม่ระหว่างรอ await
 	if not _is_closing:
 		return
 	_is_closing = false
@@ -702,9 +697,6 @@ func _get_gamepad_button_label(btn_idx: JoyButton) -> String:
 			return "Button " + str(int(btn_idx))
 
 
-# ==============================================================================
-# 4. การเชื่อมสัญญาณและการทำงานของ Audio / Graphics / Defaults / Save
-# ==============================================================================
 func _connect_all_signals() -> void:
 	if tab_audio_btn != null and not tab_audio_btn.pressed.is_connected(_on_tab_audio_pressed):
 		tab_audio_btn.pressed.connect(_on_tab_audio_pressed)
@@ -888,9 +880,6 @@ func _set_status_text(txt: String) -> void:
 		status_label.text = txt
 
 
-# ==============================================================================
-# 5. ปุ่ม Defaults และการบันทึก/โหลดไฟล์ user://settings.cfg
-# ==============================================================================
 func reset_to_defaults() -> void:
 	_cancel_waiting_input()
 	_is_loading = true

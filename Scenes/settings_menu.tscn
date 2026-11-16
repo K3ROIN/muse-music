@@ -478,7 +478,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_row_card")
 layout_mode = 2
 theme_override_colors/font_color = Color(0.490196, 0.396078, 0.45098, 1)
 theme_override_font_sizes/font_size = 13
-text = "Click a slot, then press the key you want. Esc: cancel. Right-click: clear."
+text = "Click any slot to assign the key you want. Esc: cancel. Right-click: clear."
 
 [node name="TableHeaderHBox" type="HBoxContainer" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage" unique_id=875731372]
 layout_mode = 2
@@ -526,7 +526,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
 theme_override_font_sizes/font_size = 15
-text = "Move Left (Lane L)"
+text = "Move Left"
 
 [node name="SlotKB1" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow1" unique_id=1080249989]
 custom_minimum_size = Vector2(180, 34)
@@ -565,7 +565,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
 theme_override_font_sizes/font_size = 15
-text = "Move Right (Lane R)"
+text = "Move Right"
 
 [node name="SlotKB1" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow2" unique_id=1946881532]
 custom_minimum_size = Vector2(180, 34)
@@ -604,7 +604,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.141176, 0.0980392, 0.12549, 1)
 theme_override_font_sizes/font_size = 15
-text = "Pause Menu"
+text = "Options"
 
 [node name="SlotKB1" type="Button" parent="CenterContainer/MainCard/CardVBox/PagesContainer/ControlsPage/ControlRow3" unique_id=91846976]
 custom_minimum_size = Vector2(180, 34)

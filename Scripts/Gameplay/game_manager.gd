@@ -21,12 +21,12 @@ const SFX_PATHS: Dictionary = {
 @export_group("Menu BGM Settings")
 @export_file("*.mp3", "*.ogg", "*.wav") var menu_bgm_path: String = "res://Audios/BGM/1-17. After the Battle.mp3"
 
-@export_group("Stamina / HP Settings (350/350 สไตล์ Muse Dash)")
+@export_group("Stamina / HP Settings")
 @export var max_stamina: float = 350.0
 @export var miss_stamina_damage: float = 50.0
 @export var perfect_stamina_heal: float = 8.0
 
-@export_group("Fever Bar Settings (หลอด Fever สีฟ้า)")
+@export_group("Fever Bar Settings")
 @export var max_fever: float = 100.0
 @export var fever_gain_per_perfect: float = 5.0
 @export var fever_duration_seconds: float = 6.0
@@ -96,18 +96,14 @@ func _process(delta: float) -> void:
 		fever_changed.emit(current_fever, max_fever, is_fever_active)
 
 
-# ==============================================================================
 # อัปเดตความคืบหน้าของเวลาเพลงตามไฟล์ MIDI (.mid)
-# ==============================================================================
 func update_song_progress(current_sec: float, total_sec: float) -> void:
 	song_current_time = maxf(0.0, current_sec)
 	song_total_duration = maxf(0.0, total_sec)
 	song_progress_changed.emit(song_current_time, song_total_duration)
 
 
-# ==============================================================================
 # ระบบเพลง BGM เล่นต่อเนื่องข้ามฉาก (Main Menu <-> Song Selection)
-# ==============================================================================
 func _init_menu_bgm_player() -> void:
 	_menu_bgm_player = AudioStreamPlayer.new()
 	_menu_bgm_player.name = "MenuBGMPlayer"
@@ -160,9 +156,7 @@ func _check_scene_for_menu_bgm(scene_root: Node) -> void:
 		play_menu_bgm()
 
 
-# ==============================================================================
 # โหลดปุ่มควบคุมและระดับเสียงตอนเริ่มเกม
-# ==============================================================================
 func _load_saved_keybinds_and_audio_on_startup() -> void:
 	var cfg := ConfigFile.new()
 	var err: Error = cfg.load(CONFIG_PATH)

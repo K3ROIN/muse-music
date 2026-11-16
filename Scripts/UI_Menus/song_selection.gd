@@ -1,35 +1,19 @@
 extends Control
 
-# ==============================================================================
-# Just Dance Style Carousel Song Selection (res://Scripts/song_selection.gd)
-# ถอดแบบแอนิเมชั่นและรายละเอียดจากวิดีโอ "Screen Recording 2026-11-10 153724.mp4":
-# ------------------------------------------------------------------------------
-# 1. แอนิเมชั่นตอนเข้าฉากจาก Main Menu (_play_scene_entry_animation):
-#    - แผ่นวงกลมทั้ง 5 วงจะกางออก (Fan-Out) จากจุดกึ่งกลางไปยังตำแหน่งซ้าย-ขวาแบบนุ่มนวล
-#    - แถบชื่อเพลงด้านบนและปุ่มมุมซ้าย/ขวาล่างสไลด์เข้ามาพร้อมกัน
-# 2. แอนิเมชั่นตอนกดเลื่อนเพลงซ้าย-ขวา (เหมือนในคลิปวินาทีที่ 0:02, 0:12, 0:19, 0:28):
-#    - ขณะที่แผ่นวงกลมกำลังเลื่อนสลับตำแหน่ง ขอบเรืองแสงสีขาว ไอคอน ▶ และดาวคะแนนด้านล่าง
-#      จะซ่อนตัวชั่วคราว (เหมือนในคลิปจังหวะที่แผ่นกำลังเลื่อน)
-#    - แผ่นวงกลมแต่ละวงจะเลื่อนตำแหน่ง (position) และย่อ/ขยายขนาด (size) ข้ามไปยังช่องถัดไปจริงๆ
-#    - เมื่อแผ่นใหม่เข้าสู่ตรงกลางเสร็จ ขอบวงแหวนสีขาวเรืองแสง ไอคอน ▶ และดาวคะแนน (★ ★ ★ ★ + คะแนน)
-#      จะสว่างวาบขึ้นมาพร้อมกัน!
-# 3. เพลง BGM จากหน้า Main Menu เล่นต่อเนื่องไม่สะดุด และหยุดเฉพาะตอนกดเข้าเล่นเพลง
-# ==============================================================================
-
-@export_group("Songs Catalog (แก้ไข/เพิ่มเพลงใน Inspector ได้)")
+@export_group("Songs Catalog")
 @export var song_titles: Array[String] = [
-	"Talk (Demo Track)",
-	"After the Battle",
-	"Neon Starlight",
-	"Pastel Runner",
-	"Cyber Groove"
+	"Demo Track",
+	"Song 2",
+	"Song 3",
+	"Song 4",
+	"Song 5"
 ]
 @export var song_artists: Array[String] = [
-	"K3ROIN",
-	"Muse Rhythm",
-	"Synthwave Collective",
-	"Duet Cats Studio",
-	"Future Bass Project"
+	"N/A",
+	"Rhythm",
+	"Synthwave",
+	"Duet Cats",
+	"Future"
 ]
 @export var song_audio_paths: Array[String] = [
 	"res://Audios/1-18. Talk.ogg",
@@ -74,11 +58,11 @@ extends Control
 	"★ ★ ★ ☆ ☆"
 ]
 @export var song_high_scores: Array[String] = [
-	"11047   K3R",
-	"9909   K3R",
-	"12450   K3R",
-	"8640   K3R",
-	"10200   K3R"
+	"11047",
+	"9909",
+	"12450",
+	"8640",
+	"10200"
 ]
 @export var song_cover_textures: Array[Texture2D] = []
 
@@ -118,7 +102,6 @@ var _carousel_tween: Tween = null
 
 
 func _ready() -> void:
-	# ให้เพลง BGM จากหน้า Main Menu เล่นต่อเนื่องในหน้านี้โดยไม่เริ่มใหม่
 	if typeof(GameManager) != TYPE_NIL:
 		GameManager.play_menu_bgm()
 		current_index = GameManager.selected_song_index
@@ -190,9 +173,6 @@ func _attach_hover_animations() -> void:
 		)
 
 
-# ==============================================================================
-# 1. แอนิเมชั่นตอนเปิดเข้าหน้า Song Selection จากหน้า Main Menu
-# ==============================================================================
 func _play_scene_entry_animation() -> void:
 	if _slot_positions.size() < 5:
 		return
@@ -214,7 +194,6 @@ func _play_scene_entry_animation() -> void:
 		h_tw.tween_property(header_vbox, "position:y", base_hy, 0.32).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		h_tw.tween_property(header_vbox, "modulate:a", 1.0, 0.22)
 
-	# แผ่นวงกลมทั้ง 5 กางออก (Fan-Out) จากจุดกึ่งกลางไปยังตำแหน่งของตัวเอง
 	var entry_tw: Tween = create_tween()
 	entry_tw.set_parallel(true)
 
@@ -248,9 +227,6 @@ func _play_scene_entry_animation() -> void:
 	)
 
 
-# ==============================================================================
-# 2. แอนิเมชั่นเลื่อนแผ่นวงกลมสลับตำแหน่งซ้าย-ขวา (ตามวิดีโอ 0:12, 0:19, 0:28)
-# ==============================================================================
 func _shift_carousel(step: int) -> void:
 	if _is_sliding or step == 0 or _slot_positions.size() < 5:
 		return
@@ -262,14 +238,11 @@ func _shift_carousel(step: int) -> void:
 		GameManager.play_ui_click()
 		GameManager.selected_song_index = current_index
 
-	# 1. ซ่อนวงแหวนสีขาวตรงกลาง, ไอคอน ▶ และดาวคะแนนทันทีที่เริ่มเลื่อน (เหมือนในคลิป)
 	if center_focus_overlay != null:
 		center_focus_overlay.modulate.a = 0.0
 	if score_stars_vbox != null:
 		score_stars_vbox.modulate.a = 0.0
 
-	# 2. อัปเดตสีและชื่อเพลงของแผ่นวงกลมเป็นชุดใหม่ แล้ววางจุดเริ่มต้นที่ช่องก่อนหน้า
-	#    เพื่อให้เห็นแผ่นวงกลมเลื่อนและขยาย/ย่อขนาดข้ามช่องมายังตำแหน่งใหม่อย่างต่อเนื่อง
 	_refresh_disc_contents_and_header()
 
 	if _carousel_tween != null and _carousel_tween.is_running():

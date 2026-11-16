@@ -1,15 +1,8 @@
 extends Control
 
-# ==============================================================================
-# Pause Menu สไตล์ "JUICE KIT" + เสียงปุ่มจาก res://Audios/SFX/ui/ (res://Scripts/pause_menu.gd)
-# - เลื่อนเมาส์ชี้ปุ่ม: เล่นเสียง Hover.wav
-# - กดปุ่ม RESUME / RESTART / MAIN MENU: เล่นเสียง Click.wav
-# - กดปุ่ม OPTIONS: เล่นเสียง Open_Settings.wav
-# ==============================================================================
-
 const SETTINGS_SCENE_PATH: String = "res://Scenes/settings_menu.tscn"
 
-@export_group("Button Colors (ปรับแต่งได้ใน Inspector)")
+@export_group("Button Colors")
 @export var button_normal_color: Color = Color("#f5efe2")
 @export var button_text_color: Color = Color("#161224")
 @export var button_shadow_color: Color = Color("#0b0812")

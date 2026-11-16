@@ -1,16 +1,16 @@
 extends Control
 
-@export_group("Song Progress Bar (เชื่อมกับ AudioStreamPlayer ในซีน world)")
+@export_group("Song Progress Bar")
 @export var world_audio_player: AudioStreamPlayer = null
 @export var progress_counts_down_remaining: bool = false
 @export var show_remaining_time_text: bool = true
 
-@export_group("Health & Fever Settings (ตั้งค่าหลอดเลือดและ Fever)")
+@export_group("Health & Fever Settings")
 @export var display_max_hp: int = 350
 @export var fever_gain_per_perfect: float = 5.0
 @export var fever_duration_seconds: float = 6.0
 
-@export_group("Judgment Colors (สีตัวอักษร PERFECT / MISS ปรับใน Inspector ได้)")
+@export_group("Judgment Colors")
 @export var perfect_color: Color = Color(1.0, 0.28, 0.68, 1.0)
 @export var fever_perfect_color: Color = Color(0.20, 0.95, 1.0, 1.0)
 @export var miss_color: Color = Color(0.95, 0.32, 0.42, 1.0)
