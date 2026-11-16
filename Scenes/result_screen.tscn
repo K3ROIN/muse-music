@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://beouv3r8quua4"]
 
 [ext_resource type="Script" uid="uid://c6q1y8d8oymj5" path="res://Scripts/UI_Menus/result_screen.gd" id="2_t0wn3"]
+[ext_resource type="Texture2D" uid="uid://bvb6oe2b7kmhu" path="res://Assets/icons/1x/star.png" id="3_star_icon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_card"]
 content_margin_left = 36.0
@@ -141,13 +142,38 @@ theme_override_colors/font_color = Color(1, 0.72, 0.18, 1)
 theme_override_font_sizes/font_size = 16
 text = "Talk (Demo Track)"
 
-[node name="FullComboBadge" type="Label" parent="CenterContainer/Panel/MainVBox/HeaderHBox" unique_id=1777919046]
+[node name="FullComboBadge" type="PanelContainer" parent="CenterContainer/Panel/MainVBox/HeaderHBox" unique_id=1777919046]
 visible = false
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge_tag")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox/HeaderHBox/FullComboBadge" unique_id=35618672]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="LeftStarIcon" type="TextureRect" parent="CenterContainer/Panel/MainVBox/HeaderHBox/FullComboBadge/HBox" unique_id=528464579]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("3_star_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FullComboLabel" type="Label" parent="CenterContainer/Panel/MainVBox/HeaderHBox/FullComboBadge/HBox" unique_id=2059995280]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_badge_tag")
-text = "★ FULL COMBO ★"
+text = "FULL COMBO"
+
+[node name="RightStarIcon" type="TextureRect" parent="CenterContainer/Panel/MainVBox/HeaderHBox/FullComboBadge/HBox" unique_id=1856466073]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("3_star_icon")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="BodyHBox" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox" unique_id=1768381910]
 layout_mode = 2
@@ -182,14 +208,45 @@ text = "S"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="StarsLabel" type="Label" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn" unique_id=1826119315]
+[node name="StarsHBox" type="HBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn" unique_id=1826119315]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.15, 1)
-theme_override_colors/font_shadow_color = Color(0.5, 0.25, 0, 0.85)
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 26
-text = "★ ★ ★ ★ ★"
-horizontal_alignment = 1
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Star1" type="TextureRect" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn/StarsHBox" unique_id=177521535]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+texture = ExtResource("3_star_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star2" type="TextureRect" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn/StarsHBox" unique_id=1777048487]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+texture = ExtResource("3_star_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star3" type="TextureRect" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn/StarsHBox" unique_id=407280188]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+texture = ExtResource("3_star_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star4" type="TextureRect" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn/StarsHBox" unique_id=27815919]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+texture = ExtResource("3_star_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star5" type="TextureRect" parent="CenterContainer/Panel/MainVBox/BodyHBox/LeftRankColumn/StarsHBox" unique_id=40036874]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+texture = ExtResource("3_star_icon")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="RightStatsColumn" type="VBoxContainer" parent="CenterContainer/Panel/MainVBox/BodyHBox" unique_id=303677958]
 layout_mode = 2

@@ -5,6 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://31bh8nhrnmgv" path="res://Assets/icons/1x/forward.png" id="3_iwmk6"]
 [ext_resource type="Texture2D" uid="uid://dqfa1yug84rm0" path="res://Assets/icons/1x/home.png" id="4_g42s2"]
 [ext_resource type="Texture2D" uid="uid://bvb6oe2b7kmhu" path="res://Assets/icons/1x/star.png" id="5_bbmjn"]
+[ext_resource type="Texture2D" path="res://Assets/icons/1x/gear.png" id="6_gear_icon"]
+[ext_resource type="Texture2D" path="res://Assets/icons/1x/musicOn.png" id="7_music_icon"]
+[ext_resource type="Texture2D" path="res://Assets/UI/PNG/Extra/Default/icon_play_light.png" id="8_play_icon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top_dome"]
 bg_color = Color(0.28, 0.38, 0.95, 0.5)
@@ -211,17 +214,57 @@ layout_mode = 2
 theme_override_constants/separation = 175
 alignment = 1
 
-[node name="DiffStarsLabel" type="Label" parent="HeaderVBox/DifficultyRow" unique_id=1347616676]
+[node name="DiffGearsHBox" type="HBoxContainer" parent="HeaderVBox/DifficultyRow" unique_id=1347616676]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.95)
-theme_override_font_sizes/font_size = 20
-text = "⚙ ⚙ ⚙"
+theme_override_constants/separation = 6
+alignment = 1
 
-[node name="SweatDropsLabel" type="Label" parent="HeaderVBox/DifficultyRow" unique_id=1875708029]
+[node name="Gear1" type="TextureRect" parent="HeaderVBox/DifficultyRow/DiffGearsHBox"]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.65, 0.88, 1, 0.95)
-theme_override_font_sizes/font_size = 20
-text = "💧 💧"
+texture = ExtResource("6_gear_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Gear2" type="TextureRect" parent="HeaderVBox/DifficultyRow/DiffGearsHBox"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("6_gear_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Gear3" type="TextureRect" parent="HeaderVBox/DifficultyRow/DiffGearsHBox"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("6_gear_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="IntensityIconsHBox" type="HBoxContainer" parent="HeaderVBox/DifficultyRow" unique_id=1875708029]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Intensity1" type="TextureRect" parent="HeaderVBox/DifficultyRow/IntensityIconsHBox"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_music_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Intensity2" type="TextureRect" parent="HeaderVBox/DifficultyRow/IntensityIconsHBox"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_music_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Intensity3" type="TextureRect" parent="HeaderVBox/DifficultyRow/IntensityIconsHBox"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_music_icon")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="CarouselStage" type="Control" parent="." unique_id=930067463]
 layout_mode = 1
@@ -355,19 +398,23 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_play_overlay")
 
-[node name="PlayTriangle" type="Label" parent="CarouselStage/DiscCenter/CenterFocusOverlay/PlayIconCircle" unique_id=1413191296]
+[node name="PlayIcon" type="TextureRect" parent="CarouselStage/DiscCenter/CenterFocusOverlay/PlayIconCircle" unique_id=1413191296]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 6.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.0
+offset_top = -24.0
+offset_right = 26.0
+offset_bottom = 24.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.92)
-theme_override_font_sizes/font_size = 46
-text = "▶"
-horizontal_alignment = 1
-vertical_alignment = 1
+mouse_filter = 2
+texture = ExtResource("8_play_icon")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="ScoreStarsVBox" type="VBoxContainer" parent="CarouselStage" unique_id=841831579]
 z_index = 12
@@ -377,17 +424,54 @@ offset_top = 294.0
 offset_right = 630.0
 offset_bottom = 360.0
 mouse_filter = 2
-theme_override_constants/separation = 0
+theme_override_constants/separation = 4
 alignment = 1
 
-[node name="StarsLabel" type="Label" parent="CarouselStage/ScoreStarsVBox" unique_id=1857735141]
+[node name="StarsHBox" type="HBoxContainer" parent="CarouselStage/ScoreStarsVBox" unique_id=1857735141]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.1, 1)
-theme_override_colors/font_shadow_color = Color(0.55, 0.3, 0, 0.9)
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 24
-text = "★ ★ ★ ★ ☆"
-horizontal_alignment = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Star1" type="TextureRect" parent="CarouselStage/ScoreStarsVBox/StarsHBox"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_bbmjn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star2" type="TextureRect" parent="CarouselStage/ScoreStarsVBox/StarsHBox"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_bbmjn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star3" type="TextureRect" parent="CarouselStage/ScoreStarsVBox/StarsHBox"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_bbmjn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star4" type="TextureRect" parent="CarouselStage/ScoreStarsVBox/StarsHBox"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_bbmjn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star5" type="TextureRect" parent="CarouselStage/ScoreStarsVBox/StarsHBox"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_bbmjn")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="HighScoreLabel" type="Label" parent="CarouselStage/ScoreStarsVBox" unique_id=31241972]
 layout_mode = 2

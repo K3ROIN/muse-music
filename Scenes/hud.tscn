@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cajrm4m088a14" path="res://Scripts/UI_Menus/hud.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://b4gr8t8kgpor3" path="res://Assets/icons/1x/pause.png" id="2_fccik"]
+[ext_resource type="Texture2D" uid="uid://bvb6oe2b7kmhu" path="res://Assets/icons/1x/star.png" id="3_badge_icon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_midi_prog_bg"]
 bg_color = Color(0.08, 0.05, 0.16, 0.72)
@@ -45,10 +46,10 @@ corner_radius_bottom_right = 1
 corner_radius_bottom_left = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_heart_badge"]
-content_margin_left = 12.0
-content_margin_top = 4.0
-content_margin_right = 12.0
-content_margin_bottom = 4.0
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
 bg_color = Color(1, 0.16, 0.52, 1)
 skew = Vector2(0.24, 0)
 corner_radius_top_left = 6
@@ -271,13 +272,15 @@ size_flags_vertical = 4
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_heart_badge")
 
-[node name="HeartIconLabel" type="Label" parent="BottomStatusDock/DockHBox/HeartBadge" unique_id=1166385352]
+[node name="HeartIcon" type="TextureRect" parent="BottomStatusDock/DockHBox/HeartBadge" unique_id=1166385352]
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 24
-text = "♥"
-horizontal_alignment = 1
-vertical_alignment = 1
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("3_badge_icon")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="BarsVBox" type="VBoxContainer" parent="BottomStatusDock/DockHBox" unique_id=983362528]
 layout_mode = 2

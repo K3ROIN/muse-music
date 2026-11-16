@@ -30,33 +30,15 @@ extends Control
 	"res://Audios/song1.mid"
 ]
 @export var song_disc_colors: Array[Color] = [
-	Color(0.12, 0.62, 0.92, 1.0), # ฟ้าสว่าง
-	Color(0.85, 0.20, 0.52, 1.0), # ชมพูบานเย็น
-	Color(0.52, 0.22, 0.88, 1.0), # ม่วงนีออน
-	Color(0.92, 0.45, 0.15, 1.0), # ส้มทอง
-	Color(0.15, 0.78, 0.58, 1.0)  # เขียวมินต์
+	Color(0.12, 0.62, 0.92, 1.0),
+	Color(0.85, 0.20, 0.52, 1.0),
+	Color(0.52, 0.22, 0.88, 1.0),
+	Color(0.92, 0.45, 0.15, 1.0),
+	Color(0.15, 0.78, 0.58, 1.0)
 ]
-@export var song_difficulty_gears: Array[String] = [
-	"⚙ ⚙ ○",
-	"⚙ ○ ○",
-	"⚙ ⚙ ⚙",
-	"⚙ ⚙ ○",
-	"⚙ ⚙ ⚙"
-]
-@export var song_sweat_icons: Array[String] = [
-	"💧 ○ ○",
-	"💧 ○ ○",
-	"💧 💧 💧",
-	"💧 💧 ○",
-	"💧 💧 ○"
-]
-@export var song_star_ratings: Array[String] = [
-	"★ ★ ★ ★ ☆",
-	"★ ★ ★ ☆ ☆",
-	"★ ★ ★ ★ ★",
-	"★ ★ ★ ★ ☆",
-	"★ ★ ★ ☆ ☆"
-]
+@export var song_difficulty_levels: Array[int] = [2, 1, 3, 2, 3]
+@export var song_intensity_levels: Array[int] = [1, 1, 3, 2, 2]
+@export var song_star_counts: Array[int] = [4, 3, 5, 4, 3]
 @export var song_high_scores: Array[String] = [
 	"11047",
 	"9909",
@@ -69,8 +51,8 @@ extends Control
 @onready var header_vbox: VBoxContainer = find_child("HeaderVBox", true, false) as VBoxContainer
 @onready var song_title_label: Label = find_child("SongTitleLabel", true, false) as Label
 @onready var artist_label: Label = find_child("ArtistLabel", true, false) as Label
-@onready var diff_stars_label: Label = find_child("DiffStarsLabel", true, false) as Label
-@onready var sweat_drops_label: Label = find_child("SweatDropsLabel", true, false) as Label
+@onready var diff_gears_hbox: HBoxContainer = find_child("DiffGearsHBox", true, false) as HBoxContainer
+@onready var intensity_icons_hbox: HBoxContainer = find_child("IntensityIconsHBox", true, false) as HBoxContainer
 
 @onready var carousel_stage: Control = find_child("CarouselStage", true, false) as Control
 @onready var disc_left_2: Button = find_child("DiscLeft2", true, false) as Button
@@ -78,11 +60,11 @@ extends Control
 @onready var disc_center: Button = find_child("DiscCenter", true, false) as Button
 @onready var disc_right_1: Button = find_child("DiscRight1", true, false) as Button
 @onready var disc_right_2: Button = find_child("DiscRight2", true, false) as Button
-
 @onready var center_cover_label: Label = find_child("CoverLabel", true, false) as Label
 @onready var center_focus_overlay: Control = find_child("CenterFocusOverlay", true, false) as Control
+
 @onready var score_stars_vbox: Control = find_child("ScoreStarsVBox", true, false) as Control
-@onready var stars_label: Label = find_child("StarsLabel", true, false) as Label
+@onready var stars_hbox: HBoxContainer = find_child("StarsHBox", true, false) as HBoxContainer
 @onready var high_score_label: Label = find_child("HighScoreLabel", true, false) as Label
 
 @onready var prev_song_btn: Button = find_child("PrevSongBtn", true, false) as Button
@@ -137,7 +119,6 @@ func _connect_signals_safely() -> void:
 		disc_right_1.pressed.connect(_on_disc_right_1_pressed)
 	if disc_right_2 != null and not disc_right_2.pressed.is_connected(_on_disc_right_2_pressed):
 		disc_right_2.pressed.connect(_on_disc_right_2_pressed)
-
 	if prev_song_btn != null and not prev_song_btn.pressed.is_connected(_on_prev_song_pressed):
 		prev_song_btn.pressed.connect(_on_prev_song_pressed)
 	if next_song_btn != null and not next_song_btn.pressed.is_connected(_on_next_song_pressed):
@@ -156,7 +137,6 @@ func _attach_hover_animations() -> void:
 		btn.set_meta("ui_sfx_bound", true)
 		btn.resized.connect(func(): btn.pivot_offset = btn.size / 2.0)
 		btn.pivot_offset = btn.size / 2.0
-
 		btn.mouse_entered.connect(func():
 			if _is_sliding:
 				return
@@ -196,7 +176,6 @@ func _play_scene_entry_animation() -> void:
 
 	var entry_tw: Tween = create_tween()
 	entry_tw.set_parallel(true)
-
 	for i in range(_disc_buttons.size()):
 		var btn: Button = _disc_buttons[i]
 		if btn == null:
@@ -255,7 +234,6 @@ func _shift_carousel(step: int) -> void:
 		var btn: Button = _disc_buttons[i]
 		if btn == null:
 			continue
-
 		var target_pos: Vector2 = _slot_positions[i]
 		var target_sz: Vector2 = _slot_sizes[i]
 		var from_slot: int = i + dir_sign
@@ -277,7 +255,6 @@ func _shift_carousel(step: int) -> void:
 		_carousel_tween.tween_property(btn, "size", target_sz, 0.24).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		_carousel_tween.tween_property(btn, "custom_minimum_size", target_sz, 0.24).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
-	# 3. เมื่อแผ่นเลื่อนเข้าตรงกลางเสร็จ ให้แสดงวงแหวนเรืองแสงสีขาว ไอคอน ▶ และดาวคะแนนขึ้นมา
 	_carousel_tween.chain().tween_callback(func():
 		_is_sliding = false
 		_reveal_center_focus_and_stars()
@@ -302,18 +279,24 @@ func _refresh_disc_contents_and_header() -> void:
 
 	var cur_title: String = song_titles[current_index] if current_index < song_titles.size() else "Track"
 	var cur_artist: String = song_artists[current_index] if current_index < song_artists.size() else ""
+
 	if song_title_label != null:
 		song_title_label.text = cur_title
 	if artist_label != null:
 		artist_label.text = cur_artist
-	if diff_stars_label != null and current_index < song_difficulty_gears.size():
-		diff_stars_label.text = song_difficulty_gears[current_index]
-	if sweat_drops_label != null and current_index < song_sweat_icons.size():
-		sweat_drops_label.text = song_sweat_icons[current_index]
+
+	var gear_count: int = song_difficulty_levels[current_index] if current_index < song_difficulty_levels.size() else 2
+	_update_icon_row(diff_gears_hbox, gear_count, Color(1.0, 1.0, 1.0, 0.95), Color(1.0, 1.0, 1.0, 0.22))
+
+	var intensity_count: int = song_intensity_levels[current_index] if current_index < song_intensity_levels.size() else 2
+	_update_icon_row(intensity_icons_hbox, intensity_count, Color(0.60, 0.88, 1.0, 0.95), Color(0.60, 0.88, 1.0, 0.22))
+
 	if center_cover_label != null:
 		center_cover_label.text = cur_title
-	if stars_label != null and current_index < song_star_ratings.size():
-		stars_label.text = song_star_ratings[current_index]
+
+	var star_count: int = song_star_counts[current_index] if current_index < song_star_counts.size() else 4
+	_update_icon_row(stars_hbox, star_count, Color(1.0, 0.85, 0.12, 1.0), Color(1.0, 1.0, 1.0, 0.25))
+
 	if high_score_label != null and current_index < song_high_scores.size():
 		high_score_label.text = song_high_scores[current_index]
 
@@ -343,6 +326,17 @@ func _refresh_disc_contents_and_header() -> void:
 		if song_idx < song_cover_textures.size() and song_cover_textures[song_idx] != null:
 			btn.icon = song_cover_textures[song_idx]
 			btn.expand_icon = true
+
+
+func _update_icon_row(container: HBoxContainer, active_count: int, active_col: Color, inactive_col: Color) -> void:
+	if container == null:
+		return
+	var idx: int = 0
+	for child in container.get_children():
+		var item: CanvasItem = child as CanvasItem
+		if item != null:
+			item.modulate = active_col if idx < active_count else inactive_col
+			idx += 1
 
 
 func _input(event: InputEvent) -> void:
@@ -408,10 +402,8 @@ func _start_selected_song() -> void:
 			GameManager.selected_song_audio_path = song_audio_paths[current_index]
 		if current_index < song_midi_paths.size():
 			GameManager.selected_song_midi_path = song_midi_paths[current_index]
-
 		GameManager.stop_menu_bgm()
 		GameManager.play_song_selected()
-
 	get_tree().change_scene_to_file("res://Scenes/world.tscn")
 
 

@@ -6,23 +6,24 @@ extends Control
 @export var button_text_color: Color = Color(0.086, 0.071, 0.141, 1.0)
 @export var button_shadow_color: Color = Color(0.043, 0.031, 0.071, 1.0)
 @export var hover_colors: Array[Color] = [
-	Color(1.0, 0.81, 0.28, 1.0),  # 1. RETRY     -> เหลืองทอง
-	Color(0.45, 1.0, 0.62, 1.0),  # 2. SONGS     -> เขียวมินต์
-	Color(0.36, 0.90, 1.0, 1.0)   # 3. MAIN MENU -> ฟ้าไซเบอร์
+	Color(1.0, 0.81, 0.28, 1.0),
+	Color(0.45, 1.0, 0.62, 1.0),
+	Color(0.36, 0.90, 1.0, 1.0)
 ]
 
 @onready var panel: PanelContainer = find_child("Panel", true, false) as PanelContainer
 @onready var title_label: Label = find_child("TitleLabel", true, false) as Label
 @onready var song_name_label: Label = find_child("SongNameLabel", true, false) as Label
-@onready var full_combo_badge: Label = find_child("FullComboBadge", true, false) as Label
+@onready var full_combo_badge: Control = find_child("FullComboBadge", true, false) as Control
 
 @onready var rank_circle_panel: Panel = find_child("RankCirclePanel", true, false) as Panel
 @onready var rank_label: Label = find_child("RankLabel", true, false) as Label
-@onready var stars_label: Label = find_child("StarsLabel", true, false) as Label
+@onready var stars_hbox: HBoxContainer = find_child("StarsHBox", true, false) as HBoxContainer
 
 @onready var score_label: Label = find_child("ScoreLabel", true, false) as Label
 @onready var accuracy_label: Label = find_child("AccuracyLabel", true, false) as Label
 @onready var accuracy_bar: ProgressBar = find_child("AccuracyBar", true, false) as ProgressBar
+
 @onready var max_combo_label: Label = find_child("MaxComboLabel", true, false) as Label
 @onready var perfect_label: Label = find_child("PerfectLabel", true, false) as Label
 @onready var miss_label: Label = find_child("MissLabel", true, false) as Label
@@ -39,7 +40,6 @@ var _btn_hover_tweens: Dictionary = {}
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	z_index = 95
-
 	_setup_juice_kit_buttons()
 
 	if is_overlay_in_world and get_tree().current_scene != self:
@@ -75,7 +75,6 @@ func _setup_juice_kit_buttons() -> void:
 func _style_juice_button(btn: Button, target_hover_color: Color) -> void:
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.set_meta("ui_sfx_bound", true)
-
 	btn.add_theme_color_override("font_color", button_text_color)
 	btn.add_theme_color_override("font_hover_color", button_text_color)
 	btn.add_theme_color_override("font_pressed_color", button_text_color)
@@ -98,7 +97,6 @@ func _style_juice_button(btn: Button, target_hover_color: Color) -> void:
 	sb.corner_radius_bottom_right = 10
 	sb.content_margin_top = 8
 	sb.content_margin_bottom = 8
-
 
 	btn.add_theme_stylebox_override("normal", sb)
 	btn.add_theme_stylebox_override("hover", sb)
@@ -144,7 +142,6 @@ func _animate_button_hover(btn: Button, target_col: Color, is_hovered: bool) -> 
 	if sb != null:
 		tw.tween_property(sb, "bg_color", target_col, 0.12)
 		tw.tween_property(sb, "shadow_offset", target_shadow, 0.14)
-
 	_btn_hover_tweens[btn] = tw
 
 
@@ -179,8 +176,7 @@ func show_result() -> void:
 		rank_label.text = rank_text
 		_apply_rank_theme_color(rank_text)
 
-	if stars_label != null:
-		stars_label.text = _get_stars_string(final_acc, failed)
+	_update_stars_icons(final_acc, failed)
 
 	if max_combo_label != null:
 		max_combo_label.text = "%dX" % final_combo
@@ -189,7 +185,6 @@ func show_result() -> void:
 	if miss_label != null:
 		miss_label.text = str(final_miss)
 
-	# 1. แอนิเมชั่นเด้งการ์ดหลักขึ้นมา
 	if panel != null:
 		panel.pivot_offset = panel.size / 2.0
 		panel.scale = Vector2(0.84, 0.84)
@@ -199,7 +194,6 @@ func show_result() -> void:
 		pop_tw.tween_property(panel, "scale", Vector2.ONE, 0.32).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		pop_tw.tween_property(panel, "modulate:a", 1.0, 0.18)
 
-	# 2. แอนิเมชั่นตราประทับวงกลมเกรด (Rank Stamp Pop)
 	if rank_circle_panel != null:
 		rank_circle_panel.pivot_offset = rank_circle_panel.size / 2.0
 		rank_circle_panel.scale = Vector2(1.65, 1.65)
@@ -209,7 +203,6 @@ func show_result() -> void:
 		r_tw.parallel().tween_property(rank_circle_panel, "scale", Vector2.ONE, 0.34).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 		r_tw.parallel().tween_property(rank_circle_panel, "modulate:a", 1.0, 0.15)
 
-	# 3. แอนิเมชั่นตัวเลขนับคะแนนและหลอด Accuracy วิ่งขึ้น
 	var stat_tw: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	stat_tw.set_parallel(true)
 	if score_label != null:
@@ -235,15 +228,15 @@ func _apply_rank_theme_color(rank_text: String) -> void:
 	var rank_col := Color(1.0, 0.84, 0.2, 1.0)
 	match rank_text:
 		"S+", "S":
-			rank_col = Color(1.0, 0.84, 0.2, 1.0)  # สีทอง
+			rank_col = Color(1.0, 0.84, 0.2, 1.0)
 		"A":
-			rank_col = Color(0.38, 1.0, 0.62, 1.0) # สีเขียวมินต์
+			rank_col = Color(0.38, 1.0, 0.62, 1.0)
 		"B":
-			rank_col = Color(0.36, 0.85, 1.0, 1.0) # สีฟ้าไซเบอร์
+			rank_col = Color(0.36, 0.85, 1.0, 1.0)
 		"C":
-			rank_col = Color(1.0, 0.62, 0.25, 1.0) # สีส้ม
+			rank_col = Color(1.0, 0.62, 0.25, 1.0)
 		_:
-			rank_col = Color(1.0, 0.35, 0.42, 1.0) # สีแดง
+			rank_col = Color(1.0, 0.35, 0.42, 1.0)
 
 	if rank_label != null:
 		rank_label.add_theme_color_override("font_color", rank_col)
@@ -256,23 +249,31 @@ func _apply_rank_theme_color(rank_text: String) -> void:
 			rank_circle_panel.add_theme_stylebox_override("panel", sb_copy)
 
 
-func _get_stars_string(acc: float, failed: bool) -> String:
-	if failed or acc <= 0.0:
-		return "☆ ☆ ☆ ☆ ☆"
-	var filled_count: int = 1
-	if acc >= 95.0:
-		filled_count = 5
-	elif acc >= 85.0:
-		filled_count = 4
-	elif acc >= 70.0:
-		filled_count = 3
-	elif acc >= 50.0:
-		filled_count = 2
+func _update_stars_icons(acc: float, failed: bool) -> void:
+	if stars_hbox == null:
+		return
+	var filled_count: int = 0
+	if not failed and acc > 0.0:
+		if acc >= 95.0:
+			filled_count = 5
+		elif acc >= 85.0:
+			filled_count = 4
+		elif acc >= 70.0:
+			filled_count = 3
+		elif acc >= 50.0:
+			filled_count = 2
+		else:
+			filled_count = 1
 
-	var stars_arr: PackedStringArray = PackedStringArray()
-	for i in range(5):
-		stars_arr.append("★" if i < filled_count else "☆")
-	return " ".join(stars_arr)
+	var idx: int = 0
+	for child in stars_hbox.get_children():
+		var star_item: CanvasItem = child as CanvasItem
+		if star_item != null:
+			if idx < filled_count:
+				star_item.modulate = Color(1.0, 0.85, 0.15, 1.0)
+			else:
+				star_item.modulate = Color(0.18, 0.14, 0.28, 0.38)
+			idx += 1
 
 
 func _on_retry_button_pressed() -> void:

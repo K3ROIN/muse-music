@@ -9,6 +9,7 @@ extends Control
 @export var display_max_hp: int = 350
 @export var fever_gain_per_perfect: float = 5.0
 @export var fever_duration_seconds: float = 6.0
+@export var status_badge_icon: Texture2D = preload("res://Assets/icons/1x/star.png")
 
 @export_group("Judgment Colors")
 @export var perfect_color: Color = Color(1.0, 0.28, 0.68, 1.0)
@@ -25,6 +26,7 @@ extends Control
 
 @onready var bottom_status_dock: Control = find_child("BottomStatusDock", true, false) as Control
 @onready var heart_badge: Control = find_child("HeartBadge", true, false) as Control
+@onready var heart_icon: TextureRect = find_child("HeartIcon", true, false) as TextureRect
 @onready var fever_bar: ProgressBar = find_child("FeverBar", true, false) as ProgressBar
 @onready var health_bar: ProgressBar = find_child("HealthBar", true, false) as ProgressBar
 @onready var health_value_label: Label = find_child("HealthValueLabel", true, false) as Label
@@ -52,10 +54,10 @@ func _ready() -> void:
 	if judgment_label != null:
 		judgment_label.text = ""
 		judgment_label.modulate.a = 0.0
-
 	if midi_time_label != null:
 		midi_time_label.visible = show_remaining_time_text
-
+	if heart_icon != null and status_badge_icon != null:
+		heart_icon.texture = status_badge_icon
 	if pause_button != null and not pause_button.pressed.is_connected(_on_pause_button_pressed):
 		pause_button.pressed.connect(_on_pause_button_pressed)
 
@@ -111,13 +113,11 @@ func _resolve_world_audio_player() -> void:
 			continue
 		if player.name.begins_with("UISFXPlayer") or player.name == "MenuBGMPlayer":
 			continue
-
 		var stream_path: String = player.stream.resource_path.to_lower()
 		if player.playing or stream_path.ends_with(".ogg") or stream_path.ends_with(".mp3") or player.stream is AudioStreamOggVorbis or player.stream is AudioStreamMP3:
 			world_audio_player = player
 			_sync_bar_max_to_stream(player.stream)
 			return
-
 		if fallback_player == null:
 			fallback_player = player
 
@@ -132,7 +132,6 @@ func _sync_bar_max_to_stream(stream: AudioStream) -> void:
 	var len_sec: float = stream.get_length()
 	if len_sec <= 0.0:
 		return
-
 	_song_length_sec = len_sec
 	if song_progress_bar != null:
 		song_progress_bar.min_value = 0.0
@@ -149,7 +148,6 @@ func _update_song_progress_from_audio_player() -> void:
 	var stream_len: float = world_audio_player.stream.get_length()
 	if stream_len <= 0.0:
 		return
-
 	if absf(_song_length_sec - stream_len) > 0.001:
 		_sync_bar_max_to_stream(world_audio_player.stream)
 
@@ -160,7 +158,6 @@ func _update_song_progress_from_audio_player() -> void:
 		_last_playback_pos = current_pos
 	elif not world_audio_player.stream_paused and _last_playback_pos >= _song_length_sec * 0.98:
 		current_pos = _song_length_sec
-
 
 	if song_progress_bar != null:
 		song_progress_bar.max_value = _song_length_sec
@@ -222,12 +219,10 @@ func _on_score_changed(new_score: int, new_combo: int, judgment: String) -> void
 func _show_judgment_popup(judgment: String) -> void:
 	if judgment_label == null:
 		return
-
 	if _judgment_tween != null and _judgment_tween.is_running():
 		_judgment_tween.kill()
 
 	judgment_label.pivot_offset = judgment_label.size / 2.0
-
 	if judgment == "PERFECT":
 		judgment_label.text = "PERFECT"
 		var col: Color = fever_perfect_color if _is_fever_active else perfect_color
@@ -252,7 +247,6 @@ func _on_stamina_changed(current_hp: float, max_hp: float) -> void:
 		prev_ratio = health_bar.value / health_bar.max_value
 	var new_ratio: float = clampf(current_hp / maxf(1.0, max_hp), 0.0, 1.0)
 	var took_damage: bool = new_ratio < prev_ratio - 0.001
-
 	_update_health_bar_ui(current_hp, max_hp, took_damage)
 
 
@@ -314,7 +308,6 @@ func _set_fever_mode_visual(active: bool) -> void:
 
 	if fever_badge == null:
 		return
-
 	fever_badge.pivot_offset = fever_badge.size / 2.0
 	if active:
 		if fever_text_label != null:
@@ -337,6 +330,6 @@ func _on_pause_button_pressed() -> void:
 			pause_menu.call("toggle_pause")
 			return
 	var ev := InputEventAction.new()
-	ev.action = &"pause_game"
+	ev.action = &"option" if InputMap.has_action("option") else &"pause_game"
 	ev.pressed = true
 	Input.parse_input_event(ev)
